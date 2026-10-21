@@ -4,8 +4,11 @@
 
   <introduction>
     <p>
-      Check off the courses the student has completed, choose an emphasis if they
-      have one, and set the next quarter to plan. The planner fills the remaining
+      Set the next quarter to plan, then add each course the student has taken at
+      Santa Clara to the quarter they took it, using <q>+ add course</q> in the
+      earlier quarters of the plan. Courses with AP, IB, or transfer credit are
+      ticked separately under <q>Credit from AP, IB or transfer</q> and do not
+      appear in the plan. Choose an emphasis if the student has one. The planner fills the remaining
       quarters with the courses still needed for the major, respecting every
       prerequisite and co-requisite in the Bulletin, the quarters each course is
       offered, and the alternate-year rotation. It then checks the plan against

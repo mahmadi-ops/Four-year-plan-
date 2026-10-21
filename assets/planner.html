@@ -12,7 +12,7 @@
    Styled to match the MATH 13 grade calculator: light only, Open Sans + PT Serif,
    ink/blue palette, thin 4px panels, uppercase table headers. */
 :root{
-  --ink:#22262E; --muted:#5C6575; --line:#C9CFDC; --soft:#EEF3F8; --bg:#fff;
+  --ink:#22262E; --grid:#9AA4B8; --grid-strong:#5C6575; --muted:#5C6575; --line:#C9CFDC; --soft:#EEF3F8; --bg:#fff;
   --blue:#195684; --blue-soft:#E3ECF4; --drop:#9A3B1F; --error:#B3261E; --ok:#2E6B3A; --warn:#9A3B1F; --bad:#B3261E; --now:#195684;
   --lower:#5C6575; --analysis:#195684; --algebra:#5B3F8C; --geometry:#1C7A6E; --discrete:#B5651D; --applied:#2E6B3A; --other:#8A8A8A; --ext:#9C7A1C;
   --sans:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif; --serif:"PT Serif","Times New Roman",Times,serif;
@@ -52,7 +52,18 @@ th,td{border-bottom:1px solid var(--line);vertical-align:top;padding:5px 6px;tex
 th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;width:33.3%}
 td{border-left:1px solid var(--line)}
 td:first-child{border-left:0}
-td.past{color:var(--muted);font-style:italic;background:var(--soft)}
+.years table{border:1.5px solid var(--grid-strong)}
+.years th,.years td{border:1px solid var(--grid)}
+.years th{background:var(--soft);color:var(--ink);border-bottom:1.5px solid var(--grid-strong)}
+.years td{height:4.4em}
+td.past{background:#F7F9FB}
+.course.tk{position:relative;padding-right:18px}
+.course .x{position:absolute;top:0;right:0;border:0;background:none;padding:0 3px;font-size:1rem;line-height:1;color:var(--muted);cursor:pointer;font-weight:400}
+.course .x:hover{color:var(--error)}
+.addsel{display:block;width:100%;margin-top:4px;font-size:.78rem;padding:2px 4px;color:var(--muted);border:1px dashed var(--grid);background:transparent}
+details.credit{margin-top:12px;border:1px solid var(--line);border-radius:3px;padding:6px 9px}
+details.credit summary{cursor:pointer;font-weight:600;font-size:.9rem}
+details.credit[open] summary{margin-bottom:6px}
 td.now{box-shadow:inset 0 0 0 2px var(--blue)}
 .course{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 6px;padding:2px 0 2px 7px;border-left:3px solid var(--c,var(--line));margin:3px 0}
 .course .id{font-weight:700;white-space:nowrap}
@@ -84,7 +95,8 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
 @media print{
   @page{margin:12mm}
   body{padding:0;font-size:11px}
-  h1,.sub,#settings,.noprint,#offerings,.legend,button{display:none!important}
+  h1,.sub,#settings,.noprint,#offerings,.legend,button,.addsel{display:none!important}
+  .years td{height:auto}
   .layout{display:block;margin-top:0}
   .printhead{display:block;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
   .years{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -100,7 +112,7 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
 
 
 <h1>Mathematics major four-year planner</h1>
-<div class="sub">Check off what the student has completed, choose an emphasis, and set where they are now. The planner fills the remaining quarters using the 2026–27 bulletin's prerequisites and co-requisites, and flags any course that can't wait.</div>
+<div class="sub">Set where the student is now, add the courses they have taken to the quarters they took them, and choose an emphasis. The planner fills the remaining quarters using the 2026–27 bulletin's prerequisites and co-requisites, and flags any course that can't wait.</div>
 
 <div class="layout">
 <aside class="panel" id="settings">
@@ -110,9 +122,8 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
   <label class="row">Emphasis <select id="emph"><option value="">None</option><option value="applied">Applied Mathematics</option><option value="ds">Data Science</option><option value="fin">Financial Mathematics</option><option value="econ">Mathematical Economics</option><option value="ed">Mathematics Education</option></select></label>
   <label class="row">Also prepare for <select id="goal"><option value="">—</option><option value="pure">graduate study, pure math</option><option value="appl">graduate study, applied math</option></select></label>
   <label class="row">Major courses per quarter, at most <input type="number" id="cap" min="1" max="4" value="2"></label>
-  <h3>Completed: lower division</h3><div class="chk" id="doneLower"></div>
-  <h3>Completed: upper division</h3><div class="chk" id="doneUpper"></div>
-  <h3>Completed: other departments</h3><div class="chk" id="doneExt"></div>
+  <details class="credit"><summary>Credit from AP, IB or transfer <span id="creditCount" style="color:var(--muted);font-weight:400"></span></summary><div class="chk" id="credit"></div></details>
+  <div class="note">Courses taken at SCU go in the plan itself: set <b>Next quarter to plan</b>, then use <b>+ add course</b> in each earlier quarter.</div>
   <h3>Electives the student wants</h3><div class="chk" id="want"></div>
   <div class="note">Unchecked slots among the seven upper-division courses are filled automatically.</div>
   <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><button id="reset">Clear student</button><button id="pdf">Download plan (PDF)</button></div>
@@ -213,8 +224,12 @@ const QN = ['Fall','Winter','Spring'];
 const col = k => `var(--${k})`;
 
 // ---------- state ----------
-const S = { y1: 2026, curY: 0, curQ: 0, emph: '', goal: '', cap: 2, done: {}, want: {}, off: JSON.parse(JSON.stringify(DEFAULT_OFF)) };
+const S = { y1: 2026, curY: 0, curQ: 0, emph: '', goal: '', cap: 2, taken: {}, credit: {}, want: {}, off: JSON.parse(JSON.stringify(DEFAULT_OFF)) };
 try { const s = JSON.parse(localStorage.getItem('mathplanner')||'null'); if (s) { Object.assign(S, s); S.off = Object.assign(JSON.parse(JSON.stringify(DEFAULT_OFF)), s.off||{}); } } catch(e){}
+if (S.done) { S.credit = Object.assign({}, S.done, S.credit); delete S.done; }
+S.taken = S.taken || {}; S.credit = S.credit || {};
+const isDone = id => !!S.credit[id] || (id in S.taken);
+const doneIds = () => Object.keys(C).filter(isDone);
 const save = () => { try { localStorage.setItem('mathplanner', JSON.stringify(S)); } catch(e){} };
 
 // ---------- planning ----------
@@ -235,16 +250,16 @@ function requiredSet() {
   Object.keys(S.want).filter(k=>S.want[k]).forEach(id=>add(id,'chosen elective'));
   // emphasis "choose n from" groups: honor completed/wanted first, then fill
   if (e) for (const g of e.choose) {
-    const have = g.from.filter(id=>need.has(id) || S.done[id]);
+    const have = g.from.filter(id=>need.has(id) || isDone(id));
     let n = Math.max(0, g.n - have.length);
     have.forEach(id=>add(id,'emphasis'));
-    for (const id of g.from) { if (n<=0) break; if (!need.has(id) && !S.done[id]) { add(id,'emphasis'); n--; } }
+    for (const id of g.from) { if (n<=0) break; if (!need.has(id) && !isDone(id)) { add(id,'emphasis'); n--; } }
   }
   // category requirements, then fill to seven
-  const ud = () => [...need].concat(Object.keys(S.done).filter(k=>S.done[k])).filter(id=>UPPER.includes(id));
-  for (const [cat, list] of Object.entries(CATS)) if (!list.some(id=>ud().includes(id))) add(list.find(id=>!S.done[id]) || list[0], cat==='third'?'geometry / discrete / applied requirement':cat+' requirement');
-  for (const id of FILL) { if (new Set(ud()).size >= 7) break; if (!need.has(id) && !S.done[id]) add(id,'fills the seven'); }
-  return { need: [...need].filter(id=>!S.done[id]), why };
+  const ud = () => [...need].concat(doneIds()).filter(id=>UPPER.includes(id));
+  for (const [cat, list] of Object.entries(CATS)) if (!list.some(id=>ud().includes(id))) add(list.find(id=>!isDone(id)) || list[0], cat==='third'?'geometry / discrete / applied requirement':cat+' requirement');
+  for (const id of FILL) { if (new Set(ud()).size >= 7) break; if (!need.has(id) && !isDone(id)) add(id,'fills the seven'); }
+  return { need: [...need].filter(id=>!isDone(id)), why };
 }
 function plan() {
   const { need, why } = requiredSet();
@@ -264,14 +279,16 @@ function plan() {
   };
   need.forEach(id=>visit(id));
   // forward greedy scheduling
-  const sched = {}; const at = {}; Object.keys(S.done).filter(k=>S.done[k]).forEach(k=>at[k]=-1);
+  const sched = {}; const at = {};
+  Object.keys(S.credit).filter(k=>S.credit[k]).forEach(k=>at[k]=-1);
+  Object.entries(S.taken).forEach(([k,q])=>{ at[k]=q; });
   const satisfied = (id, q) => {
     const ok = (g, strict) => g.some(p => (p in at) && (strict ? at[p] < q : at[p] <= q));
     return (C[id].pre||[]).every(g=>ok(g,true)) && (C[id].co||[]).every(g=>ok(g,false));
   };
   const prio = id => [latest[id]===null?99:latest[id], S.off[id].alt===null?1:0, C[id].k==='lower'?0:1, -deps[id].length];
   for (let q=start; q<=11; q++) {
-    sched[q] = [];
+    sched[q] = Object.keys(S.taken).filter(k=>S.taken[k]===q);
     let progress = true;
     while (progress && sched[q].length < S.cap) {
       progress = false;
@@ -282,6 +299,10 @@ function plan() {
   // warnings
   const W = [];
   const qname = q => `Year ${Math.floor(q/3)+1} ${QN[q%3]}`;
+  for (const [id,q] of Object.entries(S.taken)) {
+    const miss = (C[id].pre||[]).filter(g=>!g.some(p=>(p in at) && at[p] < q)).concat((C[id].co||[]).filter(g=>!g.some(p=>(p in at) && at[p] <= q))).map(g=>g.join(' or '));
+    if (miss.length) W.push(['info', id, `is entered in ${qname(q)}, before its prerequisite ${miss.join(', ')}. Check the quarter, or add the earlier course.`]);
+  }
   for (const id of need) {
     if (infeasible[id]) { W.push(['bad', id, `has no offering that leaves room for what follows it (${deps[id].map(d=>d[0]).join(', ')||'—'}) before Year 4 Spring.`]); continue; }
     if (latest[id] < start) {
@@ -301,13 +322,17 @@ function plan() {
   for (const id of altYearSoon) W.push(['warn', id, `is an alternate-year course; after ${qname(at[id])} the next workable offering is ${qname(latest[id])}. Do not let it slip.`]);
   if (S.emph==='' && start < 9) W.push(['info','Emphasis', 'is optional; students must decide by the end of junior year. The plan assumes none.']);
   if (S.emph==='ed') W.push(['info','MATH 195', 'satisfies the ELSJ core requirement but does not count toward the seven upper-division courses.']);
-  const sevenPlanned = need.filter(id=>UPPER.includes(id) && id in at).length + Object.keys(S.done).filter(k=>S.done[k] && UPPER.includes(k)).length;
+  const sevenPlanned = need.filter(id=>UPPER.includes(id) && id in at).length + doneIds().filter(k=>UPPER.includes(k)).length;
   return { need, why, sched, at, latest, W, start, sevenPlanned };
 }
 
 // ---------- rendering ----------
 const $ = s => document.querySelector(s);
 function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+const kOf = id => C[id].k;
+const GROUPS = [['Lower division', LOWER.concat(EXTREQ)], ['Upper division', UPPER.concat(['MATH 195'])], ['Other departments', Object.keys(C).filter(id=>C[id].k==='ext' && id!=='MATH 195' && !EXTREQ.includes(id))]];
+const takenChip = id => `<div class="course tk" style="--c:${col(kOf(id))}"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span><button class="x" data-untake="${esc(id)}" aria-label="Remove ${esc(id)}" title="Remove">×</button></div>`;
+const addSelect = q => `<select class="addsel" data-addq="${q}" aria-label="Add a course taken in this quarter"><option value="">+ add course</option>${GROUPS.map(([g,ids])=>`<optgroup label="${g}">${ids.filter(id=>!isDone(id)).map(id=>`<option value="${esc(id)}">${esc(id)} · ${esc(C[id].t)}</option>`).join('')}</optgroup>`).join('')}</select>`;
 function renderYears(P) {
   const years = $('#years'); years.innerHTML = '';
   for (let y=0; y<4; y++) {
@@ -317,10 +342,11 @@ function renderYears(P) {
     let html = `<caption>Year ${y+1}<span>${yr}–${String(yr+1).slice(2)}</span></caption><tr>${QN.map(n=>`<th>${n}</th>`).join('')}</tr><tr>`;
     for (let qq=0; qq<3; qq++) {
       const q = y*3+qq;
-      if (q < P.start) { html += `<td class="past">completed</td>`; continue; }
+      if (q < P.start) { const tk = Object.keys(S.taken).filter(k=>S.taken[k]===q).sort(); tk.forEach(id=>units+=C[id].u); html += `<td class="past">` + tk.map(takenChip).join('') + addSelect(q) + `</td>`; continue; }
       const list = P.sched[q]||[];
       list.forEach(id=>units+=C[id].u);
       html += `<td class="${q===P.start?'now':''}">` + (list.length ? list.map(id=>{
+        if (id in S.taken) return takenChip(id);
         const b = [];
         if (P.at[id]===P.latest[id]) b.push(`<span class="badge" style="--b:var(--warn)">last offering</span>`);
         else if (S.off[id].alt!==null) b.push(`<span class="badge" style="--b:var(--muted)">alt-year</span>`);
@@ -341,20 +367,20 @@ function renderWarns(P) {
   w.innerHTML = `<h2>Warnings</h2>` + (list.length ? list.map(([k,id,msg])=>`<div class="w" style="--b:var(--${k==='info'?'now':k})"><span class="k">${k==='bad'?'blocked':k==='warn'?'cannot wait':'note'}</span><span><b>${esc(id)}</b> ${esc(msg)}</span></div>`).join('') : `<div class="note">Nothing is at risk in this plan.</div>`);
 }
 function renderReq(P) {
-  const done = id => S.done[id] || (id in P.at);
+  const done = id => isDone(id) || (id in P.at);
   const mark = (ok, pend) => ok ? '<span class="ok">✓</span>' : pend ? '<span class="pend">…</span>' : '<span class="no">✗</span>';
   const rows = [];
   const lowerOK = LOWER.concat(EXTREQ).every(done);
-  rows.push([mark(LOWER.concat(EXTREQ).every(id=>S.done[id]), lowerOK), 'Lower division: MATH 11, 12, 13, 14, 23, 51, 52, 53; CSCI 10; PHYS 31, 32']);
+  rows.push([mark(LOWER.concat(EXTREQ).every(id=>isDone(id)), lowerOK), 'Lower division: MATH 11, 12, 13, 14, 23, 51, 52, 53; CSCI 10; PHYS 31, 32']);
   const ud = UPPER.filter(done);
-  rows.push([mark(ud.filter(id=>S.done[id]).length>=7, ud.length>=7), `Seven upper-division courses (${ud.length} ${ud.length===1?'is':'are'} completed or planned: ${ud.join(', ')||'—'})`]);
-  for (const [cat,list] of Object.entries(CATS)) rows.push([mark(list.some(id=>S.done[id]), list.some(done)), (cat==='third'?'One from geometry, discrete, or applied':'One '+cat+' course')+`: ${list.filter(done).join(', ')||'—'}`]);
+  rows.push([mark(ud.filter(id=>isDone(id)).length>=7, ud.length>=7), `Seven upper-division courses (${ud.length} ${ud.length===1?'is':'are'} completed or planned: ${ud.join(', ')||'—'})`]);
+  for (const [cat,list] of Object.entries(CATS)) rows.push([mark(list.some(id=>isDone(id)), list.some(done)), (cat==='third'?'One from geometry, discrete, or applied':'One '+cat+' course')+`: ${list.filter(done).join(', ')||'—'}`]);
   const e = EMPH[S.emph];
   if (e) {
-    rows.push([mark(e.req.every(id=>S.done[id]), e.req.every(done)), `Emphasis required: ${e.req.join(', ')}`]);
-    e.choose.forEach(g=>{ const have=g.from.filter(done); rows.push([mark(g.from.filter(id=>S.done[id]).length>=g.n, have.length>=g.n), `Emphasis: ${g.n} from ${g.from.join(', ')} (${have.join(', ')||'—'})`]); });
+    rows.push([mark(e.req.every(id=>isDone(id)), e.req.every(done)), `Emphasis required: ${e.req.join(', ')}`]);
+    e.choose.forEach(g=>{ const have=g.from.filter(done); rows.push([mark(g.from.filter(id=>isDone(id)).length>=g.n, have.length>=g.n), `Emphasis: ${g.n} from ${g.from.join(', ')} (${have.join(', ')||'—'})`]); });
   }
-  if (GOAL[S.goal]) rows.push([mark(GOAL[S.goal].every(id=>S.done[id]), GOAL[S.goal].every(done)), `Graduate preparation: ${GOAL[S.goal].join(', ')}`]);
+  if (GOAL[S.goal]) rows.push([mark(GOAL[S.goal].every(id=>isDone(id)), GOAL[S.goal].every(done)), `Graduate preparation: ${GOAL[S.goal].join(', ')}`]);
   $('#req').innerHTML = rows.map(([m,t])=>`<span class="s">${m}</span><span>${esc(t)}</span>`).join('');
 }
 function renderOff() {
@@ -366,15 +392,14 @@ function renderOff() {
 }
 function renderChecks() {
   const mk = (host, ids, key) => { host.innerHTML = ids.map(id=>`<label><input type="checkbox" data-${key}="${esc(id)}" ${S[key][id]?'checked':''}><span class="i">${esc(id)}</span> <span class="t">${esc(C[id].t)}</span></label>`).join(''); };
-  mk($('#doneLower'), LOWER, 'done');
-  mk($('#doneUpper'), UPPER.concat(['MATH 195']), 'done');
-  mk($('#doneExt'), Object.keys(C).filter(id=>C[id].k==='ext' && id!=='MATH 195'), 'done');
+  mk($('#credit'), GROUPS.flatMap(g=>g[1]), 'credit');
+  const n = Object.keys(S.credit).filter(k=>S.credit[k]).length; $('#creditCount').textContent = n ? `(${n})` : '';
   mk($('#want'), UPPER, 'want');
 }
 function renderHead() {
-  const done = Object.keys(S.done).filter(k=>S.done[k]);
+  const scu = Object.keys(S.taken).sort((a,b)=>S.taken[a]-S.taken[b]); const cr = Object.keys(S.credit).filter(k=>S.credit[k]);
   const en = {applied:'Applied Mathematics',ds:'Data Science',fin:'Financial Mathematics',econ:'Mathematical Economics',ed:'Mathematics Education'}[S.emph] || 'none';
-  $('#printhead').innerHTML = `<div class="ph-title">Mathematics major, four-year plan</div><div class="ph-meta">Emphasis: ${esc(en)}${S.goal?' · preparing for graduate study ('+(S.goal==='pure'?'pure':'applied')+')':''} · Year 1: ${S.y1}–${String(S.y1+1).slice(2)} · Planned from Year ${S.curY+1} ${QN[S.curQ]} · Prepared ${new Date().toLocaleDateString()}</div><div class="ph-meta">Completed: ${done.length?esc(done.join(', ')):'none entered'}</div>`;
+  $('#printhead').innerHTML = `<div class="ph-title">Mathematics major, four-year plan</div><div class="ph-meta">Emphasis: ${esc(en)}${S.goal?' · preparing for graduate study ('+(S.goal==='pure'?'pure':'applied')+')':''} · Year 1: ${S.y1}–${String(S.y1+1).slice(2)} · Planned from Year ${S.curY+1} ${QN[S.curQ]} · Prepared ${new Date().toLocaleDateString()}</div><div class="ph-meta">Taken at SCU: ${scu.length?esc(scu.join(', ')):'none entered'}${cr.length?' · Credit by exam or transfer: '+esc(cr.join(', ')):''}</div>`;
 }
 function render() { const P = plan(); renderHead(); renderYears(P); renderWarns(P); renderReq(P); }
 
@@ -386,14 +411,16 @@ document.addEventListener('change', e => {
   const t = e.target;
   if (t.id==='y1') S.y1 = +t.value; else if (t.id==='curY') S.curY = +t.value; else if (t.id==='curQ') S.curQ = +t.value;
   else if (t.id==='emph') S.emph = t.value; else if (t.id==='goal') S.goal = t.value; else if (t.id==='cap') S.cap = Math.max(1, Math.min(4, +t.value||2));
-  else if (t.dataset.done) S.done[t.dataset.done] = t.checked;
+  else if (t.dataset.credit) { S.credit[t.dataset.credit] = t.checked; if (t.checked) delete S.taken[t.dataset.credit]; renderChecks(); }
+  else if ('addq' in t.dataset) { if (!t.value) return; S.taken[t.value] = +t.dataset.addq; delete S.credit[t.value]; renderChecks(); }
   else if (t.dataset.want) S.want[t.dataset.want] = t.checked;
   else if (t.dataset.off) S.off[t.dataset.off].off[+t.dataset.q] = t.checked ? 1 : 0;
   else if (t.dataset.alt) S.off[t.dataset.alt].alt = t.value==='' ? null : +t.value;
   else return;
   save(); render();
 });
-$('#reset').addEventListener('click', () => { S.done = {}; S.want = {}; S.emph=''; S.goal=''; S.curY=0; S.curQ=0; $('#emph').value=''; $('#goal').value=''; $('#curY').value=0; $('#curQ').value=0; renderChecks(); save(); render(); });
+document.addEventListener('click', e => { const b = e.target.closest('[data-untake]'); if (!b) return; delete S.taken[b.dataset.untake]; renderChecks(); save(); render(); });
+$('#reset').addEventListener('click', () => { S.taken = {}; S.credit = {}; S.want = {}; S.emph=''; S.goal=''; S.curY=0; S.curQ=0; $('#emph').value=''; $('#goal').value=''; $('#curY').value=0; $('#curQ').value=0; renderChecks(); save(); render(); });
 $('#pdf').addEventListener('click', () => { renderHead(); window.print(); });
 $('#resetOff').addEventListener('click', () => { S.off = JSON.parse(JSON.stringify(DEFAULT_OFF)); renderOff(); save(); render(); });
 window.__planner = { plan, S, C };
