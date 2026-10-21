@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SCU Math Major Map, Proposed</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Layout: a fixed 2200×1460 stage scaled to the viewport; MATH 51 and 53 as hub boxes fanning dashed "proposed" arrows into every upper-division column. Deliberately single dark theme to match the MATH 14 brain map. */
+:root { --bg: #16130f; --fg: #f3f2f2; --fg-55: rgba(243,242,242,0.55); --fg-75: rgba(243,242,242,0.75); --line: rgba(243,242,242,0.38); --gold: #b68235; --gold-hi: #cf9f55; --font-display: "Cormorant Garamond", Georgia, serif; --font-body: "Lora", Georgia, serif; color-scheme: dark; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); }
+#wrap { overflow: hidden; width: 100%; }
+#stage { position: relative; width: 2200px; height: 1460px; background: var(--bg); color: var(--fg); font-family: var(--font-body); overflow: hidden; transform-origin: 0 0; }
+#connectors { position: absolute; inset: 0; pointer-events: none; }
+#connectors path { transition: stroke 0.15s, stroke-width 0.15s, opacity 0.15s; }
+#connectors path.dash { stroke-dasharray: 7 5; }
+#connectors.focus path { opacity: 0.08; }
+#connectors.focus path.hi { opacity: 1; stroke-width: 2.6; }
+#connectors path.hi.plain { stroke: rgba(243,242,242,0.9); }
+#connectors path.hi.gold { stroke: var(--gold-hi); }
+.node { position: absolute; box-sizing: border-box; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 12px 16px; color: var(--fg); display: block; transition: border-color 0.15s, opacity 0.15s; }
+.node.gold { border-color: rgba(182,130,53,0.85); }
+.node.prop { border: 1.5px dashed var(--gold-hi); }
+.node:hover, .node.hi { border-color: var(--gold-hi); }
+#stage.focus .node { opacity: 0.28; }
+#stage.focus .node.hi, #stage.focus .node:hover { opacity: 1; }
+#stage.focus .colhead { opacity: 0.28; }
+.node .kick { font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-55); }
+.node .t { font-family: var(--font-display); font-weight: 600; font-size: 22px; line-height: 1.12; margin-top: 2px; text-wrap: balance; }
+.node .hub { font-family: var(--font-display); font-weight: 500; font-size: 30px; text-align: center; line-height: 1.1; }
+.node .meta { margin-top: 6px; font-size: 13.5px; line-height: 1.35; color: var(--fg-55); }
+.node .meta b { color: var(--fg-75); font-weight: 400; }
+.node .meta.c { text-align: center; color: var(--gold-hi); }
+.node.emph .t { font-size: 22px; }
+.node.emph .meta { font-size: 14px; color: var(--fg-75); }
+.rule { width: 70px; height: 1px; background: var(--gold); margin: 10px auto 0; }
+.colhead { position: absolute; font-size: 13.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); transition: opacity 0.15s; white-space: nowrap; }
+.colhead span { color: var(--fg-55); letter-spacing: 0.04em; text-transform: none; font-style: italic; }
+.title { position: absolute; left: 60px; top: 44px; }
+.title .h { font-family: var(--font-display); font-weight: 400; font-size: 42px; line-height: 1; }
+.title .k { margin-top: 8px; font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
+#legend { position: absolute; left: 60px; top: 140px; width: 250px; font-size: 14px; color: var(--fg-75); line-height: 1.45; }
+#legend .row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+#legend svg { flex: none; }
+#legend .box { flex: none; width: 36px; height: 14px; border: 1px solid rgba(182,130,53,0.85); border-radius: 3px; box-sizing: border-box; }
+#legend .hint { margin-top: 10px; font-style: italic; color: var(--fg-55); }
+#changes { position: absolute; left: 360px; top: 150px; width: 290px; font-size: 14px; line-height: 1.45; color: var(--fg-75); }
+#changes .k { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+#changes ol { margin: 0; padding-left: 18px; }
+#changes li { margin-bottom: 6px; }
+@media (prefers-reduced-motion: reduce) { #connectors path, .node, .colhead { transition: none; } }
+</style>
+</head>
+<body>
+
+<div id="wrap"><div id="stage">
+  <svg id="connectors" width="2200" height="1460">
+    <defs>
+      <marker id="arr-plain" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="rgba(243,242,242,0.45)"/></marker>
+      <marker id="arr-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="rgba(182,130,53,0.85)"/></marker>
+    </defs>
+  </svg>
+  <div class="title"><div class="h">The major, course by course</div><div class="k">B.S. Mathematics &middot; proposed revision</div></div>
+  <div id="legend">
+    <div class="row"><svg width="44" height="10"><line x1="0" y1="5" x2="36" y2="5" stroke="rgba(243,242,242,0.35)" stroke-width="1.5"/><path d="M36,1 L44,5 L36,9 z" fill="rgba(243,242,242,0.45)"/></svg><span>current prerequisite</span></div>
+    <div class="row"><svg width="44" height="10"><line x1="0" y1="5" x2="36" y2="5" stroke="rgba(243,242,242,0.55)" stroke-width="1.5" stroke-dasharray="6 4"/><path d="M36,1 L44,5 L36,9 z" fill="rgba(243,242,242,0.45)"/></svg><span>proposed new prerequisite</span></div>
+    <div class="row"><svg width="44" height="10"><line x1="0" y1="5" x2="36" y2="5" stroke="rgba(182,130,53,0.75)" stroke-width="1.5"/><path d="M36,1 L44,5 L36,9 z" fill="rgba(182,130,53,0.85)"/></svg><span>gold: the course it feeds runs only in alternate years</span></div>
+    <div class="row"><span class="box"></span><span>offered in alternate years</span></div>
+    <div class="row"><span class="box" style="border-style:dashed"></span><span>proposed change to the course</span></div>
+    <div class="hint">Hover a course to light up what it needs and what it unlocks. Hover MATH 51 or 53 to see the full fan. Hover an emphasis to see its courses.</div>
+  </div>
+  <div id="changes"><div class="k">What changes</div><ol>
+    <li>MATH 51 and MATH 53 become prerequisites for every upper-division course (dashed arrows).</li>
+    <li>Both are offered every quarter, so the new requirement never costs a student a year.</li>
+    <li>No course is renumbered. Every other prerequisite stays as it is.</li>
+  </ol></div>
+</div></div>
+
+<script>
+(function(){
+const HEADS = [
+  [60, 445, 'Lower division', 'all required'],
+  [720, 80, 'Applied', 'one of geometry / discrete / applied'],
+  [720, 1000, 'Minor in Mathematics', ''],
+  [1080, 80, 'Analysis', 'at least one'],
+  [1080, 610, 'Geometry', 'one of geometry / discrete / applied'],
+  [1440, 80, 'Algebra', 'at least one'],
+  [1440, 490, 'Discrete', 'one of geometry / discrete / applied'],
+  [1440, 800, 'Does not count', 'toward the seven'],
+  [1800, 80, 'Uncategorized', 'count toward the seven, satisfy no category'],
+  [60, 1210, 'Emphases', 'optional · at most one · decide by end of junior year'],
+];
+const W = 270;
+const NODES = [
+  { id:'11', x:60,  y:475, w:240, kick:'MATH 11', t:'Calculus I', meta:'Prereq: MATH 9 / CRE ≥ 76 / AP' },
+  { id:'12', x:60,  y:590, w:240, kick:'MATH 12', t:'Calculus II', meta:'Prereq: 11' },
+  { id:'13', x:60,  y:705, w:240, kick:'MATH 13', t:'Calculus III', meta:'Prereq: 12' },
+  { id:'14', x:60,  y:820, w:240, kick:'MATH 14', t:'Calculus IV', meta:'Prereq: 13' },
+  { id:'c10', x:60, y:965, w:240, kick:'CSCI 10', t:'Intro to Computer Science', meta:'or demonstrated proficiency' },
+  { id:'phys', x:60, y:1080, w:240, kick:'PHYS 31 · 32', t:'Physics I, II', meta:'teaching track may substitute PHYS 11–12' },
+  { id:'23', x:360, y:475, w:260, kick:'MATH 23', t:'Series & Differential Equations', meta:'Prereq: 13 · runs parallel to 14' },
+  { id:'53', x:360, y:620, w:260, hub:'MATH 53', rule:true, t2:'Linear Algebra', meta:'Prereq: 13', c:'offered every quarter', prop:true },
+  { id:'51', x:360, y:830, w:260, hub:'MATH 51', rule:true, t2:'Discrete Mathematics', meta:'no prerequisite · also CSEN 19', c:'offered every quarter', prop:true },
+  { id:'52', x:360, y:1040, w:260, kick:'MATH 52', t:'Intro to Abstract Algebra', meta:'Prereq: 51' },
+  // applied
+  { id:'122', x:720, y:110, w:W, kick:'MATH 122', t:'Probability & Statistics I', meta:'Pre/co-req: 14 · <b>required in 4 of 5 emphases</b>' },
+  { id:'125', x:720, y:230, w:W, kick:'MATH 125', t:'Mathematical Finance', meta:'Prereq: 53, 122' },
+  { id:'141', x:720, y:350, w:W, kick:'MATH 141', t:'Mathematical Models', meta:'Prereq: 53, 23 · <b>the only course that requires MATH 23</b>', alt:true },
+  { id:'144', x:720, y:470, w:W, kick:'MATH 144', t:'Partial Differential Equations', meta:'Prereq: 14 (23 recommended)', alt:true },
+  { id:'146', x:720, y:590, w:W, kick:'MATH 146', t:'Optimization I', meta:'Prereq: CSCI 10, 14, 53 · also CSCI 146' },
+  { id:'155', x:720, y:710, w:W, kick:'MATH 155', t:'Ordinary Differential Equations', meta:'Prereq: 53 (23 recommended)', alt:true },
+  { id:'166', x:720, y:830, w:W, kick:'MATH 166', t:'Numerical Analysis', meta:'Prereq: CSCI 10, 53 · also CSCI 166' },
+  { id:'minor', x:720, y:1030, w:W, kick:'Minor', t:'Mathematics', meta:'MATH 11–14, and 52 or 53, plus three 5-unit upper-division courses (not 100, 192, 195)', req:['11','12','13','14','52','53'] },
+  // analysis + geometry
+  { id:'102', x:1080, y:110, w:W, kick:'MATH 102', t:'Advanced Calculus', meta:'Prereq: 14, 53' },
+  { id:'105', x:1080, y:230, w:W, kick:'MATH 105', t:'Complex Variables', meta:'Prereq: 14 (23, 51 recommended)', alt:true },
+  { id:'153', x:1080, y:350, w:W, kick:'MATH 153', t:'Intermediate Analysis I', meta:'Prereq: 51 and 102 or 105', alt:true },
+  { id:'154', x:1080, y:470, w:W, kick:'MATH 154', t:'Intermediate Analysis II', meta:'Prereq: 153 · not on the required list', alt:true },
+  { id:'101', x:1080, y:640, w:W, kick:'MATH 101', t:'Survey of Geometry', meta:'Prereq: 13', alt:true },
+  { id:'113', x:1080, y:760, w:W, kick:'MATH 113', t:'Topology', meta:'Prereq: 14, 51 (102 recommended)', alt:true },
+  { id:'174', x:1080, y:880, w:W, kick:'MATH 174', t:'Differential Geometry', meta:'Prereq: 53', alt:true },
+  // algebra + discrete + does-not-count
+  { id:'103', x:1440, y:110, w:W, kick:'MATH 103', t:'Advanced Linear Algebra', meta:'Prereq: 53' },
+  { id:'111', x:1440, y:230, w:W, kick:'MATH 111', t:'Abstract Algebra I', meta:'Prereq: 52, 53', alt:true },
+  { id:'112', x:1440, y:350, w:W, kick:'MATH 112', t:'Abstract Algebra II', meta:'Prereq: 111 · not on the required list', alt:true },
+  { id:'176', x:1440, y:520, w:W, kick:'MATH 176', t:'Combinatorics', meta:'Prereq: 51' },
+  { id:'177', x:1440, y:640, w:W, kick:'MATH 177', t:'Graph Theory', meta:'Prereq: 51', alt:true },
+  { id:'nocount', x:1440, y:830, w:W, kick:'MATH 100 · 190–199', t:'Writing, seminars, research, independent study', meta:'MATH 100 is strongly recommended but counts for nothing; 195 satisfies ELSJ only' },
+  // uncategorized
+  { id:'123', x:1800, y:110, w:W, kick:'MATH 123', t:'Probability & Statistics II', meta:'Prereq: 122; 53 pre/co · <b>required in 4 emphases</b>' },
+  { id:'147', x:1800, y:230, w:W, kick:'MATH 147', t:'Optimization II', meta:'Prereq: 122, 146 · also CSCI 147' },
+  { id:'175', x:1800, y:350, w:W, kick:'MATH 175', t:'Theory of Numbers', meta:'Prereq: 52', alt:true },
+  { id:'178', x:1800, y:470, w:W, kick:'MATH 178', t:'Cryptography', meta:'Prereq: 51 · followed by CSCI 181' },
+  { id:'170', x:1800, y:590, w:W, kick:'MATH 170', t:'Development of Mathematics', meta:'Prereq: upper-division standing', alt:true },
+  { id:'172', x:1800, y:710, w:W, kick:'MATH 172', t:'Problem Solving', meta:'no prerequisite listed', alt:true },
+  { id:'133', x:1800, y:830, w:W, kick:'MATH 133 · 134', t:'Logic & Foundations · Set Theory', meta:'offered on demand' },
+  { id:'c162', x:1800, y:950, w:W, kick:'CSCI 162', t:'Theory of Algorithms', meta:'the one CSCI course permitted among the seven' },
+  // emphases
+  { id:'e-app', x:60,   y:1240, w:390, emph:true, t:'Applied Mathematics', meta:'102, 122, 123 · two of 125 / 141 / 144 / 146 / 147 / 155 / 166 / 178 · one of 166, 147', req:['102','122','123','125','141','144','146','147','155','166','178'] },
+  { id:'e-ds',  x:480,  y:1240, w:390, emph:true, t:'Data Science', meta:'122, 123 · CSCI 10, 60, 61, 62, 183 · CSCI 184 or CSEN 178 · two of CSCI 127/163, MATH 146/147/166, CSEN 166/169, ECON 174', req:['122','123','c10','146','147','166'] },
+  { id:'e-fin', x:900,  y:1240, w:390, emph:true, t:'Financial Mathematics', meta:'102, 122, 123, 125 · two of 144 / 146 / 147 / 166 · BUSN 70 · ACTG 11, 12 · FNCE 121, 124', req:['102','122','123','125','144','146','147','166'] },
+  { id:'e-econ', x:1320, y:1240, w:390, emph:true, t:'Mathematical Economics', meta:'102, 122, 123, 146, 147 · ECON 113 · two of 125, 166, ECON 170–174', req:['102','122','123','146','147','125','166'] },
+  { id:'e-ed',  x:1740, y:1240, w:390, emph:true, t:'Mathematics Education', meta:'101, 102, 122, 123 (or 8), 170, 175 (or 178), 195 · Urban Education minor advised', req:['101','102','122','123','170','175','178','nocount'] },
+];
+// current prerequisites (solid)
+const EDGES = [
+  ['11','12'], ['12','13'], ['13','14'], ['13','23'], ['13','53'], ['51','52'],
+  ['14','122'], ['53','125'], ['122','125'], ['53','141'], ['23','141'], ['14','144'],
+  ['14','146'], ['53','146'], ['c10','146'], ['53','155'], ['53','166'], ['c10','166'],
+  ['14','102'], ['53','102'], ['14','105'], ['51','153'], ['102','153'], ['105','153'], ['153','154'],
+  ['13','101'], ['14','113'], ['51','113'], ['53','174'],
+  ['53','103'], ['52','111'], ['53','111'], ['111','112'], ['51','176'], ['51','177'],
+  ['122','123'], ['53','123'], ['122','147'], ['146','147'], ['52','175'], ['51','178'],
+];
+// proposed additions (dashed): 51 and 53 into every upper-division course that lacks them.
+// Sequels (112, 154) inherit through their own prerequisite and are left alone.
+const PROPOSED = [];
+const UPPER = ['122','125','141','144','146','155','166','102','105','153','101','113','174','103','111','176','177','123','147','175','178','170','172','133'];
+const has = (a,b) => EDGES.some(e => e[0]===a && e[1]===b);
+for (const t of UPPER) {
+  if (!has('51',t) && t!=='111' && t!=='175') PROPOSED.push(['51',t]);   // 111 and 175 already need 52, which needs 51
+  if (!has('53',t) && t!=='153') PROPOSED.push(['53',t]);                // 153 already needs 102 or 105
+}
+
+const stage = document.getElementById('stage');
+for (const [x, y, h, s] of HEADS) {
+  const d = document.createElement('div'); d.className = 'colhead'; d.style.left = x + 'px'; d.style.top = y + 'px';
+  d.textContent = h; if (s) { const sp = document.createElement('span'); sp.textContent = ' · ' + s; d.appendChild(sp); }
+  stage.appendChild(d);
+}
+const byId = {};
+for (const n of NODES) {
+  byId[n.id] = n;
+  const el = document.createElement('div');
+  el.className = 'node' + (n.alt ? ' gold' : '') + (n.emph ? ' emph' : '') + (n.prop ? ' prop' : '');
+  el.dataset.node = n.id;
+  el.style.left = n.x + 'px'; el.style.top = n.y + 'px'; el.style.width = n.w + 'px';
+  if (n.hub) { const h = document.createElement('div'); h.className = 'hub'; h.textContent = n.hub; el.appendChild(h); if (n.rule) { const r = document.createElement('div'); r.className = 'rule'; el.appendChild(r); } }
+  if (n.t2) { const t = document.createElement('div'); t.className = 't'; t.style.textAlign = 'center'; t.style.marginTop = '8px'; t.textContent = n.t2; el.appendChild(t); }
+  if (n.kick) { const k = document.createElement('div'); k.className = 'kick'; k.textContent = n.kick; el.appendChild(k); }
+  if (n.t) { const t = document.createElement('div'); t.className = 't'; t.textContent = n.t; el.appendChild(t); }
+  if (n.meta) { const m = document.createElement('div'); m.className = 'meta' + (n.hub ? ' c' : ''); if (n.hub) m.style.color = 'var(--fg-55)'; m.innerHTML = n.meta; el.appendChild(m); }
+  if (n.c) { const m = document.createElement('div'); m.className = 'meta c'; m.textContent = n.c; el.appendChild(m); }
+  stage.appendChild(el);
+}
+const svg = document.getElementById('connectors');
+const touching = {};
+const q = id => stage.querySelector('[data-node="' + id + '"]');
+function draw() {
+  while (svg.lastChild && svg.lastChild.tagName !== 'defs') svg.removeChild(svg.lastChild);
+  for (const k in touching) delete touching[k];
+  const all = EDGES.map(e => [e[0], e[1], false]).concat(PROPOSED.map(e => [e[0], e[1], true]));
+  for (const [a, b, proposed] of all) {
+    const rectOf = id => { const el = q(id); return { x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight }; };
+    const A = rectOf(a), B = rectOf(b);
+    const acx = A.x + A.w / 2, acy = A.y + A.h / 2, bcx = B.x + B.w / 2, bcy = B.y + B.h / 2;
+    let d;
+    if (Math.abs(bcx - acx) > Math.abs(bcy - acy)) {
+      const p1 = bcx > acx ? [A.x + A.w, acy] : [A.x, acy];
+      const p2 = bcx > acx ? [B.x, bcy] : [B.x + B.w, bcy];
+      const k = (p2[0] - p1[0]) * 0.45;
+      d = `M${p1[0]},${p1[1]} C${p1[0] + k},${p1[1]} ${p2[0] - k},${p2[1]} ${p2[0]},${p2[1]}`;
+    } else {
+      const p1 = bcy > acy ? [acx, A.y + A.h] : [acx, A.y];
+      const p2 = bcy > acy ? [bcx, B.y] : [bcx, B.y + B.h];
+      const k = (p2[1] - p1[1]) * 0.45;
+      d = `M${p1[0]},${p1[1]} C${p1[0]},${p1[1] + k} ${p2[0]},${p2[1] - k} ${p2[0]},${p2[1]}`;
+    }
+    const gold = !!byId[b].alt;
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', d); p.setAttribute('fill', 'none');
+    p.setAttribute('class', (gold ? 'gold' : 'plain') + (proposed ? ' dash' : ''));
+    p.setAttribute('stroke', gold ? 'rgba(182,130,53,0.7)' : (proposed ? 'rgba(243,242,242,0.34)' : 'rgba(243,242,242,0.26)'));
+    p.setAttribute('stroke-width', '1.5');
+    p.setAttribute('marker-end', gold ? 'url(#arr-gold)' : 'url(#arr-plain)');
+    svg.appendChild(p);
+    for (const id of [a, b]) {
+      (touching[id] = touching[id] || { paths: [], nodes: [] });
+      touching[id].paths.push(p);
+      touching[id].nodes.push(id === a ? b : a);
+    }
+  }
+}
+draw();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+
+for (const n of NODES) {
+  const el = q(n.id);
+  const focus = on => {
+    const inc = touching[n.id] || { paths: [], nodes: [] };
+    const extra = n.req || [];
+    if (!inc.paths.length && !extra.length) return;
+    svg.classList.toggle('focus', on); stage.classList.toggle('focus', on);
+    for (const p of inc.paths) p.classList.toggle('hi', on);
+    for (const id of inc.nodes.concat(extra)) { const t = q(id); if (t) t.classList.toggle('hi', on); }
+  };
+  el.addEventListener('mouseenter', () => focus(true));
+  el.addEventListener('mouseleave', () => focus(false));
+}
+function fit() {
+  const w = document.documentElement.clientWidth;
+  const s = w / 2200;
+  stage.style.transform = 'scale(' + s + ')';
+  document.getElementById('wrap').style.height = (1460 * s) + 'px';
+}
+fit(); window.addEventListener('resize', fit);
+})();
+</script>
+</body>
+</html>

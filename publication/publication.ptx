@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<publication>
+  <source>
+    <!-- assets/ holds the planner and the course maps; PreTeXt copies it to
+         external/ in the built site, which is where the iframes load from. -->
+    <directories external="../assets" generated="../generated-assets"/>
+  </source>
+  <common>
+    <tableofcontents level="2"/>
+  </common>
+  <html>
+    <calculator model="none"/>
+  </html>
+</publication>

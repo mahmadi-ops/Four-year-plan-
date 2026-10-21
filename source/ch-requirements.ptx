@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="ch-requirements" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Degree requirements</title>
+
+  <introduction>
+    <p>
+      Restated from the Santa Clara University Undergraduate Bulletin
+      2026<ndash/>27, Department of Mathematics and Computer Science. The Bulletin
+      is authoritative; this chapter exists so that the planner's rules can be
+      checked against their source.
+    </p>
+  </introduction>
+
+  <section xml:id="sec-req-major">
+    <title>Major in Mathematics</title>
+    <p>In addition to the Core Curriculum for the bachelor of science degree:</p>
+    <ul>
+      <li><p><c>CSCI 10</c>, or demonstrated equivalent proficiency in programming.</p></li>
+      <li><p><c>MATH 11</c>, <c>12</c>, <c>13</c>, <c>14</c>, <c>23</c>, <c>51</c>, <c>52</c>, and <c>53</c>.</p></li>
+      <li><p><c>PHYS 31</c> and <c>32</c>. Students planning to teach in secondary schools may substitute <c>PHYS 11</c> and <c>12</c> with approval of the department chair.</p></li>
+      <li>
+        <p>
+          Seven approved 5-unit upper-division courses in mathematics (<c>CSCI 162</c>
+          also permitted), which must include
+        </p>
+        <ul>
+          <li><p>at least one course in analysis: <c>MATH 102</c>, <c>105</c>, or <c>153</c>;</p></li>
+          <li><p>at least one course in algebra: <c>MATH 103</c> or <c>111</c>;</p></li>
+          <li><p>at least one course from geometry (<c>MATH 101</c>, <c>113</c>, <c>174</c>), discrete mathematics (<c>MATH 176</c>, <c>177</c>), or applied mathematics (<c>MATH 122</c>, <c>125</c>, <c>141</c>, <c>144</c>, <c>146</c>, <c>155</c>, <c>166</c>).</p></li>
+        </ul>
+        <p><c>MATH 100</c> and courses numbered 190 and above do not count toward the seven.</p>
+      </li>
+    </ul>
+    <p>
+      At least four of the required upper-division courses must be taken at Santa
+      Clara. A single upper-division course can satisfy only one major or minor
+      requirement in the department. Students should decide on an emphasis by the
+      end of junior year; only one emphasis is allowed.
+    </p>
+    <p>
+      Students planning graduate study in pure mathematics should take
+      <c>MATH 105</c>, <c>111</c>, <c>112</c>, <c>113</c>, <c>153</c>, and <c>154</c>.
+      Students planning graduate study in applied mathematics should complete the
+      applied mathematics emphasis and take <c>MATH 105</c>, <c>144</c>, <c>153</c>,
+      <c>154</c>, and <c>155</c>.
+    </p>
+  </section>
+
+  <section xml:id="sec-req-emphases">
+    <title>Emphases</title>
+    <p>Each emphasis adds the following to the requirements above.</p>
+    <dl>
+      <li>
+        <title>Applied Mathematics</title>
+        <p><c>MATH 102</c>, <c>122</c>, <c>123</c>; two of <c>MATH 125</c>, <c>141</c>, <c>144</c>, <c>146</c>, <c>147</c>, <c>155</c>, <c>166</c>, <c>178</c> (or an approved alternative); one of <c>MATH 166</c>, <c>147</c>.</p>
+      </li>
+      <li>
+        <title>Data Science</title>
+        <p><c>MATH 122</c>, <c>123</c>; <c>CSCI 10</c>, <c>60</c>, <c>61</c>, <c>62</c>, <c>183</c>; <c>CSCI 184</c> or <c>CSEN 178</c>; two of <c>CSCI 127</c>, <c>163</c>, <c>MATH 146</c>, <c>147</c>, <c>166</c>, <c>CSEN 166</c>, <c>169</c>, <c>ECON 174</c>.</p>
+      </li>
+      <li>
+        <title>Financial Mathematics</title>
+        <p><c>MATH 102</c>, <c>122</c>, <c>123</c>, <c>125</c>; two of <c>MATH 144</c>, <c>146</c>, <c>147</c>, <c>166</c>; <c>BUSN 70</c>; <c>ACTG 11</c>, <c>12</c>; <c>FNCE 121</c>, <c>124</c>.</p>
+      </li>
+      <li>
+        <title>Mathematical Economics</title>
+        <p><c>MATH 102</c>, <c>122</c>, <c>123</c>, <c>146</c>, <c>147</c>; <c>ECON 113</c>; two of <c>MATH 125</c>, <c>166</c>, <c>ECON 170</c><ndash/><c>174</c>.</p>
+      </li>
+      <li>
+        <title>Mathematics Education</title>
+        <p><c>MATH 101</c>, <c>102</c>, <c>122</c>, <c>123</c> (or <c>8</c>), <c>170</c>, <c>175</c> (or <c>178</c>), <c>195</c>. The Urban Education minor is strongly advised.</p>
+      </li>
+    </dl>
+  </section>
+
+  <section xml:id="sec-req-minor">
+    <title>Minor in Mathematics</title>
+    <p>
+      <c>MATH 11</c>, <c>12</c>, <c>13</c>, <c>14</c>, and either <c>52</c> or <c>53</c>;
+      three approved 5-unit upper-division mathematics courses. <c>MATH 100</c>,
+      <c>192</c>, and <c>195</c> do not count toward the minor.
+    </p>
+  </section>
+
+  <section xml:id="sec-req-prereqs">
+    <title>Prerequisites used by the planner</title>
+    <p>
+      From the course descriptions. <q>Pre/co</q> means the course may be taken in
+      the same quarter. <q>Alt.</q> marks courses the Bulletin lists as offered in
+      alternate years.
+    </p>
+    <table xml:id="tab-prereqs">
+      <title>Mathematics courses and their prerequisites</title>
+      <tabular halign="left" top="minor" bottom="minor" left="minor" right="minor">
+        <col width="14%"/><col width="34%"/><col width="42%"/><col width="10%"/>
+        <row header="yes" bottom="medium">
+          <cell>Course</cell><cell>Title</cell><cell>Prerequisite</cell><cell>Alt.</cell>
+        </row>
+        <row><cell>MATH 11</cell><cell>Calculus and Analytic Geometry I</cell><cell>MATH 9/9S/9B, CRE 76+, AP Calculus AB 3, or AP Precalculus 4</cell><cell></cell></row>
+        <row><cell>MATH 12</cell><cell>Calculus and Analytic Geometry II</cell><cell>MATH 11</cell><cell></cell></row>
+        <row><cell>MATH 13</cell><cell>Calculus and Analytic Geometry III</cell><cell>MATH 12</cell><cell></cell></row>
+        <row><cell>MATH 14</cell><cell>Calculus and Analytic Geometry IV</cell><cell>MATH 13</cell><cell></cell></row>
+        <row><cell>MATH 23</cell><cell>Series and Differential Equations</cell><cell>MATH 13</cell><cell></cell></row>
+        <row><cell>MATH 51</cell><cell>Discrete Mathematics</cell><cell>none</cell><cell></cell></row>
+        <row><cell>MATH 52</cell><cell>Introduction to Abstract Algebra</cell><cell>MATH 51 or permission</cell><cell></cell></row>
+        <row><cell>MATH 53</cell><cell>Linear Algebra</cell><cell>MATH 13</cell><cell></cell></row>
+        <row><cell>MATH 101</cell><cell>A Survey of Geometry</cell><cell>MATH 13</cell><cell>yes</cell></row>
+        <row><cell>MATH 102</cell><cell>Advanced Calculus</cell><cell>MATH 14, 53</cell><cell></cell></row>
+        <row><cell>MATH 103</cell><cell>Advanced Linear Algebra</cell><cell>MATH 53</cell><cell></cell></row>
+        <row><cell>MATH 105</cell><cell>Theory of Functions of a Complex Variable</cell><cell>MATH 14 (23 and 51 recommended)</cell><cell>yes</cell></row>
+        <row><cell>MATH 111</cell><cell>Abstract Algebra I</cell><cell>MATH 52, 53</cell><cell>yes</cell></row>
+        <row><cell>MATH 112</cell><cell>Abstract Algebra II</cell><cell>MATH 111</cell><cell>yes</cell></row>
+        <row><cell>MATH 113</cell><cell>Topology</cell><cell>MATH 14, 51 (102 recommended)</cell><cell>yes</cell></row>
+        <row><cell>MATH 122</cell><cell>Probability and Statistics I</cell><cell>pre/co MATH 14</cell><cell></cell></row>
+        <row><cell>MATH 123</cell><cell>Probability and Statistics II</cell><cell>MATH 122; pre/co MATH 53</cell><cell></cell></row>
+        <row><cell>MATH 125</cell><cell>Mathematical Finance</cell><cell>MATH 53 and MATH 122 (or AMTH 108)</cell><cell></cell></row>
+        <row><cell>MATH 141</cell><cell>Mathematical Models</cell><cell>MATH 53 and MATH 23 (or AMTH 106)</cell><cell>yes</cell></row>
+        <row><cell>MATH 144</cell><cell>Partial Differential Equations</cell><cell>MATH 14 (23 recommended)</cell><cell>yes</cell></row>
+        <row><cell>MATH 146</cell><cell>Optimization I</cell><cell>CSCI 10, MATH 14, MATH 53</cell><cell></cell></row>
+        <row><cell>MATH 147</cell><cell>Optimization II</cell><cell>MATH 122 (or AMTH 108), MATH 146</cell><cell></cell></row>
+        <row><cell>MATH 153</cell><cell>Intermediate Analysis I</cell><cell>MATH 51 and either 102 or 105</cell><cell>yes</cell></row>
+        <row><cell>MATH 154</cell><cell>Intermediate Analysis II</cell><cell>MATH 153</cell><cell>yes</cell></row>
+        <row><cell>MATH 155</cell><cell>Ordinary Differential Equations</cell><cell>MATH 53 (CSCI 10 and 23 recommended)</cell><cell>yes</cell></row>
+        <row><cell>MATH 166</cell><cell>Numerical Analysis</cell><cell>CSCI 10, MATH 53</cell><cell></cell></row>
+        <row><cell>MATH 170</cell><cell>Development of Mathematics</cell><cell>upper-division standing in a science major</cell><cell>yes</cell></row>
+        <row><cell>MATH 172</cell><cell>Problem Solving</cell><cell>none listed</cell><cell>yes</cell></row>
+        <row><cell>MATH 174</cell><cell>Differential Geometry</cell><cell>MATH 53</cell><cell>yes</cell></row>
+        <row><cell>MATH 175</cell><cell>Theory of Numbers</cell><cell>MATH 52</cell><cell>yes</cell></row>
+        <row><cell>MATH 176</cell><cell>Combinatorics</cell><cell>MATH 51</cell><cell></cell></row>
+        <row><cell>MATH 177</cell><cell>Graph Theory</cell><cell>MATH 51</cell><cell>yes</cell></row>
+        <row><cell>MATH 178</cell><cell>Cryptography</cell><cell>MATH 51</cell><cell></cell></row>
+        <row><cell>MATH 195</cell><cell>Math Education and Social Justice</cell><cell>MATH 12, 31, or 36; does not count toward the major</cell><cell></cell></row>
+        <row><cell>CSCI 162</cell><cell>Computational Complexity</cell><cell>MATH 51</cell><cell>yes</cell></row>
+      </tabular>
+    </table>
+  </section>
+
+</chapter>

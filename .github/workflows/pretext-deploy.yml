@@ -1,0 +1,37 @@
+name: Build and Deploy
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    container: pretextbook/pretext-full:1.9
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: setup git config
+        run: |
+          git config --global --add safe.directory $(pwd)
+          git config user.name "${{ github.actor }} via GitHub Actions"
+          git config user.email "${{ github.actor }}@github_actions.no_reply"
+      - name: install deps
+        run: pip install -r requirements.txt --break-system-packages
+      - name: check pretext
+        run: pretext --version
+      - name: build web
+        run: pretext build web
+      - name: run deploy
+        run: pretext deploy --no-push
+      - name: push gh-pages branch
+        run: git push origin gh-pages --force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

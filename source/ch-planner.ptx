@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="ch-planner" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Four-year planner</title>
+
+  <introduction>
+    <p>
+      Check off the courses the student has completed, choose an emphasis if they
+      have one, and set the next quarter to plan. The planner fills the remaining
+      quarters with the courses still needed for the major, respecting every
+      prerequisite and co-requisite in the Bulletin, the quarters each course is
+      offered, and the alternate-year rotation. It then checks the plan against
+      the degree requirements and lists anything at risk.
+      For comfortable use, <url href="external/planner.html" visual="">open the planner full size in a new tab</url>.
+    </p>
+  </introduction>
+
+  <section xml:id="sec-planner">
+    <title>The planner</title>
+
+    <interactive xml:id="planner" iframe="planner.html" width="100%" aspect="2:3">
+      <instructions>
+        <p>
+          Entries are kept in the browser, so an advisor can set up a student, close
+          the page, and come back to it. <q>Clear student</q> resets everything except
+          the offerings table.
+        </p>
+      </instructions>
+      <static>
+        <p>Interactive four-year planner (available in the HTML version).</p>
+      </static>
+    </interactive>
+  </section>
+
+  <section xml:id="sec-planner-how">
+    <title>How the plan is built</title>
+
+    <p>
+      The planner starts from the set of courses the student still needs: the
+      lower-division core, the emphasis courses, one course from each required
+      upper-division category, any electives the student asked for, and enough
+      further electives to reach seven upper-division courses. For each of these it
+      computes the <term>latest workable quarter</term>: the last quarter in which
+      the course is offered that still leaves room for everything that depends on
+      it. A course whose latest workable quarter has already passed is reported as
+      <em>blocked</em>, with the chain that caused it.
+    </p>
+
+    <p>
+      It then walks forward from the next quarter to plan. In each quarter it
+      takes the courses whose prerequisites are met, that are offered that quarter,
+      and that fit under the per-quarter cap, choosing the most urgent first:
+      earliest latest-workable-quarter, then alternate-year courses, then
+      lower-division courses. Pre-or-co-requisites (<c>MATH 122</c> with
+      <c>MATH 14</c>, <c>MATH 123</c> with <c>MATH 53</c>) may be scheduled in the
+      same quarter as the course that needs them.
+    </p>
+
+    <p>
+      Three kinds of warning appear under the tables.
+    </p>
+    <dl>
+      <li>
+        <title>Blocked</title>
+        <p>
+          A course can no longer be completed by Year 4 Spring, either because an
+          alternate-year course has no remaining offering or because a chain such as
+          <c>MATH 52</c> <m>\to</m> <c>MATH 111</c> <m>\to</m> <c>MATH 112</c> has run
+          out of quarters.
+        </p>
+      </li>
+      <li>
+        <title>Cannot wait</title>
+        <p>
+          A course within the next year that has no later slot in the plan, with the
+          reason: the courses that must follow it, or the fact that it is not offered
+          again before graduation.
+        </p>
+      </li>
+      <li>
+        <title>Note</title>
+        <p>
+          Advice that does not change the plan, such as the deadline for declaring
+          an emphasis (end of junior year) and the fact that <c>MATH 195</c> satisfies
+          the ELSJ requirement but does not count toward the seven upper-division
+          courses.
+        </p>
+      </li>
+    </dl>
+
+    <p>
+      The plan shows only major courses. Quarters marked
+      <q>core / electives</q> have no major course scheduled and are where Core
+      Curriculum and free electives go.
+    </p>
+  </section>
+
+  <section xml:id="sec-planner-offerings">
+    <title>Course offerings</title>
+    <p>
+      The Bulletin marks a course as <q>offered in alternate years</q> but does not
+      say which quarter or which years. The planner's offerings table, at the bottom
+      of the page, holds placeholders chosen so that sequences like
+      <c>MATH 111</c>/<c>112</c> and <c>MATH 153</c>/<c>154</c> fall in consecutive
+      quarters of the same year. Edit the table to match the department's schedule;
+      the plan and its warnings update at once. Edits persist in the browser only,
+      so once the rotation is settled the defaults in <c>assets/planner.html</c>
+      (the <c>off</c> and <c>alt</c> fields of the course table) should be changed
+      to match, so that every visitor sees the real schedule.
+    </p>
+  </section>
+
+</chapter>
