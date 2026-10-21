@@ -1,0 +1,11 @@
+/* Full-width layout: the default-modern theme limits the page to 1200px and the
+   text column to 696px.  The planners and maps are far wider than that. */
+.ptx-page { max-width: none; }
+.ptx-main .ptx-content { max-width: none; padding-left: 36px; padding-right: 36px; }
+@media (max-width: 800px) { .ptx-main .ptx-content { padding-left: 16px; padding-right: 16px; } }
+
+/* PreTeXt writes a fixed 600px width on each <interactive iframe>.  Let the
+   embedded planners and maps fill the column, keeping their aspect ratios. */
+.interactive-iframe-container iframe { width: 100% !important; height: auto !important; display: block; }
+#planner, #cs-planner { aspect-ratio: 1 / 1.25; }
+#major-map, #cs-major-map { aspect-ratio: 1920 / 1240; }

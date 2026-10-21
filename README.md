@@ -19,7 +19,8 @@ Pushing to `main` builds the site and publishes it to the `gh-pages` branch (`.g
 ## Layout
 
 ```
-project.ptx                 target: web
+project.ptx                 target: web (xsl/custom-html.xsl)
+xsl/custom-html.xsl         adds assets/wide.css to every page
 publication/publication.ptx external directory = assets/
 source/main.ptx             article shell
 source/ch-planner.ptx       mathematics planner
@@ -28,7 +29,7 @@ source/ch-maps.ptx          mathematics major map
 source/ch-cs-map.ptx        computer science major map
 source/ch-requirements.ptx  bulletin requirements, mathematics
 source/ch-cs-requirements.ptx bulletin requirements, computer science
-assets/                     the planner and maps; copied to external/ in the built site
+assets/                     the planners, maps and wide.css; copied to external/ in the built site
 ```
 
 Each page in `assets/` is a self-contained HTML file. The planner and maps are embedded with `<interactive iframe="...">` and can also be opened directly at `external/<file>.html` on the built site.

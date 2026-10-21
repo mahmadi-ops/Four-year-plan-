@@ -3,6 +3,6 @@
      iframes live in assets/ (the "external" directory, see publication/). -->
 <project ptx-version="2">
   <targets>
-    <target name="web" format="html" publication="publication.ptx" />
+    <target name="web" format="html" xsl="custom-html.xsl" publication="publication.ptx" />
   </targets>
 </project>
