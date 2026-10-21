@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter xml:id="ch-planner" xmlns:xi="http://www.w3.org/2001/XInclude">
+<section xml:id="ch-planner" xmlns:xi="http://www.w3.org/2001/XInclude">
   <title>Four-year planner</title>
 
   <introduction>
@@ -14,7 +14,7 @@
     </p>
   </introduction>
 
-  <section xml:id="sec-planner">
+  <subsection xml:id="sec-planner">
     <title>The planner</title>
 
     <interactive xml:id="planner" iframe="planner.html" width="100%" aspect="2:3">
@@ -29,9 +29,9 @@
         <p>Interactive four-year planner (available in the HTML version).</p>
       </static>
     </interactive>
-  </section>
+  </subsection>
 
-  <section xml:id="sec-planner-how">
+  <subsection xml:id="sec-planner-how">
     <title>How the plan is built</title>
 
     <p>
@@ -92,9 +92,9 @@
       <q>core / electives</q> have no major course scheduled and are where Core
       Curriculum and free electives go.
     </p>
-  </section>
+  </subsection>
 
-  <section xml:id="sec-planner-offerings">
+  <subsection xml:id="sec-planner-offerings">
     <title>Course offerings</title>
     <p>
       The Bulletin marks a course as <q>offered in alternate years</q> but does not
@@ -107,6 +107,6 @@
       (the <c>off</c> and <c>alt</c> fields of the course table) should be changed
       to match, so that every visitor sees the real schedule.
     </p>
-  </section>
+  </subsection>
 
-</chapter>
+</section>

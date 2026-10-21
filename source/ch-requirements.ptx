@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter xml:id="ch-requirements" xmlns:xi="http://www.w3.org/2001/XInclude">
+<section xml:id="ch-requirements" xmlns:xi="http://www.w3.org/2001/XInclude">
   <title>Degree requirements</title>
 
   <introduction>
     <p>
       Restated from the Santa Clara University Undergraduate Bulletin
       2026<ndash/>27, Department of Mathematics and Computer Science. The Bulletin
-      is authoritative; this chapter exists so that the planner's rules can be
+      is authoritative; this section exists so that the planner's rules can be
       checked against their source.
     </p>
   </introduction>
 
-  <section xml:id="sec-req-major">
+  <subsection xml:id="sec-req-major">
     <title>Major in Mathematics</title>
     <p>In addition to the Core Curriculum for the bachelor of science degree:</p>
     <ul>
@@ -44,9 +44,9 @@
       applied mathematics emphasis and take <c>MATH 105</c>, <c>144</c>, <c>153</c>,
       <c>154</c>, and <c>155</c>.
     </p>
-  </section>
+  </subsection>
 
-  <section xml:id="sec-req-emphases">
+  <subsection xml:id="sec-req-emphases">
     <title>Emphases</title>
     <p>Each emphasis adds the following to the requirements above.</p>
     <dl>
@@ -71,18 +71,18 @@
         <p><c>MATH 101</c>, <c>102</c>, <c>122</c>, <c>123</c> (or <c>8</c>), <c>170</c>, <c>175</c> (or <c>178</c>), <c>195</c>. The Urban Education minor is strongly advised.</p>
       </li>
     </dl>
-  </section>
+  </subsection>
 
-  <section xml:id="sec-req-minor">
+  <subsection xml:id="sec-req-minor">
     <title>Minor in Mathematics</title>
     <p>
       <c>MATH 11</c>, <c>12</c>, <c>13</c>, <c>14</c>, and either <c>52</c> or <c>53</c>;
       three approved 5-unit upper-division mathematics courses. <c>MATH 100</c>,
       <c>192</c>, and <c>195</c> do not count toward the minor.
     </p>
-  </section>
+  </subsection>
 
-  <section xml:id="sec-req-prereqs">
+  <subsection xml:id="sec-req-prereqs">
     <title>Prerequisites used by the planner</title>
     <p>
       From the course descriptions. <q>Pre/co</q> means the course may be taken in
@@ -133,6 +133,6 @@
         <row><cell>CSCI 162</cell><cell>Computational Complexity</cell><cell>MATH 51</cell><cell>yes</cell></row>
       </tabular>
     </table>
-  </section>
+  </subsection>
 
-</chapter>
+</section>
