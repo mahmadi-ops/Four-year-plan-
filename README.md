@@ -35,7 +35,7 @@ Each page in `assets/` is a self-contained HTML file. The planner and maps are e
 
 ## Course offerings
 
-The Bulletin says which courses run in alternate years but not which quarters or which years. The planner's offerings table (bottom of the page) holds placeholders. Once the department's rotation is known, edit the `off` (Fall/Winter/Spring) and `alt` (even/odd year) fields in the course table near the top of `assets/planner.html` so every visitor sees the real schedule.
+The Bulletin says which courses run in alternate years but not which quarters or which years. The mathematics planner's offerings table holds placeholders; the computer science planner uses the department's tentative 2026–27 schedule. Once the department's rotation is known, edit the `off` (Fall/Winter/Spring) and `alt` (even/odd year) fields in the course table near the top of `assets/planner.html` so every visitor sees the real schedule.
 
 ## Updating for a new bulletin
 
