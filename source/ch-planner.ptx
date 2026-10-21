@@ -4,15 +4,16 @@
 
   <introduction>
     <p>
-      Set the next quarter to plan, then add each course the student has taken at
-      Santa Clara to the quarter they took it, using <q>+ add course</q> in the
-      earlier quarters of the plan. Courses with AP, IB, or transfer credit are
-      ticked separately under <q>Credit from AP, IB or transfer</q> and do not
-      appear in the plan. Choose an emphasis if the student has one. The planner fills the remaining
-      quarters with the courses still needed for the major, respecting every
-      prerequisite and co-requisite in the Bulletin, the quarters each course is
-      offered, and the alternate-year rotation. It then checks the plan against
-      the degree requirements and lists anything at risk.
+      Students build their own plan. Set the next quarter to plan, then use
+      <q>+ add course</q> to put each course taken at Santa Clara in the quarter
+      it was taken, and each course you intend to take in a later quarter. AP,
+      IB, or transfer credit is ticked separately under <q>Credit from AP, IB or
+      transfer</q> and does not appear in the plan. Once anything has been
+      entered, a <q>Recommended next</q> table suggests the order of the courses
+      the major still needs, respecting every prerequisite and co-requisite in the
+      Bulletin, the quarters each course is offered, and the alternate-year
+      rotation; <q>Add to plan</q> copies a suggestion into the plan. The
+      requirement check marks what is completed and what is in the plan.
       For comfortable use, <url href="external/planner.html" visual="">open the planner full size in a new tab</url>.
     </p>
   </introduction>

@@ -61,7 +61,17 @@ td.past{background:#F7F9FB}
 .course .x{position:absolute;top:0;right:0;border:0;background:none;padding:0 3px;font-size:1rem;line-height:1;color:var(--muted);cursor:pointer;font-weight:400}
 .course .x:hover{color:var(--error)}
 .addsel{display:block;width:100%;margin-top:4px;font-size:.78rem;padding:2px 4px;color:var(--muted);border:1px dashed var(--grid);background:transparent}
+.rec{width:100%;border-collapse:collapse;font-size:.88rem;table-layout:auto;margin-top:4px;background:#fff}
+.rec th,.rec td{border:1px solid var(--grid);padding:5px 7px;vertical-align:middle;width:auto}
+.rec th{background:var(--soft);color:var(--ink)}
+.rec td.q{white-space:nowrap;font-weight:600}
+.rec td.a{width:1%;white-space:nowrap}
+.rec button{font-size:.8rem;padding:3px 9px}
+.empty{color:var(--muted);font-size:.9rem;margin:2px 0 0}
 details.credit{margin-top:12px;border:1px solid var(--line);border-radius:3px;padding:6px 9px}
+details.more{margin-top:8px}
+details.more summary{font-weight:600;font-size:.82rem;color:var(--muted);cursor:pointer}
+details.more[open] summary{margin-bottom:4px}
 details.credit summary{cursor:pointer;font-weight:600;font-size:.9rem}
 details.credit[open] summary{margin-bottom:6px}
 td.now{box-shadow:inset 0 0 0 2px var(--blue)}
@@ -111,7 +121,7 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
 <body>
 
 <h1>Computer science major four-year planner</h1>
-<div class="sub">Set where the student is now, add the courses they have taken to the quarters they took them, and choose an emphasis. The planner fills the remaining quarters using the department's prerequisite list and 2026–27 offerings, follows the advising sequencing advice, and flags any course that can't wait.</div>
+<div class="sub">Build your own plan: add the courses you have taken to the quarters you took them, then the courses you intend to take. Recommendations for what to take next appear once you have started. Recommendations follow the department's prerequisite list, 2026–27 offerings and sequencing advice, and flag any course that can't wait.</div>
 
 <div class="layout">
 <aside class="panel" id="settings">
@@ -120,10 +130,8 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
   <label class="row">Next quarter to plan <span><select id="curY"><option value="0">Year 1</option><option value="1">Year 2</option><option value="2">Year 3</option><option value="3">Year 4</option></select> <select id="curQ"><option value="0">Fall</option><option value="1">Winter</option><option value="2">Spring</option></select></span></label>
   <label class="row">Emphasis <select id="emph"><option value="">Undecided</option><option value="alg">Algorithms &amp; Complexity</option><option value="ds">Data Science</option><option value="sec">Security</option><option value="sw">Software</option></select></label>
   <label class="row">Major courses per quarter, at most <input type="number" id="cap" min="1" max="4" value="2"></label>
-  <details class="credit"><summary>Credit from AP, IB or transfer <span id="creditCount" style="color:var(--muted);font-weight:400"></span></summary><div class="chk" id="credit"></div></details>
-  <div class="note">Courses taken at SCU go in the plan itself: set <b>Next quarter to plan</b>, then use <b>+ add course</b> in each earlier quarter.</div>
-  <h3>Electives the student wants</h3><div class="chk" id="want"></div>
-  <div class="note">Unfilled emphasis slots are filled automatically, preferring courses with programming.</div>
+  <details class="credit" id="creditBox"><summary>Credit from AP, IB or transfer <span id="creditCount" style="color:var(--muted);font-weight:400"></span></summary><div class="chk" id="credit"></div><details class="more" id="creditMore"><summary>Upper-division and other courses</summary><div class="chk" id="credit2"></div></details></details>
+  <div class="note">Use <b>+ add course</b> in the plan: earlier quarters for courses taken at SCU, later quarters for courses you intend to take.</div>
   <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><button id="reset">Clear student</button><button id="pdf">Download plan (PDF)</button></div>
 </aside>
 
@@ -133,6 +141,7 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
   <div class="legend">
     <span><i style="--c:var(--lower)"></i>math</span><span><i style="--c:var(--analysis)"></i>CSCI</span><span><i style="--c:var(--applied)"></i>programming-heavy CSCI</span><span><i style="--c:var(--ext)"></i>CSEN / ECEN / science</span>
   </div>
+  <section class="panel result noprint" style="margin-top:12px" id="recs"></section>
   <section class="panel result warns" id="warns"></section>
   <section class="panel" style="margin-top:12px"><h2>Requirement check</h2><div class="req" id="req"></div></section>
   <section class="panel noprint" style="margin-top:12px" id="offerings">
@@ -217,6 +226,8 @@ if (S.done) { S.credit = Object.assign({}, S.done, S.credit); delete S.done; }
 S.taken = S.taken || {}; S.credit = S.credit || {};
 const isDone = id => !!S.credit[id] || (id in S.taken);
 const doneIds = () => Object.keys(C).filter(isDone);
+const started = () => Object.keys(S.taken).length > 0 || Object.keys(S.credit).some(k=>S.credit[k]);
+const completed = id => !!S.credit[id] || (id in S.taken && S.taken[id] < S.curY*3 + S.curQ);
 const save = () => { try { localStorage.setItem('csplanner', JSON.stringify(S)); } catch(e){} };
 
 // ---------- planning ----------
@@ -231,7 +242,6 @@ function requiredSet() {
   LOWER.forEach(id=>add(id,'lower division')); CORE.forEach(id=>add(id,'required upper division'));
   const e = EMPH[S.emph];
   if (e) e.req.forEach(id=>add(id,'emphasis'));
-  Object.keys(S.want).filter(k=>S.want[k]).forEach(id=>add(id,'chosen elective'));
   if (e) {
     const used = new Set(e.req);   // a course satisfies only one emphasis requirement
     for (const g of e.choose) {
@@ -294,6 +304,7 @@ function plan() {
   for (const [id,q] of Object.entries(S.taken)) {
     const miss = (C[id].pre||[]).filter(g=>!g.some(p=>(p in at) && at[p] < q)).concat((C[id].co||[]).filter(g=>!g.some(p=>(p in at) && at[p] <= q))).map(g=>g.join(' or '));
     if (miss.length) W.push(['info', id, `is entered in ${qname(q)}, before its prerequisite ${miss.join(', ')}. Check the quarter, or add the earlier course.`]);
+    if (q >= start && !offered(id, q)) W.push(['warn', id, `is planned for ${qname(q)}, but the offerings table does not list it then.`]);
   }
   for (const id of need) {
     if (infeasible[id]) { W.push(['bad', id, `has no offering that leaves room for what follows it (${deps[id].map(d=>d[0]).join(', ')||'—'}) before Year 4 Spring.`]); continue; }
@@ -339,16 +350,9 @@ function renderYears(P) {
     let html = `<caption>Year ${y+1}<span>${yr}–${String(yr+1).slice(2)}</span></caption><tr>${QN.map(n=>`<th>${n}</th>`).join('')}</tr><tr>`;
     for (let qq=0; qq<3; qq++) {
       const q = y*3+qq;
-      if (q < P.start) { const tk = Object.keys(S.taken).filter(k=>S.taken[k]===q).sort(); tk.forEach(id=>units+=C[id].u); html += `<td class="past">` + tk.map(takenChip).join('') + addSelect(q) + `</td>`; continue; }
-      const list = P.sched[q]||[]; list.forEach(id=>units+=C[id].u);
-      html += `<td class="${q===P.start?'now':''}">` + (list.length ? list.map(id=>{
-        if (id in S.taken) return takenChip(id);
-        const b = [];
-        if (P.at[id]===P.latest[id]) b.push(`<span class="badge" style="--b:var(--warn)">last offering</span>`);
-        else if (S.off[id].alt!==null) b.push(`<span class="badge" style="--b:var(--muted)">alt-year</span>`);
-        const k = PROG.has(id) ? 'prog' : C[id].k;
-        return `<div class="course" style="--c:${col(k)}"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span>${b.join('')}</div>`;
-      }).join('') : `<span style="color:var(--muted)">core / electives</span>`) + `</td>`;
+      const tk = Object.keys(S.taken).filter(k=>S.taken[k]===q).sort();
+      tk.forEach(id=>units+=C[id].u);
+      html += `<td class="${q<P.start?'past':''}${q===P.start?' now':''}">` + tk.map(takenChip).join('') + addSelect(q) + `</td>`;
     }
     t.innerHTML = html + `</tr>`;
     const wrap = document.createElement('div'); wrap.appendChild(t);
@@ -356,24 +360,40 @@ function renderYears(P) {
     years.appendChild(wrap);
   }
 }
+function renderRecs(P) {
+  const box = $('#recs');
+  if (!started()) { box.innerHTML = `<h2>Recommended next</h2><p class="empty">Add a course you have taken, or tick any AP, IB or transfer credit, and recommendations for the remaining quarters will appear here.</p>`; return; }
+  const rows = [];
+  for (let q=P.start; q<=11; q++) for (const id of (P.sched[q]||[])) if (!(id in S.taken)) rows.push([q,id]);
+  if (!rows.length) { box.innerHTML = `<h2>Recommended next</h2><p class="empty">Nothing left to recommend: every course the major still needs is in your plan.</p>`; return; }
+  const qn = q => `Year ${Math.floor(q/3)+1} ${QN[q%3]}`;
+  box.innerHTML = `<h2>Recommended next</h2><p class="empty" style="margin-bottom:6px">A suggested order for the courses the major still needs, after what is already in your plan. Add the ones you choose.</p><table class="rec"><tr><th>Quarter</th><th>Course</th><th>Why</th><th></th></tr>` + rows.map(([q,id])=>{
+    const b = [];
+    if (P.at[id]===P.latest[id]) b.push(`<span class="badge" style="--b:var(--warn)">last offering</span>`);
+    else if (S.off[id].alt!==null) b.push(`<span class="badge" style="--b:var(--muted)">alt-year</span>`);
+    return `<tr><td class="q">${qn(q)}</td><td><div class="course" style="--c:${col(kOf(id))};margin:0"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span></div></td><td>${esc(P.why[id]||'')} ${b.join(' ')}</td><td class="a"><button data-recadd="${esc(id)}" data-recq="${q}">Add to plan</button></td></tr>`;
+  }).join('') + `</table>`;
+}
 function renderWarns(P) {
+  $('#warns').hidden = !started();
+  if (!started()) return;
   const order = {bad:0,warn:1,info:2};
   const list = P.W.sort((a,b)=>order[a[0]]-order[b[0]]);
   $('#warns').innerHTML = `<h2>Warnings and advice</h2>` + (list.length ? list.map(([k,id,msg])=>`<div class="w" style="--b:var(--${k==='info'?'now':k})"><span class="k">${k==='bad'?'blocked':k==='warn'?'cannot wait':'advice'}</span><span><b>${esc(id)}</b> ${esc(msg)}</span></div>`).join('') : `<div class="note">Nothing is at risk in this plan.</div>`);
 }
 function renderReq(P) {
-  const done = id => isDone(id) || (id in P.at);
+  const done = isDone;
   const mark = (ok, pend) => ok ? '<span class="ok">✓</span>' : pend ? '<span class="pend">…</span>' : '<span class="no">✗</span>';
   const rows = [];
-  rows.push([mark(LOWER.every(id=>isDone(id)), LOWER.every(done)), 'Lower division: MATH 11, 12, 13, 14, 51, 53; CSCI 10, 60, 61, 62; one science; CSEN 20 & 20L; ECEN 21 & 21L']);
-  rows.push([mark(CORE.every(id=>isDone(id)), CORE.every(done)), 'Required upper division: MATH 122, CSCI 161, CSCI 163, CSEN 177 & 177L']);
+  rows.push([mark(LOWER.every(id=>completed(id)), LOWER.every(done)), 'Lower division: MATH 11, 12, 13, 14, 51, 53; CSCI 10, 60, 61, 62; one science; CSEN 20 & 20L; ECEN 21 & 21L']);
+  rows.push([mark(CORE.every(id=>completed(id)), CORE.every(done)), 'Required upper division: MATH 122, CSCI 161, CSCI 163, CSEN 177 & 177L']);
   const e = EMPH[S.emph];
   if (e) {
-    rows.push([mark(e.req.every(id=>isDone(id)), e.req.every(done)), `${e.name} emphasis, required: ${e.req.join(', ')}`]);
-    e.choose.forEach(g=>{ const have=g.from.filter(done); rows.push([mark(g.from.filter(id=>isDone(id)).length>=g.n, have.length>=g.n), `${e.name}: ${g.n} more from the emphasis list (${have.slice(0,g.n).join(', ')||'—'})`]); });
+    rows.push([mark(e.req.every(id=>completed(id)), e.req.every(done)), `${e.name} emphasis, required: ${e.req.join(', ')}`]);
+    e.choose.forEach(g=>{ const have=g.from.filter(done); rows.push([mark(g.from.filter(id=>completed(id)).length>=g.n, have.length>=g.n), `${e.name}: ${g.n} more from the emphasis list (${have.slice(0,g.n).join(', ')||'—'})`]); });
   } else {
     const ud = UDLIST.filter(done);
-    rows.push([mark(ud.filter(id=>isDone(id)).length>=5, ud.length>=5), `Five emphasis courses, emphasis undecided (${ud.length} completed or planned: ${ud.join(', ')||'—'})`]);
+    rows.push([mark(ud.filter(id=>completed(id)).length>=5, ud.length>=5), `Five emphasis courses, emphasis undecided (${ud.length} completed or in the plan: ${ud.join(', ')||'—'})`]);
   }
   $('#req').innerHTML = rows.map(([m,t])=>`<span class="s">${m}</span><span>${esc(t)}</span>`).join('');
 }
@@ -385,15 +405,16 @@ function renderOff() {
 }
 function renderChecks() {
   const mk = (host, ids, key) => { host.innerHTML = ids.map(id=>`<label><input type="checkbox" data-${key}="${esc(id)}" ${S[key][id]?'checked':''}><span class="i">${esc(id)}</span> <span class="t">${esc(C[id].t)}</span></label>`).join(''); };
-  mk($('#credit'), GROUPS.flatMap(g=>g[1]), 'credit');
+  mk($('#credit'), GROUPS[0][1], 'credit');
+  mk($('#credit2'), GROUPS.slice(1).flatMap(g=>g[1]), 'credit');
+  if (GROUPS.slice(1).some(g=>g[1].some(id=>S.credit[id]))) $('#creditMore').open = true;
   const n = Object.keys(S.credit).filter(k=>S.credit[k]).length; $('#creditCount').textContent = n ? `(${n})` : '';
-  mk($('#want'), UDLIST, 'want');
 }
 function renderHead() {
   const scu = Object.keys(S.taken).sort((a,b)=>S.taken[a]-S.taken[b]); const cr = Object.keys(S.credit).filter(k=>S.credit[k]);
-  $('#printhead').innerHTML = `<div class="ph-title">Computer science major, four-year plan</div><div class="ph-meta">Emphasis: ${esc(EMPH[S.emph]?EMPH[S.emph].name:'undecided')} · Year 1: ${S.y1}–${String(S.y1+1).slice(2)} · Planned from Year ${S.curY+1} ${QN[S.curQ]} · Prepared ${new Date().toLocaleDateString()}</div><div class="ph-meta">Taken at SCU: ${scu.length?esc(scu.join(', ')):'none entered'}${cr.length?' · Credit by exam or transfer: '+esc(cr.join(', ')):''}</div>`;
+  $('#printhead').innerHTML = `<div class="ph-title">Computer science major, four-year plan</div><div class="ph-meta">Emphasis: ${esc(EMPH[S.emph]?EMPH[S.emph].name:'undecided')} · Year 1: ${S.y1}–${String(S.y1+1).slice(2)} · Planned from Year ${S.curY+1} ${QN[S.curQ]} · Prepared ${new Date().toLocaleDateString()}</div><div class="ph-meta">Courses in the plan: ${scu.length?esc(scu.join(', ')):'none entered'}${cr.length?' · Credit by exam or transfer: '+esc(cr.join(', ')):''}</div>`;
 }
-function render() { const P = plan(); renderHead(); renderYears(P); renderWarns(P); renderReq(P); }
+function render() { const P = plan(); renderHead(); renderYears(P); renderRecs(P); renderWarns(P); renderReq(P); const cb=$('#creditBox'); if (cb && !started() && !cb.dataset.touched) cb.open = true; }
 
 // ---------- wiring ----------
 const y1 = $('#y1'); for (let y=2020; y<=2030; y++) { const o=document.createElement('option'); o.value=y; o.textContent=`${y}–${String(y+1).slice(2)}`; y1.appendChild(o); }
@@ -405,13 +426,17 @@ document.addEventListener('change', e => {
   else if (t.id==='emph') S.emph = t.value; else if (t.id==='cap') S.cap = Math.max(1, Math.min(4, +t.value||2));
   else if (t.dataset.credit) { S.credit[t.dataset.credit] = t.checked; if (t.checked) delete S.taken[t.dataset.credit]; renderChecks(); }
   else if ('addq' in t.dataset) { if (!t.value) return; S.taken[t.value] = +t.dataset.addq; delete S.credit[t.value]; renderChecks(); }
-  else if (t.dataset.want) S.want[t.dataset.want] = t.checked;
   else if (t.dataset.off) S.off[t.dataset.off].off[+t.dataset.q] = t.checked ? 1 : 0;
   else if (t.dataset.alt) S.off[t.dataset.alt].alt = t.value==='' ? null : +t.value;
   else return;
   save(); render();
 });
-document.addEventListener('click', e => { const b = e.target.closest('[data-untake]'); if (!b) return; delete S.taken[b.dataset.untake]; renderChecks(); save(); render(); });
+document.addEventListener('click', e => {
+  const r = e.target.closest('[data-recadd]');
+  if (r) { S.taken[r.dataset.recadd] = +r.dataset.recq; delete S.credit[r.dataset.recadd]; renderChecks(); save(); render(); return; }
+  const b = e.target.closest('[data-untake]'); if (!b) return; delete S.taken[b.dataset.untake]; renderChecks(); save(); render();
+});
+$('#creditBox').addEventListener('toggle', e => { e.currentTarget.dataset.touched = '1'; });
 $('#reset').addEventListener('click', () => { S.taken = {}; S.credit = {}; S.want = {}; S.emph=''; S.curY=0; S.curQ=0; $('#emph').value=''; $('#curY').value=0; $('#curQ').value=0; renderChecks(); save(); render(); });
 $('#resetOff').addEventListener('click', () => { S.off = JSON.parse(JSON.stringify(DEFAULT_OFF)); renderOff(); save(); render(); });
 $('#pdf').addEventListener('click', () => { renderHead(); window.print(); });

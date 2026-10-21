@@ -2,7 +2,7 @@
 
 A PreTeXt site for advising mathematics and computer science majors at Santa Clara University:
 
-- **Four-year planners** (`assets/planner.html` for mathematics, `assets/cs-planner.html` for computer science): enter a student's completed courses and emphasis; get a quarter-by-quarter plan with prerequisite, co-requisite and alternate-year warnings, and print it.
+- **Four-year planners** (`assets/planner.html` for mathematics, `assets/cs-planner.html` for computer science): students build their own quarter-by-quarter plan (courses taken and intended), tick AP/IB/transfer credit separately, and get recommendations for what to take next with prerequisite, co-requisite and alternate-year warnings; the plan prints.
 - **Course maps** (`assets/major-map.html`, `assets/cs-major-map.html`): each major on one page with every prerequisite drawn as an arrow.
 - **Degree requirements** (`source/ch-requirements.ptx`, `source/ch-cs-requirements.ptx`): the rules from the 2026–27 Undergraduate Bulletin, which is the source for everything here.
 
