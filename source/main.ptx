@@ -41,7 +41,7 @@
           The Bulletin does not say which quarter each course is offered in, or which
           years the alternate-year courses fall on. The planner ships with placeholder
           offerings; the department's actual rotation should be entered in the
-          offerings table at the bottom of the planner, and the file
+          offerings table in the planner, and the file
           <c>assets/planner.html</c> should be updated so the placeholders match.
         </p>
       </preface>

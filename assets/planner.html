@@ -4,75 +4,80 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Math Major Planner</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=PT+Serif:wght@400;700&display=swap">
 <style>
-/* Layout: a settings column on the left, four year-tables and the checks on the right; course boxes keyed by requirement category. */
-:root {
-  --bg: #f6f4ee; --surface: #fffdf8; --fg: #1d2230; --muted: #5d6474; --line: #d8d3c6; --soft: #ecE8dd;
-  --accent: #7a4aa8; --ok: #2f7d4a; --warn: #b8641c; --bad: #b3312f; --now: #2f6db3;
-  --lower: #5a6b85; --analysis: #2f6db3; --algebra: #7a4aa8; --geometry: #1f8a7e; --discrete: #d2691e; --applied: #3f8f3a; --other: #8c8779; --ext: #a3871f;
-  --font-display: "Lora", Georgia, serif; --font-body: "Public Sans", system-ui, sans-serif; --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+/* Layout: settings column on the left, four year-tables and the checks on the right.
+   Styled to match the MATH 13 grade calculator: light only, Open Sans + PT Serif,
+   ink/blue palette, thin 4px panels, uppercase table headers. */
+:root{
+  --ink:#22262E; --muted:#5C6575; --line:#C9CFDC; --soft:#EEF3F8; --bg:#fff;
+  --blue:#195684; --blue-soft:#E3ECF4; --drop:#9A3B1F; --error:#B3261E; --ok:#2E6B3A; --warn:#9A3B1F; --bad:#B3261E; --now:#195684;
+  --lower:#5C6575; --analysis:#195684; --algebra:#5B3F8C; --geometry:#1C7A6E; --discrete:#B5651D; --applied:#2E6B3A; --other:#8A8A8A; --ext:#9C7A1C;
+  --sans:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif; --serif:"PT Serif","Times New Roman",Times,serif;
+  color-scheme: light;
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #15181f; --surface: #1d2129; --fg: #ebe8e0; --muted: #a2a6b1; --line: #343a46; --soft: #262b35;
-  --accent: #b48ae0; --ok: #7fcf78; --warn: #f0a85a; --bad: #ee7a78; --now: #6ea4e8;
-  --lower: #9aa9c2; --analysis: #6ea4e8; --algebra: #b48ae0; --geometry: #4fc2b3; --discrete: #f09a52; --applied: #7fcf78; --other: #a9a496; --ext: #d9b94a; color-scheme: dark; } }
-:root[data-theme="dark"] {
-  --bg: #15181f; --surface: #1d2129; --fg: #ebe8e0; --muted: #a2a6b1; --line: #343a46; --soft: #262b35;
-  --accent: #b48ae0; --ok: #7fcf78; --warn: #f0a85a; --bad: #ee7a78; --now: #6ea4e8;
-  --lower: #9aa9c2; --analysis: #6ea4e8; --algebra: #b48ae0; --geometry: #4fc2b3; --discrete: #f09a52; --applied: #7fcf78; --other: #a9a496; --ext: #d9b94a; color-scheme: dark; }
-body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 14px; line-height: 1.45; padding-block: 20px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-h1 { font-family: var(--font-display); font-weight: 600; font-size: 24px; margin: 0; text-wrap: balance; }
-h2 { font-family: var(--font-display); font-weight: 600; font-size: 18px; margin: 0 0 8px; }
-h3 { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 14px 0 6px; font-weight: 600; }
-.sub { color: var(--muted); font-size: 13px; margin-top: 4px; max-width: 70ch; }
-.layout { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 24px; margin-top: 18px; align-items: start; }
-@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; min-width: 0; }
-label.row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; margin: 6px 0; font-size: 13px; }
-select, input[type=number] { font: inherit; font-size: 13px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 5px; background: var(--bg); color: var(--fg); }
-input[type=number] { width: 60px; }
-.chk { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 2px 8px; }
-.chk label { display: flex; align-items: center; gap: 5px; font-size: 12.5px; font-family: var(--font-mono); cursor: pointer; padding: 2px 0; }
-.chk label span.t { font-family: var(--font-body); color: var(--muted); font-size: 11px; min-width: 0; overflow-wrap: anywhere; }
-.chk label span.i { white-space: nowrap; }
-.chk label { align-items: baseline; }
-.chk input { margin: 0; }
-button { font: inherit; font-size: 12.5px; font-weight: 500; padding: 6px 10px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 6px; cursor: pointer; }
-button:hover { border-color: var(--muted); }
-button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--now); outline-offset: 2px; }
-.years { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-.years > div { min-width: 0; }
-@media (max-width: 1100px) { .years { grid-template-columns: 1fr; } }
-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
-caption { text-align: left; font-family: var(--font-display); font-weight: 600; font-size: 16px; padding: 0 0 6px; }
-caption span { color: var(--muted); font-weight: 400; font-size: 13px; font-family: var(--font-body); margin-left: 8px; }
-th, td { border: 1px solid var(--line); vertical-align: top; padding: 6px 8px; text-align: left; }
-th { background: var(--soft); font-weight: 600; width: 33.3%; }
-td.past { color: var(--muted); font-style: italic; background: color-mix(in srgb, var(--soft) 50%, transparent); }
-td.now { box-shadow: inset 0 0 0 2px var(--now); }
-.course { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; padding: 3px 0; border-left: 3px solid var(--c, var(--line)); padding-left: 7px; margin: 3px 0; }
-.course .id { font-family: var(--font-mono); font-size: 12px; white-space: nowrap; }
-.course .nm { color: var(--muted); font-size: 12px; }
-.badge { display: inline-block; font-size: 10.5px; font-weight: 600; letter-spacing: .04em; padding: 1px 6px; border-radius: 4px; color: #fff; background: var(--b); white-space: nowrap; }
-.tot { color: var(--muted); font-size: 12px; margin-top: 4px; }
-.warns { margin: 14px 0 0; }
-.w { display: grid; grid-template-columns: auto 1fr; gap: 10px; padding: 8px 10px; border-radius: 6px; margin: 6px 0; font-size: 13px; background: var(--soft); border-left: 4px solid var(--b); }
-.w b { font-family: var(--font-mono); font-weight: 500; }
-.w .k { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--b); padding-top: 2px; }
-.req { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 13px; margin-top: 8px; }
-.req .s { font-family: var(--font-mono); font-size: 12px; }
-.ok { color: var(--ok); } .no { color: var(--bad); } .pend { color: var(--warn); }
-details { margin-top: 18px; }
-summary { cursor: pointer; font-weight: 600; }
-.off { width: 100%; font-size: 12.5px; margin-top: 10px; }
-.off td, .off th { padding: 3px 6px; }
-.off td:first-child { font-family: var(--font-mono); white-space: nowrap; }
-.off input[type=checkbox] { margin: 0; }
-.off select { font-size: 12px; padding: 2px 4px; }
-.note { font-size: 12.5px; color: var(--muted); margin-top: 8px; max-width: 80ch; }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); margin-top: 10px; }
-.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; background: var(--c); margin-right: 5px; vertical-align: -1px; }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;
+  padding-block:10px 24px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+h1{font-family:var(--serif);font-size:1.4rem;font-weight:700;margin:0;text-wrap:balance}
+h2{font-family:var(--serif);font-size:1.15rem;margin:0 0 10px;font-weight:700}
+h3{font-size:.8rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:12px 0 4px;font-weight:600}
+.sub{color:var(--muted);font-size:.9rem;margin-top:4px;max-width:72ch}
+.layout{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.6fr);gap:12px;margin-top:12px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:minmax(0,1fr)}}
+.panel{border:1px solid var(--line);border-radius:4px;padding:12px;min-width:0;background:#fff}
+.panel.result{background:var(--soft)}
+label.row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;padding:4px 0;font-weight:600}
+label.row span{display:flex;gap:6px}
+select,input[type=number]{font:inherit;font-size:.9rem;padding:5px 8px;border:1px solid #9AA4B8;border-radius:3px;background:#fff;color:var(--ink)}
+input[type=number]{width:4.4em;text-align:right;font-variant-numeric:tabular-nums}
+select:focus-visible,input:focus-visible,button:focus-visible{outline:3px solid #8DB3D6;outline-offset:1px;border-color:var(--blue)}
+.chk{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:2px 8px}
+.chk label{display:flex;align-items:baseline;gap:5px;font-size:.85rem;cursor:pointer;padding:2px 0}
+.chk label span.i{white-space:nowrap;font-weight:600;font-variant-numeric:tabular-nums}
+.chk label span.t{color:var(--muted);font-size:.78rem;min-width:0;overflow-wrap:anywhere}
+.chk input{margin:0;position:relative;top:2px}
+button{font:inherit;font-size:.9rem;font-weight:600;color:var(--ink);background:#fff;border:1px solid #B9C1D2;border-radius:3px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--blue);color:var(--blue)}
+.years{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:1100px){.years{grid-template-columns:minmax(0,1fr)}}
+.years>div{min-width:0}
+table{width:100%;border-collapse:collapse;font-size:.88rem;table-layout:fixed;font-variant-numeric:tabular-nums}
+caption{text-align:left;font-family:var(--serif);font-weight:700;font-size:1.05rem;padding:0 0 6px}
+caption span{color:var(--muted);font-weight:400;font-size:.88rem;font-family:var(--sans);margin-left:8px}
+th,td{border-bottom:1px solid var(--line);vertical-align:top;padding:5px 6px;text-align:left}
+th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;width:33.3%}
+td{border-left:1px solid var(--line)}
+td:first-child{border-left:0}
+td.past{color:var(--muted);font-style:italic;background:var(--soft)}
+td.now{box-shadow:inset 0 0 0 2px var(--blue)}
+.course{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 6px;padding:2px 0 2px 7px;border-left:3px solid var(--c,var(--line));margin:3px 0}
+.course .id{font-weight:700;white-space:nowrap}
+.course .nm{color:var(--muted);font-size:.82rem}
+.badge{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:1px 6px;border-radius:3px;color:#fff;background:var(--b);white-space:nowrap}
+.tot{color:var(--muted);font-size:.82rem;margin-top:4px}
+.warns{margin-top:12px}
+.w{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:6px 9px;border-radius:3px;margin:6px 0;font-size:.88rem;background:#fff;border:1px solid var(--line);border-left:4px solid var(--b)}
+.w b{font-weight:700}
+.w .k{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--b);padding-top:2px}
+.req{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:.88rem;margin-top:6px}
+.req .s{font-weight:700}
+.ok{color:var(--ok)}.no{color:var(--bad)}.pend{color:var(--warn)}
+.off{width:100%;font-size:.85rem;margin-top:8px;table-layout:auto}
+.off th{width:auto}
+.off td,.off th{padding:3px 6px}
+.off td:first-child{white-space:nowrap;font-weight:600}
+.off td{border-left:0}
+.off input[type=checkbox]{margin:0}
+.off select{font-size:.82rem;padding:2px 4px}
+.note{font-size:.85rem;color:var(--muted);margin-top:6px;max-width:80ch}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.8rem;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--c);margin-right:5px;vertical-align:-1px}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);background:var(--blue-soft);border-radius:3px;padding:2px 6px;margin-left:6px;vertical-align:2px}
+.offwrap{overflow-x:auto}
 </style>
 </head>
 <body>
@@ -101,13 +106,14 @@ summary { cursor: pointer; font-weight: 600; }
   <div class="legend">
     <span><i style="--c:var(--lower)"></i>lower division</span><span><i style="--c:var(--analysis)"></i>analysis</span><span><i style="--c:var(--algebra)"></i>algebra</span><span><i style="--c:var(--geometry)"></i>geometry</span><span><i style="--c:var(--discrete)"></i>discrete</span><span><i style="--c:var(--applied)"></i>applied</span><span><i style="--c:var(--other)"></i>other elective</span><span><i style="--c:var(--ext)"></i>other department</span>
   </div>
-  <section class="panel warns" id="warns"></section>
-  <section class="panel" style="margin-top:14px"><h2>Requirement check</h2><div class="req" id="req"></div></section>
-  <details class="panel"><summary>Course offerings used by the planner (edit to match the department schedule)</summary>
-    <div class="note">The bulletin says which courses run in alternate years but not which quarters or which years. These are placeholders, and the plan is only as good as this table. "Even" means an academic year starting in an even calendar year (2026–27).</div>
-    <table class="off" id="off"></table>
+  <section class="panel result warns" id="warns"></section>
+  <section class="panel" style="margin-top:12px"><h2>Requirement check</h2><div class="req" id="req"></div></section>
+  <section class="panel" style="margin-top:12px" id="offerings">
+    <h2>Course offerings <span class="tag">Placeholder</span></h2>
+    <div class="note">The plan is only as good as this table. The bulletin says which courses run in alternate years but not which quarters or which years, so these are placeholders. Check the quarters each course is offered and choose every year, even, or odd academic years ("even" = starting in an even calendar year, e.g. 2026–27). Changes apply immediately and are kept in this browser.</div>
+    <div class="offwrap"><table class="off" id="off"></table></div>
     <div style="margin-top:8px"><button id="resetOff">Restore placeholder offerings</button></div>
-  </details>
+  </section>
 </main>
 </div>
 
