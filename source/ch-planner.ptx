@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section xml:id="ch-planner" xmlns:xi="http://www.w3.org/2001/XInclude">
-  <title>Four-year planner</title>
+  <title>Mathematics four-year planner</title>
 
   <introduction>
     <p>
@@ -22,7 +22,10 @@
         <p>
           Entries are kept in the browser, so an advisor can set up a student, close
           the page, and come back to it. <q>Clear student</q> resets everything except
-          the offerings table.
+          the offerings table. <q>Download plan (PDF)</q> opens the browser's print
+          dialog with only the plan on the page: a header naming the emphasis and the
+          completed courses, the four year-tables, the warnings, and the requirement
+          check. Choose <q>Save as PDF</q> there to keep a copy.
         </p>
       </instructions>
       <static>

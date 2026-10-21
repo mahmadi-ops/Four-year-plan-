@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xml:id="ch-cs-planner" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Computer science four-year planner</title>
+
+  <introduction>
+    <p>
+      The same planner for the computer science major. Prerequisites and the
+      2026<ndash/>27 quarter offerings come from the department's CS advising
+      document rather than the Bulletin, and the department's sequencing advice is
+      built in: <c>MATH 122</c> as soon after <c>MATH 14</c> as possible,
+      <c>CSCI 161</c> and <c>163</c> not long after <c>MATH 51</c>, <c>CSCI 62</c>
+      before any upper-division CSCI course, and at least one programming-heavy
+      upper-division course in sophomore year. Where the advice is not followed the
+      plan says so under <q>Warnings and advice</q>.
+      For comfortable use, <url href="external/cs-planner.html" visual="">open the planner full size in a new tab</url>.
+    </p>
+  </introduction>
+
+  <subsection xml:id="sec-cs-planner">
+    <title>The planner</title>
+    <interactive xml:id="cs-planner" iframe="cs-planner.html" width="100%" aspect="2:3">
+      <instructions>
+        <p>
+          With the emphasis left as <q>Undecided</q>, the five emphasis slots are
+          filled with programming-heavy courses so the plan still shows a full load;
+          choosing an emphasis replaces them with that emphasis's requirements.
+          <q>Download plan (PDF)</q> prints only the plan.
+        </p>
+      </instructions>
+      <static><p>Interactive four-year planner (available in the HTML version).</p></static>
+    </interactive>
+  </subsection>
+
+  <subsection xml:id="sec-cs-planner-offerings">
+    <title>Course offerings</title>
+    <p>
+      The offerings table holds the tentative 2026<ndash/>27 schedule from the
+      advising document, applied to every year of the plan. Courses the document
+      does not list (<c>CSCI 127</c>, <c>146</c>, <c>147</c>, <c>164</c>, <c>165</c>,
+      <c>CSEN 152</c>, and the MATH electives of the Algorithms emphasis) are marked
+      <q>placeholder</q> and given a guessed quarter; <c>CSEN 152</c> is marked as not
+      offered. The planner never fills an emphasis slot with a placeholder course on
+      its own, but will schedule one the student asks for.
+    </p>
+  </subsection>
+
+</section>

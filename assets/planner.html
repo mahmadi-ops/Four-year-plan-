@@ -78,9 +78,26 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--c);margin-right:5px;vertical-align:-1px}
 .tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);background:var(--blue-soft);border-radius:3px;padding:2px 6px;margin-left:6px;vertical-align:2px}
 .offwrap{overflow-x:auto}
+.printhead{display:none}
+.ph-title{font-family:var(--serif);font-size:1.3rem;font-weight:700}
+.ph-meta{color:var(--muted);font-size:.85rem;margin-top:2px}
+@media print{
+  @page{margin:12mm}
+  body{padding:0;font-size:11px}
+  h1,.sub,#settings,.noprint,#offerings,.legend,button{display:none!important}
+  .layout{display:block;margin-top:0}
+  .printhead{display:block;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .years{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .panel,.w,table,.years>div{break-inside:avoid}
+  td.now{box-shadow:none}
+  .panel.result{background:#fff}
+  .badge{border:1px solid currentColor;color:var(--ink)!important;background:#fff!important}
+  a{color:inherit;text-decoration:none}
+}
 </style>
 </head>
 <body>
+
 
 <h1>Mathematics major four-year planner</h1>
 <div class="sub">Check off what the student has completed, choose an emphasis, and set where they are now. The planner fills the remaining quarters using the 2026–27 bulletin's prerequisites and co-requisites, and flags any course that can't wait.</div>
@@ -98,17 +115,18 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
   <h3>Completed: other departments</h3><div class="chk" id="doneExt"></div>
   <h3>Electives the student wants</h3><div class="chk" id="want"></div>
   <div class="note">Unchecked slots among the seven upper-division courses are filled automatically.</div>
-  <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><button id="reset">Clear student</button></div>
+  <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><button id="reset">Clear student</button><button id="pdf">Download plan (PDF)</button></div>
 </aside>
 
-<main style="min-width:0">
+<main style="min-width:0" id="plan">
+  <div class="printhead" id="printhead"></div>
   <div class="years" id="years"></div>
   <div class="legend">
     <span><i style="--c:var(--lower)"></i>lower division</span><span><i style="--c:var(--analysis)"></i>analysis</span><span><i style="--c:var(--algebra)"></i>algebra</span><span><i style="--c:var(--geometry)"></i>geometry</span><span><i style="--c:var(--discrete)"></i>discrete</span><span><i style="--c:var(--applied)"></i>applied</span><span><i style="--c:var(--other)"></i>other elective</span><span><i style="--c:var(--ext)"></i>other department</span>
   </div>
   <section class="panel result warns" id="warns"></section>
   <section class="panel" style="margin-top:12px"><h2>Requirement check</h2><div class="req" id="req"></div></section>
-  <section class="panel" style="margin-top:12px" id="offerings">
+  <section class="panel noprint" style="margin-top:12px" id="offerings">
     <h2>Course offerings <span class="tag">Placeholder</span></h2>
     <div class="note">The plan is only as good as this table. The bulletin says which courses run in alternate years but not which quarters or which years, so these are placeholders. Check the quarters each course is offered and choose every year, even, or odd academic years ("even" = starting in an even calendar year, e.g. 2026–27). Changes apply immediately and are kept in this browser.</div>
     <div class="offwrap"><table class="off" id="off"></table></div>
@@ -353,7 +371,12 @@ function renderChecks() {
   mk($('#doneExt'), Object.keys(C).filter(id=>C[id].k==='ext' && id!=='MATH 195'), 'done');
   mk($('#want'), UPPER, 'want');
 }
-function render() { const P = plan(); renderYears(P); renderWarns(P); renderReq(P); }
+function renderHead() {
+  const done = Object.keys(S.done).filter(k=>S.done[k]);
+  const en = {applied:'Applied Mathematics',ds:'Data Science',fin:'Financial Mathematics',econ:'Mathematical Economics',ed:'Mathematics Education'}[S.emph] || 'none';
+  $('#printhead').innerHTML = `<div class="ph-title">Mathematics major, four-year plan</div><div class="ph-meta">Emphasis: ${esc(en)}${S.goal?' · preparing for graduate study ('+(S.goal==='pure'?'pure':'applied')+')':''} · Year 1: ${S.y1}–${String(S.y1+1).slice(2)} · Planned from Year ${S.curY+1} ${QN[S.curQ]} · Prepared ${new Date().toLocaleDateString()}</div><div class="ph-meta">Completed: ${done.length?esc(done.join(', ')):'none entered'}</div>`;
+}
+function render() { const P = plan(); renderHead(); renderYears(P); renderWarns(P); renderReq(P); }
 
 // ---------- wiring ----------
 const y1 = $('#y1'); for (let y=2020; y<=2030; y++) { const o=document.createElement('option'); o.value=y; o.textContent=`${y}–${String(y+1).slice(2)}`; y1.appendChild(o); }
@@ -371,6 +394,7 @@ document.addEventListener('change', e => {
   save(); render();
 });
 $('#reset').addEventListener('click', () => { S.done = {}; S.want = {}; S.emph=''; S.goal=''; S.curY=0; S.curQ=0; $('#emph').value=''; $('#goal').value=''; $('#curY').value=0; $('#curQ').value=0; renderChecks(); save(); render(); });
+$('#pdf').addEventListener('click', () => { renderHead(); window.print(); });
 $('#resetOff').addEventListener('click', () => { S.off = JSON.parse(JSON.stringify(DEFAULT_OFF)); renderOff(); save(); render(); });
 window.__planner = { plan, S, C };
 })();
