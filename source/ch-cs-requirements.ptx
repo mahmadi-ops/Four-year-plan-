@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xml:id="ch-cs-requirements" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Computer science degree requirements</title>
+
+  <introduction>
+    <p>
+      Restated from the Santa Clara University Undergraduate Bulletin
+      2026<ndash/>27, Department of Mathematics and Computer Science. The Bulletin
+      is authoritative.
+    </p>
+  </introduction>
+
+  <subsection xml:id="sec-cs-req-major">
+    <title>Major in Computer Science</title>
+    <p>In addition to the Core Curriculum for the bachelor of science degree:</p>
+    <ul>
+      <li><p><c>MATH 11</c>, <c>12</c>, <c>13</c>, <c>14</c>, <c>51</c>, <c>53</c>.</p></li>
+      <li><p><c>CSCI 10</c>, <c>60</c>, <c>61</c>, <c>62</c>.</p></li>
+      <li><p>One of <c>PHYS 31</c>, <c>CHEM 11</c>, <c>ENVS 21</c>, or <c>ENVS 23</c>.</p></li>
+      <li><p><c>CSEN 20</c> and <c>20L</c>, <c>ECEN 21</c> and <c>21L</c>.</p></li>
+      <li><p><c>MATH 122</c>, <c>CSCI 161</c> and <c>163</c>, and <c>CSEN 177</c> and <c>177L</c>.</p></li>
+      <li><p>Five additional 4- or 5-unit upper-division courses in one of the four emphases below.</p></li>
+    </ul>
+    <p>
+      At least four of the required upper-division courses must be taken at Santa
+      Clara. A single upper-division course can satisfy only one major or minor
+      requirement in the department. Students should decide on an emphasis by the
+      end of junior year; only one emphasis is allowed, and Data Science may not be
+      the emphasis for both a mathematics and a computer science major. Students,
+      especially in the Software emphasis, are encouraged to take upper-division
+      courses beyond the minimum, such as <c>CSEN 178</c>.
+    </p>
+  </subsection>
+
+  <subsection xml:id="sec-cs-req-emphases">
+    <title>Emphases</title>
+    <dl>
+      <li>
+        <title>Algorithms and Complexity</title>
+        <p><c>CSCI 162</c>, <c>CSCI 164</c>; two more from <c>CSCI 146</c>, <c>147</c>, <c>165</c>, <c>181</c>, <c>MATH 101</c>, <c>175</c>, <c>176</c>, <c>177</c>, <c>178</c>; one more from that list or any other 4<ndash/>5 unit upper-division CSCI course below 190 or CSEN course below 188.</p>
+      </li>
+      <li>
+        <title>Data Science</title>
+        <p><c>CSCI 183</c>, <c>184</c>, <c>185</c>; two more from <c>CSCI 127</c>, <c>146</c>, <c>147</c>, <c>164</c>, <c>166</c>, <c>MATH 123</c>, <c>CSEN 166</c>, or any other 4<ndash/>5 unit upper-division CSCI course below 190 or CSEN course below 188.</p>
+      </li>
+      <li>
+        <title>Security</title>
+        <p><c>MATH 178</c>, <c>CSCI 180</c>, <c>CSCI 181</c>; two more from <c>MATH 175</c>, <c>CSEN 152</c> and <c>152L</c>, <c>CSEN 161</c> and <c>161L</c>, <c>CSEN 146</c> and <c>146L</c>, or any other 4<ndash/>5 unit upper-division CSCI course below 190 or CSEN course below 188, excluding <c>CSEN 150</c>.</p>
+      </li>
+      <li>
+        <title>Software</title>
+        <p><c>CSCI 169</c>, <c>CSCI 187</c>, <c>CSEN 146</c> and <c>146L</c>; one more from <c>CSCI 183</c>, <c>180</c>, <c>168</c>, or any other 4<ndash/>5 unit upper-division CSCI course below 190; one other from <c>CSCI 183</c>, <c>180</c>, <c>168</c>, <c>CSEN 161</c>, <c>178</c>, or any other 4<ndash/>5 unit upper-division CSCI course below 190 or CSEN course below 188.</p>
+      </li>
+    </dl>
+  </subsection>
+
+  <subsection xml:id="sec-cs-req-minor">
+    <title>Minor in Computer Science</title>
+    <p>
+      <c>CSCI 10</c>, <c>60</c>, <c>61</c>, and <c>62</c>; <c>MATH 51</c>;
+      <c>CSEN 20</c> and <c>20L</c>; three 4- or 5-unit upper-division courses:
+      two upper-division CSCI courses and one upper-division CSCI or CSEN course.
+      <c>CSCI 192</c> does not count toward the minor.
+    </p>
+  </subsection>
+
+  <subsection xml:id="sec-cs-req-prereqs">
+    <title>Prerequisites used by the planner and the map</title>
+    <p>
+      From the course descriptions. Every CSCI prerequisite requires a grade of
+      C<minus/> or better, or equivalent, or permission of the instructor where the
+      Bulletin says so. <q>Alt.</q> marks courses offered in alternate years.
+    </p>
+    <table xml:id="tab-cs-prereqs">
+      <title>Computer science courses and their prerequisites</title>
+      <tabular halign="left" top="minor" bottom="minor" left="minor" right="minor">
+        <col width="13%"/><col width="33%"/><col width="46%"/><col width="8%"/>
+        <row header="yes" bottom="medium">
+          <cell>Course</cell><cell>Title</cell><cell>Prerequisite</cell><cell>Alt.</cell>
+        </row>
+        <row><cell>CSCI 10</cell><cell>Introduction to Computer Science</cell><cell>none</cell><cell></cell></row>
+        <row><cell>CSCI 60</cell><cell>Introduction to C++ and Object-Oriented Programming</cell><cell>CSCI 10</cell><cell></cell></row>
+        <row><cell>CSCI 61</cell><cell>Data Structures</cell><cell>CSCI 60 (not with CSEN 12)</cell><cell></cell></row>
+        <row><cell>CSCI 62</cell><cell>Advanced Programming</cell><cell>CSCI 60 and CSCI 61 or CSEN 79</cell><cell></cell></row>
+        <row><cell>CSCI 127</cell><cell>Computer Simulation</cell><cell>CSCI 10 (MATH 122 recommended); offered on demand</cell><cell></cell></row>
+        <row><cell>CSCI 146</cell><cell>Optimization I</cell><cell>CSCI 10, MATH 14, MATH 53; also MATH 146</cell><cell></cell></row>
+        <row><cell>CSCI 147</cell><cell>Optimization II</cell><cell>MATH 122 (or AMTH 108), MATH/CSCI 146; also MATH 147</cell><cell></cell></row>
+        <row><cell>CSCI 161</cell><cell>Theory of Automata and Languages</cell><cell>MATH 51</cell><cell></cell></row>
+        <row><cell>CSCI 162</cell><cell>Computational Complexity</cell><cell>MATH 51</cell><cell>yes</cell></row>
+        <row><cell>CSCI 163</cell><cell>Theory of Algorithms</cell><cell>MATH 51 and CSCI 61 or CSEN 79 (CSCI 62 recommended); also CSEN 179</cell><cell></cell></row>
+        <row><cell>CSCI 164</cell><cell>Advanced Theory of Algorithms</cell><cell>CSCI 163 or CSEN 179</cell><cell></cell></row>
+        <row><cell>CSCI 165</cell><cell>Data Privacy and Algorithmic Fairness</cell><cell>MATH 51 and CSCI 10 (CSCI 163 and basic probability recommended)</cell><cell></cell></row>
+        <row><cell>CSCI 166</cell><cell>Numerical Analysis</cell><cell>CSCI 10 and MATH 53; also MATH 166</cell><cell></cell></row>
+        <row><cell>CSCI 168</cell><cell>Computer Graphics</cell><cell>CSCI 62 or CSEN 79, and MATH 13</cell><cell></cell></row>
+        <row><cell>CSCI 169</cell><cell>Programming Languages</cell><cell>CSCI 62 or CSEN 79, and MATH 51 (not with CSEN 171)</cell><cell></cell></row>
+        <row><cell>CSCI 180</cell><cell>Computer Security</cell><cell>CSEN 20, and CSCI 62 or CSEN 79</cell><cell></cell></row>
+        <row><cell>CSCI 181</cell><cell>Applied Cryptography</cell><cell>MATH 178, and CSCI 62 or CSEN 79</cell><cell></cell></row>
+        <row><cell>CSCI 183</cell><cell>Introduction to Data Science and Machine Learning</cell><cell>CSCI 62 or CSEN 79, MATH 53 and 122 (CSCI 169 strongly recommended)</cell><cell></cell></row>
+        <row><cell>CSCI 184</cell><cell>Advanced Machine Learning</cell><cell>CSCI 183</cell><cell></cell></row>
+        <row><cell>CSCI 185</cell><cell>Data Mining</cell><cell>CSCI 62 or CSEN 79, MATH 53 and 122 (CSCI 169 or 183 strongly recommended)</cell><cell></cell></row>
+        <row><cell>CSCI 187</cell><cell>The Design and Management of Software</cell><cell>CSCI 62, CSEN 70, or CSEN 79 (not with CSEN 174)</cell><cell></cell></row>
+        <row><cell>MATH 178</cell><cell>Cryptography</cell><cell>MATH 51; followed by CSCI 181</cell><cell></cell></row>
+      </tabular>
+    </table>
+  </subsection>
+
+</section>

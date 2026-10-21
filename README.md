@@ -3,8 +3,8 @@
 A PreTeXt site for advising mathematics majors at Santa Clara University:
 
 - **Four-year planner** (`assets/planner.html`): enter a student's completed courses and emphasis; get a quarter-by-quarter plan with prerequisite, co-requisite and alternate-year warnings.
-- **Course maps** (`assets/*-map*.html`): the whole major on one page with every prerequisite drawn as an arrow, plus variants for proposed changes and a quantum course.
-- **Degree requirements** (`source/ch-requirements.ptx`): the rules from the 2026–27 Undergraduate Bulletin, which is the source for everything here.
+- **Course maps** (`assets/major-map.html`, `assets/cs-major-map.html`): each major on one page with every prerequisite drawn as an arrow.
+- **Degree requirements** (`source/ch-requirements.ptx`, `source/ch-cs-requirements.ptx`): the rules from the 2026–27 Undergraduate Bulletin, which is the source for everything here.
 
 ## Build
 
@@ -21,10 +21,12 @@ Pushing to `main` builds the site and publishes it to the `gh-pages` branch (`.g
 ```
 project.ptx                 target: web
 publication/publication.ptx external directory = assets/
-source/main.ptx             book shell
+source/main.ptx             article shell
 source/ch-planner.ptx       planner chapter
-source/ch-maps.ptx          course maps
-source/ch-requirements.ptx  bulletin requirements
+source/ch-maps.ptx          mathematics major map
+source/ch-cs-map.ptx        computer science major map
+source/ch-requirements.ptx  bulletin requirements, mathematics
+source/ch-cs-requirements.ptx bulletin requirements, computer science
 assets/                     the planner and maps; copied to external/ in the built site
 ```
 

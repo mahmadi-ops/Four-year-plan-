@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xml:id="ch-cs-map" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Computer science major map</title>
+
+  <p>
+    The computer science major from the same Bulletin, drawn the same way:
+    lower division (mathematics on the left, programming beside it), the four
+    required upper-division courses, the four emphases with the courses each one
+    names, and the minor. Blue borders mark CSCI courses. Prerequisites for CSEN
+    and ECEN courses are set by the School of Engineering and are not drawn.
+    <url href="external/cs-major-map.html" visual="">Open full size</url>
+    or <url href="external/cs-major-map.pdf" visual="">download as PDF</url>.
+  </p>
+  <interactive xml:id="cs-major-map" iframe="cs-major-map.html" width="100%" aspect="1920:1240">
+    <static><p>Interactive map of the computer science major (available in the HTML version).</p></static>
+  </interactive>
+
+</section>

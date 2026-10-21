@@ -19,9 +19,10 @@
         This site has three parts. The <xref ref="ch-planner" text="title"/> takes
         what a student has completed and lays out the rest of the major quarter by
         quarter, with warnings for anything that cannot wait. The
-        <xref ref="ch-maps" text="title"/> show the whole major on one page, with
-        every prerequisite drawn as an arrow. The
-        <xref ref="ch-requirements" text="title"/> section restates the degree
+        <xref ref="ch-maps" text="title"/> and <xref ref="ch-cs-map" text="title"/>
+        show each major on one page, with every prerequisite drawn as an arrow. The
+        <xref ref="ch-requirements" text="title"/> and
+        <xref ref="ch-cs-requirements" text="title"/> sections restate the degree
         requirements from the 2026<ndash/>27 Undergraduate Bulletin, which is the
         source for everything else here.
       </p>
@@ -36,7 +37,9 @@
 
     <xi:include href="ch-planner.ptx"/>
     <xi:include href="ch-maps.ptx"/>
+    <xi:include href="ch-cs-map.ptx"/>
     <xi:include href="ch-requirements.ptx"/>
+    <xi:include href="ch-cs-requirements.ptx"/>
 
   </article>
 </pretext>

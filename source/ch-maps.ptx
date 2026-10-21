@@ -1,89 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section xml:id="ch-maps" xmlns:xi="http://www.w3.org/2001/XInclude">
-  <title>Course maps</title>
+  <title>Mathematics major map</title>
 
-  <introduction>
-    <p>
-      Each map shows the courses of the major as boxes, grouped by requirement
-      category, with an arrow from every prerequisite to the course that needs it.
-      Gold arrows feed a course that is offered only in alternate years, which is
-      where timing goes wrong most often. Hover over a course to light up what it
-      needs and what it unlocks; hover over an emphasis to see the courses it
-      requires.
-    </p>
-  </introduction>
-
-  <subsection xml:id="sec-map-current">
-    <title>The major as it stands</title>
-    <p>
-      The major from the 2026<ndash/>27 Bulletin: lower division, the seven
-      upper-division courses by category, the five emphases, and the minor.
-      <url href="external/major-map.html" visual="">Open full size</url>
-      or <url href="external/major-map.pdf" visual="">download as PDF</url>.
-    </p>
-    <interactive xml:id="major-map" iframe="major-map.html" width="100%" aspect="1920:1240">
-      <static><p>Interactive map of the major (available in the HTML version).</p></static>
-    </interactive>
-  </subsection>
-
-  <subsection xml:id="sec-map-recommended">
-    <title>If recommended prerequisites became required</title>
-    <p>
-      The same map with one change: everywhere the Bulletin says that
-      <c>MATH 23</c>, <c>51</c>, or <c>53</c> is <q>recommended</q> before a course,
-      it is drawn as a prerequisite (dashed arrows). That affects
-      <c>MATH 105</c> (23 and 51), <c>MATH 144</c> (23), and <c>MATH 155</c> (23).
-      The practical effect is that <c>MATH 23</c> must be finished by the end of
-      sophomore year, since four alternate-year courses would then depend on it.
-      <url href="external/major-map-recommended-to-required.html" visual="">Open full size</url>
-      or <url href="external/major-map-recommended-to-required.pdf" visual="">download as PDF</url>.
-    </p>
-    <interactive xml:id="major-map-rec" iframe="major-map-recommended-to-required.html" width="100%" aspect="1920:1240">
-      <static><p>Interactive map (available in the HTML version).</p></static>
-    </interactive>
-  </subsection>
-
-  <subsection xml:id="sec-map-gate">
-    <title>If MATH 51 and 53 gated the upper division</title>
-    <p>
-      A larger change: <c>MATH 51</c> and <c>MATH 53</c> become prerequisites for
-      every upper-division course and are offered every quarter, with no
-      renumbering. The dashed arrows are the new prerequisites.
-      <url href="external/major-map-51-53-gate.html" visual="">Open full size</url>.
-    </p>
-    <interactive xml:id="major-map-gate" iframe="major-map-51-53-gate.html" width="100%" aspect="2200:1460">
-      <static><p>Interactive map (available in the HTML version).</p></static>
-    </interactive>
-  </subsection>
-
-  <subsection xml:id="sec-map-cs">
-    <title>With the department's computer science courses</title>
-    <p>
-      The major alongside the CSCI courses taught in the department. Blue arrows are
-      the places where a mathematics course is a prerequisite for a computer science
-      course or the reverse: <c>MATH 51</c> gates all of CS theory, <c>MATH 53</c> and
-      <c>122</c> gate the data science courses, and <c>MATH 178</c> gates
-      <c>CSCI 181</c>.
-      <url href="external/math-and-cs-map.html" visual="">Open full size</url>.
-    </p>
-    <interactive xml:id="math-cs-map" iframe="math-and-cs-map.html" width="100%" aspect="2740:1240">
-      <static><p>Interactive map (available in the HTML version).</p></static>
-    </interactive>
-  </subsection>
-
-  <subsection xml:id="sec-map-quantum">
-    <title>A quantum information and computation course</title>
-    <p>
-      How a course in quantum information and computation would sit in the
-      department: its required prerequisites on the left, the upper-division
-      mathematics courses whose tools it draws on above and to the right, and the
-      computer science theory courses beside them.
-      <url href="external/quantum-course-map.html" visual="">Open full size</url>
-      or <url href="external/quantum-course-map.pdf" visual="">download as PDF</url>.
-    </p>
-    <interactive xml:id="quantum-map" iframe="quantum-course-map.html" width="100%" aspect="16:9">
-      <static><p>Interactive map (available in the HTML version).</p></static>
-    </interactive>
-  </subsection>
+  <p>
+    The major from the 2026<ndash/>27 Bulletin on one page: lower division, the
+    seven upper-division courses by category, the five emphases, and the minor.
+    Each box is a course and each arrow runs from a prerequisite to the course
+    that needs it. Gold arrows feed a course offered only in alternate years,
+    which is where timing goes wrong most often. Hover over a course to light up
+    what it needs and what it unlocks; hover over an emphasis to see the courses
+    it requires.
+    <url href="external/major-map.html" visual="">Open full size</url>
+    or <url href="external/major-map.pdf" visual="">download as PDF</url>.
+  </p>
+  <interactive xml:id="major-map" iframe="major-map.html" width="100%" aspect="1920:1240">
+    <static><p>Interactive map of the mathematics major (available in the HTML version).</p></static>
+  </interactive>
 
 </section>
