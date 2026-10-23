@@ -137,7 +137,7 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
   <label class="row">Year 1 is academic year <select id="y1"></select></label>
   <label class="row">Next quarter to plan <span><select id="curY"><option value="0">Year 1</option><option value="1">Year 2</option><option value="2">Year 3</option><option value="3">Year 4</option></select> <select id="curQ"><option value="0">Fall</option><option value="1">Winter</option><option value="2">Spring</option></select></span></label>
   <label class="row">Emphasis <select id="emph"><option value="">None</option><option value="applied">Applied Mathematics</option><option value="ds">Data Science</option><option value="fin">Financial Mathematics</option><option value="econ">Mathematical Economics</option><option value="ed">Mathematics Education</option></select></label>
-  <label class="row">Major courses per quarter, at most <input type="number" id="cap" min="1" max="4" value="2"></label>
+  <label class="row">Major courses per quarter, at most <input type="number" id="cap" min="1" max="4" value="3"></label>
   <details class="credit" id="creditBox"><summary>Credit from AP, IB or transfer <span id="creditCount" style="color:var(--muted);font-weight:400"></span></summary><div class="chk" id="credit"></div><details class="more" id="creditMore"><summary>Upper-division and other courses</summary><div class="chk" id="credit2"></div></details></details>
   <div class="note">Use <b>+ add course</b> in the plan: earlier quarters for courses taken at SCU, later quarters for courses you intend to take.</div>
   <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><button id="reset">Clear student</button><button id="pdf">Download plan (PDF)</button></div>
@@ -239,7 +239,7 @@ const QN = ['Fall','Winter','Spring'];
 const col = k => `var(--${k})`;
 
 // ---------- state ----------
-const S = { y1: 2026, curY: 0, curQ: 0, emph: '', cap: 2, taken: {}, credit: {}, want: {}, off: JSON.parse(JSON.stringify(DEFAULT_OFF)) };
+const S = { y1: 2026, curY: 0, curQ: 0, emph: '', cap: 3, taken: {}, credit: {}, want: {}, off: JSON.parse(JSON.stringify(DEFAULT_OFF)) };
 try { const s = JSON.parse(localStorage.getItem('mathplanner')||'null'); if (s) { Object.assign(S, s); S.off = Object.assign(JSON.parse(JSON.stringify(DEFAULT_OFF)), s.off||{}); } } catch(e){}
 if (S.done) { S.credit = Object.assign({}, S.done, S.credit); delete S.done; }
 S.taken = S.taken || {}; S.credit = S.credit || {};
@@ -248,6 +248,12 @@ const doneIds = () => Object.keys(C).filter(isDone);
 const started = () => Object.keys(S.taken).length > 0 || Object.keys(S.credit).some(k=>S.credit[k]);
 const completed = id => !!S.credit[id] || (id in S.taken && S.taken[id] < S.curY*3 + S.curQ);
 delete S.goal;
+// Target quarters from the department's sample curriculum (Mathematics Major Checklist, Fall 2025):
+// Y1 F MATH 11 · W CSCI 10, MATH 12, PHYS 31 · S MATH 13, PHYS 32 · Y2 F MATH 14, 51 · W MATH 53 · S MATH 23, 52;
+// upper division from junior year.  A course is not suggested before its target unless a deadline forces it.
+const TQ = {'MATH 11':0,'CSCI 10':1,'MATH 12':1,'PHYS 31':1,'MATH 13':2,'PHYS 32':2,'MATH 14':3,'MATH 51':3,'MATH 53':4,'MATH 23':5,'MATH 52':5};
+const tqOf = id => id in TQ ? TQ[id] : (UPPER.includes(id) || id==='MATH 195') ? 6 : 3;
+const classCap = (id, list) => UPPER.includes(id) ? list.filter(x=>UPPER.includes(x)).length < 2 : true;   // at most two upper-division courses a quarter
 const save = () => { try { localStorage.setItem('mathplanner', JSON.stringify(S)); } catch(e){} };
 
 // ---------- planning ----------
@@ -258,7 +264,7 @@ function offered(id, q) { // q: 0..11
   const yr = S.y1 + Math.floor(q/3);
   return (yr % 2) === o.alt;
 }
-function requiredSet() {
+function requiredSet(excl = new Set()) {
   const need = new Set(), why = {};
   const add = (id, w) => { if (!C[id]) return; if (!need.has(id)) { need.add(id); why[id] = w; } };
   LOWER.forEach(id=>add(id,'lower division')); EXTREQ.forEach(id=>add(id,'major requirement'));
@@ -274,11 +280,11 @@ function requiredSet() {
   // category requirements, then fill to seven
   const ud = () => [...need].concat(doneIds()).filter(id=>UPPER.includes(id));
   for (const [cat, list] of Object.entries(CATS)) if (!list.some(id=>ud().includes(id))) add(list.find(id=>!isDone(id)) || list[0], cat==='third'?'geometry / discrete / applied requirement':cat+' requirement');
-  for (const id of FILL) { if (new Set(ud()).size >= 7) break; if (!need.has(id) && !isDone(id)) add(id,'fills the seven'); }
+  for (const id of FILL) { if (new Set(ud()).size >= 7) break; if (!need.has(id) && !isDone(id) && !excl.has(id)) add(id,'fills the seven'); }
   return { need: [...need].filter(id=>!isDone(id)), why };
 }
-function plan() {
-  const { need, why } = requiredSet();
+function plan(excl = new Set()) {
+  const { need, why } = requiredSet(excl);
   const start = S.curY*3 + S.curQ;
   const reqSet = new Set(need);
   const deps = {}; need.forEach(id=>{ deps[id]=[]; });
@@ -303,17 +309,25 @@ function plan() {
     const ok = (g, strict) => g.some(p => (p in at) && (strict ? at[p] < q : at[p] <= q));
     return (C[id].pre||[]).every(g=>ok(g,true)) && (C[id].co||[]).every(g=>ok(g,false));
   };
-  const prio = id => [latest[id]===null?99:latest[id], S.off[id].alt===null?1:0, C[id].k==='lower'?0:1, -deps[id].length];
+  const prio = (id,q) => [tqOf(id), latest[id]===null?99:latest[id], S.off[id].alt===null?1:0, C[id].k==='lower'?0:1, -deps[id].length];
   for (let q=start; q<=11; q++) {
     sched[q] = Object.keys(S.taken).filter(k=>S.taken[k]===q);
-    let progress = true;
-    while (progress && sched[q].length < S.cap) {
-      progress = false;
-      const cand = need.filter(id=>!(id in at) && offered(id,q) && satisfied(id,q)).sort((a,b)=>{ const pa=prio(a), pb=prio(b); for (let i=0;i<4;i++) if (pa[i]!==pb[i]) return pa[i]-pb[i]; return a.localeCompare(b); });
-      if (cand.length) { const id = cand[0]; sched[q].push(id); at[id]=q; progress = true; }
-    }
+    const bySample = id => tqOf(id) <= q || (latest[id]!==null && latest[id] <= q+2);   // on schedule, or a deadline is near
+    const pick = (filter) => {
+      let progress = true;
+      while (progress && sched[q].length < S.cap) {
+        progress = false;
+        const cand = need.filter(id=>!(id in at) && offered(id,q) && satisfied(id,q) && filter(id) && (classCap(id, sched[q]) || (latest[id]!==null && latest[id] <= q)))
+          .sort((a,b)=>{ const pa=prio(a,q), pb=prio(b,q); for (let i=0;i<pa.length;i++) if (pa[i]!==pb[i]) return pa[i]-pb[i]; return a.localeCompare(b); });
+        if (cand.length) { const id = cand[0]; sched[q].push(id); at[id]=q; progress = true; }
+      }
+    };
+    pick(bySample);
+    if (sched[q].length === 0) { const n = S.cap; S.cap = 1; pick(()=>true); S.cap = n; }   // never leave a quarter empty while work remains
   }
   // warnings
+  const stuck = need.filter(id=>!(id in at) && why[id]==='fills the seven');
+  if (stuck.length && excl.size < 8) return plan(new Set([...excl, ...stuck]));
   const W = [];
   const qname = q => `Year ${Math.floor(q/3)+1} ${QN[q%3]}`;
   for (const [id,q] of Object.entries(S.taken)) {

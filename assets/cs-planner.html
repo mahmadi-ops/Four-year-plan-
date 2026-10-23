@@ -136,7 +136,7 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
   <label class="row">Year 1 is academic year <select id="y1"></select></label>
   <label class="row">Next quarter to plan <span><select id="curY"><option value="0">Year 1</option><option value="1">Year 2</option><option value="2">Year 3</option><option value="3">Year 4</option></select> <select id="curQ"><option value="0">Fall</option><option value="1">Winter</option><option value="2">Spring</option></select></span></label>
   <label class="row">Emphasis <select id="emph"><option value="">Undecided</option><option value="alg">Algorithms &amp; Complexity</option><option value="ds">Data Science</option><option value="sec">Security</option><option value="sw">Software</option></select></label>
-  <label class="row">Major courses per quarter, at most <input type="number" id="cap" min="1" max="4" value="2"></label>
+  <label class="row">Major courses per quarter, at most <input type="number" id="cap" min="1" max="4" value="3"></label>
   <details class="credit" id="creditBox"><summary>Credit from AP, IB or transfer <span id="creditCount" style="color:var(--muted);font-weight:400"></span></summary><div class="chk" id="credit"></div><details class="more" id="creditMore"><summary>Upper-division and other courses</summary><div class="chk" id="credit2"></div></details></details>
   <div class="note">Use <b>+ add course</b> in the plan: earlier quarters for courses taken at SCU, later quarters for courses you intend to take.</div>
   <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><button id="reset">Clear student</button><button id="pdf">Download plan (PDF)</button></div>
@@ -228,7 +228,7 @@ const QN = ['Fall','Winter','Spring'];
 const col = k => k==='cs' ? 'var(--analysis)' : k==='prog' ? 'var(--applied)' : `var(--${k})`;
 
 // ---------- state ----------
-const S = { y1: 2026, curY: 0, curQ: 0, emph: '', cap: 2, taken: {}, credit: {}, want: {}, off: JSON.parse(JSON.stringify(DEFAULT_OFF)) };
+const S = { y1: 2026, curY: 0, curQ: 0, emph: '', cap: 3, taken: {}, credit: {}, want: {}, off: JSON.parse(JSON.stringify(DEFAULT_OFF)) };
 try { const s = JSON.parse(localStorage.getItem('csplanner')||'null'); if (s) { Object.assign(S, s); S.off = Object.assign(JSON.parse(JSON.stringify(DEFAULT_OFF)), s.off||{}); } } catch(e){}
 if (S.done) { S.credit = Object.assign({}, S.done, S.credit); delete S.done; }
 S.taken = S.taken || {}; S.credit = S.credit || {};
@@ -236,6 +236,13 @@ const isDone = id => !!S.credit[id] || (id in S.taken);
 const doneIds = () => Object.keys(C).filter(isDone);
 const started = () => Object.keys(S.taken).length > 0 || Object.keys(S.credit).some(k=>S.credit[k]);
 const completed = id => !!S.credit[id] || (id in S.taken && S.taken[id] < S.curY*3 + S.curQ);
+// Target quarters from the department's sample curriculum (CS Sample Curriculum, Fall 2025):
+// Y1 F CSCI 10, MATH 11 · W CSCI 60, MATH 12 · S CSCI 61, MATH 13 · Y2 F CSCI 62, MATH 14, 51 · W MATH 122, emphasis I (programming)
+// · S CSCI 163, MATH 53 · Y3 F CSCI 161, CSEN 20 · W emphasis II, CSEN 177 · S ECEN 21 · Y4 one emphasis course a quarter.
+const TQ = {'CSCI 10':0,'MATH 11':0,'CSCI 60':1,'MATH 12':1,'CSCI 61':2,'MATH 13':2,'CSCI 62':3,'MATH 14':3,'MATH 51':3,'MATH 122':4,'CSCI 163':5,'MATH 53':5,'CSCI 161':6,'CSEN 20':6,'CSEN 177':7,'ECEN 21':8,'SCI':8};
+const isEmph = id => !LOWER.includes(id) && !CORE.includes(id) && id!=='MATH 9';
+const tqOf = id => id in TQ ? TQ[id] : isEmph(id) ? 4 : 0;
+const classCap = (id, list) => isEmph(id) ? !list.some(isEmph) : true;   // one emphasis course a quarter, as in the sample
 const save = () => { try { localStorage.setItem('csplanner', JSON.stringify(S)); } catch(e){} };
 
 // ---------- planning ----------
@@ -263,6 +270,10 @@ function requiredSet() {
     const ud = () => [...need].concat(doneIds()).filter(id=>UDLIST.includes(id));
     for (const id of ANY) { if (new Set(ud()).size >= 5) break; if (!need.has(id) && !isDone(id)) add(id,'elective (emphasis undecided)'); }
   }
+  // the sample curriculum puts a programming-heavy emphasis course in sophomore winter; make sure one is reachable then
+  const soph = new Set(['CSCI 10','CSCI 60','CSCI 61','CSCI 62','MATH 11','MATH 12','MATH 13','MATH 14','MATH 51']);
+  const early = id => PROG.has(id) && (C[id].pre||[]).every(g=>g.some(p=>soph.has(p))) && !(C[id].co||[]).length;
+  if (![...need].concat(doneIds()).some(early)) { const pick = ANY.find(id=>early(id) && !need.has(id) && !isDone(id)); if (pick) add(pick,'programming course for sophomore year (recommended)'); }
   if (need.has('MATH 175')) add('MATH 52','prerequisite of MATH 175');
   return { need: [...need].filter(id=>!isDone(id)), why };
 }
@@ -298,15 +309,21 @@ function plan() {
     if (id==='CSCI 161' && !('CSCI 163' in at)) return 1;
     return 0;
   };
-  const prio = (id,q) => [(latest[id]===null?99:latest[id]) + boost(id,q), S.off[id].alt===null?1:0, LOWER.includes(id)?0:1, -deps[id].length];
+  const prio = (id,q) => [tqOf(id), (latest[id]===null?99:latest[id]) + boost(id,q) + (isEmph(id) && q<=5 && !PROG.has(id) ? 3 : 0), S.off[id].alt===null?1:0, LOWER.includes(id)?0:1, -deps[id].length];
   for (let q=start; q<=11; q++) {
     sched[q] = Object.keys(S.taken).filter(k=>S.taken[k]===q);
-    let progress = true;
-    while (progress && sched[q].length < S.cap) {
-      progress = false;
-      const cand = need.filter(id=>!(id in at) && offered(id,q) && satisfied(id,q)).sort((a,b)=>{ const pa=prio(a,q), pb=prio(b,q); for (let i=0;i<4;i++) if (pa[i]!==pb[i]) return pa[i]-pb[i]; return a.localeCompare(b); });
-      if (cand.length) { const id = cand[0]; sched[q].push(id); at[id]=q; progress = true; }
-    }
+    const bySample = id => tqOf(id) <= q || (latest[id]!==null && latest[id] <= q+2);   // on schedule, or a deadline is near
+    const pick = (filter) => {
+      let progress = true;
+      while (progress && sched[q].length < S.cap) {
+        progress = false;
+        const cand = need.filter(id=>!(id in at) && offered(id,q) && satisfied(id,q) && filter(id) && (classCap(id, sched[q]) || (latest[id]!==null && latest[id] <= q)))
+          .sort((a,b)=>{ const pa=prio(a,q), pb=prio(b,q); for (let i=0;i<pa.length;i++) if (pa[i]!==pb[i]) return pa[i]-pb[i]; return a.localeCompare(b); });
+        if (cand.length) { const id = cand[0]; sched[q].push(id); at[id]=q; progress = true; }
+      }
+    };
+    pick(bySample);
+    if (sched[q].length === 0) { const n = S.cap; S.cap = 1; pick(()=>true); S.cap = n; }   // never leave a quarter empty while work remains
   }
   const W = [];
   const qname = q => `Year ${Math.floor(q/3)+1} ${QN[q%3]}`;
@@ -333,13 +350,13 @@ function plan() {
   const q14 = at['MATH 14'], q122 = at['MATH 122'];
   if (q14!==undefined && q122!==undefined && q122>=start) {
     let earliest = null; for (let q=Math.max(start,q14); q<=11; q++) if (offered('MATH 122',q)) { earliest = q; break; }
-    if (earliest!==null && q122 > earliest) W.push(['info','MATH 122', `is planned in ${qname(q122)} but could be taken in ${qname(earliest)}; the department advises taking it as soon after MATH 14 as possible.`]);
+    if (earliest!==null && q122 > earliest && q122 - q14 > 1) W.push(['info','MATH 122', `is planned in ${qname(q122)} but could be taken in ${qname(earliest)}; the department advises taking it as soon after MATH 14 as possible.`]);
   }
   const q51 = at['MATH 51'], first = Math.min(...[at['CSCI 161'],at['CSCI 163']].filter(x=>x!==undefined));
   if (q51!==undefined && q51>=start && isFinite(first) && first - q51 > 3) W.push(['info','MATH 51', `is ${first-q51} quarters before the first of CSCI 161/163; keep the gap short so the material is fresh.`]);
   const q62 = at['CSCI 62'];
   for (const id of ['CSCI 161','CSCI 163']) if (at[id]!==undefined && q62!==undefined && at[id] < q62 && at[id]>=start) W.push(['info', id, `is planned before CSCI 62; the department advises finishing CSCI 62 before any upper-division CSCI course.`]);
-  if (q62!==undefined && q62 <= 2) { const y2 = [3,4,5].flatMap(q=>sched[q]||[]); if (!y2.some(id=>PROG.has(id)) && start <= 5) W.push(['info','Sophomore year', `has no programming-heavy upper-division course. After CSCI 62 the lower division has little programming; add one of CSCI 181, 183, 185, 169, 184, 168, 187 or a CSEN course in Year 2.`]); }
+  if (q62!==undefined && q62 <= 3) { const y2 = [4,5].flatMap(q=>sched[q]||[]); if (!y2.some(id=>PROG.has(id)) && start <= 5) W.push(['info','Sophomore year', `has no programming-heavy upper-division course. After CSCI 62 the lower division has little programming; add one of CSCI 181, 183, 185, 169, 184, 168, 187 or a CSEN course in Year 2.`]); }
   if (S.emph==='' && start < 9) W.push(['info','Emphasis', `is undecided; the plan fills the five emphasis slots with programming-heavy courses. Declare by the beginning of senior year, earlier if sure, so the degree audit shows the requirements.`]);
   const udDone = UDLIST.filter(id=>isDone(id) || id in at).length;
   return { need, why, sched, at, latest, W, start, udDone };
