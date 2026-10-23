@@ -36,13 +36,14 @@
   <subsection xml:id="sec-cs-planner-offerings">
     <title>Course offerings</title>
     <p>
-      The offerings table holds the tentative 2026<ndash/>27 schedule from the
-      advising document, applied to every year of the plan. Courses the document
-      does not list (<c>CSCI 127</c>, <c>146</c>, <c>147</c>, <c>164</c>, <c>165</c>,
-      <c>CSEN 152</c>, and the MATH electives of the Algorithms emphasis) are marked
-      <q>placeholder</q> and given a guessed quarter; <c>CSEN 152</c> is marked as not
-      offered. The planner never fills an emphasis slot with a placeholder course on
-      its own, but will schedule one the student asks for.
+      Upper-division quarters and the alternate-year rotation come from the
+      department's
+      <url href="https://www.scu.edu/cas/mathcs/academic-program/upper-division-course-schedule/" visual="scu.edu/cas/mathcs">upper-division course schedule</url>
+      (revised May 2026); the lower-division CSCI courses and MATH 51, 52, 53 and
+      122 from the tentative 2026<ndash/>27 list in the CS advising document.
+      Calculus, the CSEN and ECEN courses and the science course are guesses, marked
+      <q>placeholder</q> in the offerings table. CSCI 127 and 165 are offered by
+      request only and are never suggested.
     </p>
   </subsection>
 

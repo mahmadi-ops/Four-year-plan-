@@ -60,7 +60,7 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); }
   <div id="legend">
     <div class="row"><svg width="44" height="10"><line x1="0" y1="5" x2="36" y2="5" stroke="rgba(243,242,242,0.35)" stroke-width="1.5"/><path d="M36,1 L44,5 L36,9 z" fill="rgba(243,242,242,0.45)"/></svg><span>is a prerequisite for</span></div>
     <div class="row"><svg width="44" height="10"><line x1="0" y1="5" x2="36" y2="5" stroke="rgba(182,130,53,0.75)" stroke-width="1.5"/><path d="M36,1 L44,5 L36,9 z" fill="rgba(182,130,53,0.85)"/></svg><span>feeds a course offered only in alternate years</span></div>
-    <div class="row"><span class="box"></span><span>offered in alternate years</span></div>
+    <div class="row"><span class="box"></span><span>offered in alternate years (department schedule, May 2026)</span></div>
     <div class="row"><span class="box" style="border-color:rgba(111,179,242,0.6)"></span><span>computer science course</span></div>
     <div class="hint">Hover a course to light up what it needs and what it unlocks; hover an emphasis to see its courses. CSEN and ECEN prerequisites are not drawn.</div>
   </div>
@@ -101,10 +101,10 @@ const NODES = [
   { id:'minor', x:620, y:590, w:W, kick:'Minor', t:'Computer Science', meta:'CSCI 10, 60, 61, 62; MATH 51; CSEN 20 & 20L; two upper-division CSCI and one CSCI or CSEN', req:['c10','c60','c61','c62','51','csen20'] },
   // algorithms & complexity
   { id:'c162', x:920, y:90,  w:W, cs:true, kick:'CSCI 162', t:'Computational Complexity', meta:'Prereq: MATH 51', alt:true },
-  { id:'c164', x:920, y:190, w:W, cs:true, kick:'CSCI 164', t:'Advanced Theory of Algorithms', meta:'Prereq: CSCI 163' },
-  { id:'c165', x:920, y:290, w:W, cs:true, kick:'CSCI 165', t:'Data Privacy & Algorithmic Fairness', meta:'Prereq: MATH 51, CSCI 10' },
-  { id:'c146', x:920, y:390, w:W, cs:true, kick:'CSCI 146', t:'Optimization I', meta:'Prereq: CSCI 10, MATH 14, 53 · also MATH 146' },
-  { id:'c147', x:920, y:490, w:W, cs:true, kick:'CSCI 147', t:'Optimization II', meta:'Prereq: MATH 122, CSCI 146 · also MATH 147' },
+  { id:'c164', x:920, y:190, w:W, cs:true, kick:'CSCI 164', t:'Advanced Theory of Algorithms', meta:'Prereq: CSCI 163', alt:true },
+  { id:'c165', x:920, y:290, w:W, cs:true, kick:'CSCI 165', t:'Data Privacy & Algorithmic Fairness', meta:'Prereq: MATH 51, CSCI 10 · by request' },
+  { id:'c146', x:920, y:390, w:W, cs:true, kick:'CSCI 146', t:'Optimization I', meta:'Prereq: CSCI 10, MATH 14, 53 · also MATH 146', alt:true },
+  { id:'c147', x:920, y:490, w:W, cs:true, kick:'CSCI 147', t:'Optimization II', meta:'Prereq: MATH 122, CSCI 146 · also MATH 147', alt:true },
   // software
   { id:'c169', x:920, y:730, w:W, cs:true, kick:'CSCI 169', t:'Programming Languages', meta:'Prereq: CSCI 62, MATH 51' },
   { id:'c187', x:920, y:830, w:W, cs:true, kick:'CSCI 187', t:'Design & Management of Software', meta:'Prereq: CSCI 62' },
@@ -113,8 +113,8 @@ const NODES = [
   { id:'c183', x:1220, y:90,  w:W, cs:true, kick:'CSCI 183', t:'Data Science & Machine Learning', meta:'Prereq: CSCI 62, MATH 53, 122' },
   { id:'c184', x:1220, y:190, w:W, cs:true, kick:'CSCI 184', t:'Advanced Machine Learning', meta:'Prereq: CSCI 183' },
   { id:'c185', x:1220, y:290, w:W, cs:true, kick:'CSCI 185', t:'Data Mining', meta:'Prereq: CSCI 62, MATH 53, 122' },
-  { id:'c127', x:1220, y:390, w:W, cs:true, kick:'CSCI 127', t:'Computer Simulation', meta:'Prereq: CSCI 10 (MATH 122 recommended)' },
-  { id:'c166', x:1220, y:490, w:W, cs:true, kick:'CSCI 166', t:'Numerical Analysis', meta:'Prereq: CSCI 10, MATH 53 · also MATH 166' },
+  { id:'c127', x:1220, y:390, w:W, cs:true, kick:'CSCI 127', t:'Computer Simulation', meta:'Prereq: CSCI 10 (MATH 122 recommended) · by request' },
+  { id:'c166', x:1220, y:490, w:W, cs:true, kick:'CSCI 166', t:'Numerical Analysis', meta:'Prereq: CSCI 10, MATH 53 · also MATH 166', alt:true },
   // security
   { id:'178', x:1220, y:730, w:W, kick:'MATH 178', t:'Cryptography', meta:'Prereq: MATH 51' },
   { id:'c180', x:1220, y:830, w:W, cs:true, kick:'CSCI 180', t:'Computer Security', meta:'Prereq: CSEN 20, CSCI 62' },
@@ -122,7 +122,7 @@ const NODES = [
   // math electives
   { id:'101', x:1520, y:90,  w:W, kick:'MATH 101', t:'Survey of Geometry', meta:'Prereq: 13 · algorithms emphasis', alt:true },
   { id:'175', x:1520, y:190, w:W, kick:'MATH 175', t:'Theory of Numbers', meta:'Prereq: MATH 52 (not in the CS major) · algorithms, security', alt:true },
-  { id:'176', x:1520, y:290, w:W, kick:'MATH 176', t:'Combinatorics', meta:'Prereq: 51 · algorithms emphasis' },
+  { id:'176', x:1520, y:290, w:W, kick:'MATH 176', t:'Combinatorics', meta:'Prereq: 51 · algorithms emphasis', alt:true },
   { id:'177', x:1520, y:390, w:W, kick:'MATH 177', t:'Graph Theory', meta:'Prereq: 51 · algorithms emphasis', alt:true },
   { id:'123', x:1520, y:490, w:W, kick:'MATH 123', t:'Probability & Statistics II', meta:'Prereq: 122; 53 pre/co · data science emphasis' },
   { id:'csen', x:1520, y:730, w:W, kick:'CSEN electives', t:'146, 152, 161, 166, 169, 178', meta:'School of Engineering courses named by the emphases; prerequisites not drawn' },

@@ -161,10 +161,10 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
   <section class="panel result warns" id="warns"></section>
   <section class="panel" style="margin-top:12px"><h2>Requirement check</h2><div class="req" id="req"></div></section>
   <section class="panel noprint" style="margin-top:12px" id="offerings">
-    <h2>Course offerings <span class="tag">2026–27 tentative</span></h2>
-    <div class="note">Quarters from the department's tentative 2026–27 schedule, applied to every year of the plan. Courses absent from that list are marked and given placeholder quarters. Edit to match later schedules; changes apply immediately and are kept in this browser.</div>
+    <h2>Course offerings <span class="tag">Department schedule, May 2026</span></h2>
+    <div class="note">Upper-division quarters and alternate-year rotation are from the department's upper-division course schedule (revised May 2026); lower-division CSCI and MATH 51, 52, 53, 122 from the tentative 2026–27 list. Courses marked placeholder are guesses (calculus, CSEN, ECEN, the science course). "Even" = academic years starting in an even calendar year (2026–27, 2028–29). Courses offered by request only have no quarters ticked. Changes apply immediately and are kept in this browser.</div>
     <div class="offwrap"><table class="off" id="off"></table></div>
-    <div style="margin-top:8px"><button id="resetOff">Restore 2026–27 offerings</button></div>
+    <div style="margin-top:8px"><button id="resetOff">Restore department schedule</button></div>
   </section>
 </main>
 </div>
@@ -175,30 +175,30 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
 // pre: groups of alternatives (any one satisfies); co: pre-or-co-requisite groups; off: [F,W,S]; alt: null | 0 (even academic years) | 1 (odd); prog: programming-heavy
 const C = {
   'MATH 9':{t:'Precalculus',u:4,k:'lower',pre:[],off:[1,1,1],ph:true},
-  'MATH 11':{t:'Calculus I',u:4,k:'lower',pre:[],off:[1,1,1]},
-  'MATH 12':{t:'Calculus II',u:4,k:'lower',pre:[['MATH 11']],off:[1,1,1]},
-  'MATH 13':{t:'Calculus III',u:4,k:'lower',pre:[['MATH 12']],off:[1,1,1]},
-  'MATH 14':{t:'Calculus IV',u:4,k:'lower',pre:[['MATH 13']],off:[1,1,1]},
+  'MATH 11':{t:'Calculus I',u:4,k:'lower',pre:[],off:[1,1,1],ph:true},
+  'MATH 12':{t:'Calculus II',u:4,k:'lower',pre:[['MATH 11']],off:[1,1,1],ph:true},
+  'MATH 13':{t:'Calculus III',u:4,k:'lower',pre:[['MATH 12']],off:[1,1,1],ph:true},
+  'MATH 14':{t:'Calculus IV',u:4,k:'lower',pre:[['MATH 13']],off:[1,1,1],ph:true},
   'MATH 51':{t:'Discrete Mathematics',u:4,k:'lower',pre:[],off:[1,1,1]},
   'MATH 53':{t:'Linear Algebra',u:4,k:'lower',pre:[['MATH 13']],off:[0,1,1]},
   'CSCI 10':{t:'Intro to Computer Science',u:5,k:'cs',pre:[],off:[1,1,0]},
   'CSCI 60':{t:'C++ & Object-Oriented Programming',u:5,k:'cs',pre:[['CSCI 10']],off:[1,1,1]},
   'CSCI 61':{t:'Data Structures',u:4,k:'cs',pre:[['CSCI 60']],off:[1,1,1]},
   'CSCI 62':{t:'Advanced Programming',u:4,k:'cs',pre:[['CSCI 61']],off:[1,1,1]},
-  'SCI':{t:'Science: PHYS 31, CHEM 11, ENVS 21 or 23',u:4,k:'ext',pre:[],off:[1,1,1]},
-  'CSEN 20':{t:'Embedded Systems (+20L)',u:5,k:'ext',pre:[['CSCI 62']],off:[1,1,1]},
-  'ECEN 21':{t:'Logic Design (+21L)',u:5,k:'ext',pre:[],off:[1,1,1]},
+  'SCI':{t:'Science: PHYS 31, CHEM 11, ENVS 21 or 23',u:4,k:'ext',pre:[],off:[1,1,1],ph:true},
+  'CSEN 20':{t:'Embedded Systems (+20L)',u:5,k:'ext',pre:[['CSCI 62']],off:[1,1,1],ph:true},
+  'ECEN 21':{t:'Logic Design (+21L)',u:5,k:'ext',pre:[],off:[1,1,1],ph:true},
   'MATH 122':{t:'Probability & Statistics I',u:5,k:'lower',pre:[],co:[['MATH 14']],off:[1,1,0]},
   'CSCI 161':{t:'Automata & Languages',u:5,k:'cs',pre:[['MATH 51']],off:[1,1,1]},
   'CSCI 163':{t:'Theory of Algorithms',u:5,k:'cs',pre:[['CSCI 62'],['MATH 51']],off:[1,1,1]},
-  'CSEN 177':{t:'Operating Systems (+177L)',u:5,k:'ext',pre:[['CSCI 62'],['CSEN 20']],off:[1,1,1]},
+  'CSEN 177':{t:'Operating Systems (+177L)',u:5,k:'ext',pre:[['CSCI 62'],['CSEN 20']],off:[1,1,1],ph:true},
   'CSCI 162':{t:'Computational Complexity',u:5,k:'cs',pre:[['CSCI 161']],off:[0,1,0],alt:0},
-  'CSCI 164':{t:'Advanced Theory of Algorithms',u:5,k:'cs',pre:[['CSCI 163']],off:[0,1,0],ph:true},
-  'CSCI 165':{t:'Data Privacy & Algorithmic Fairness',u:5,k:'cs',pre:[['MATH 51'],['CSCI 10']],off:[0,0,1],ph:true},
-  'CSCI 146':{t:'Optimization I',u:5,k:'cs',pre:[['CSCI 10'],['MATH 14'],['MATH 53']],off:[1,0,0],ph:true},
-  'CSCI 147':{t:'Optimization II',u:5,k:'cs',pre:[['MATH 122'],['CSCI 146']],off:[0,1,0],ph:true},
-  'CSCI 127':{t:'Computer Simulation',u:5,k:'cs',pre:[['CSCI 10']],off:[0,1,0],ph:true},
-  'CSCI 166':{t:'Numerical Analysis',u:5,k:'cs',pre:[['CSCI 10'],['MATH 53']],off:[0,1,0]},
+  'CSCI 164':{t:'Advanced Theory of Algorithms',u:5,k:'cs',pre:[['CSCI 163']],off:[0,0,1],alt:1},
+  'CSCI 165':{t:'Data Privacy & Algorithmic Fairness',u:5,k:'cs',pre:[['MATH 51'],['CSCI 10']],off:[0,0,0],noAuto:true},
+  'CSCI 146':{t:'Optimization I',u:5,k:'cs',pre:[['CSCI 10'],['MATH 14'],['MATH 53']],off:[0,1,0],alt:1},
+  'CSCI 147':{t:'Optimization II',u:5,k:'cs',pre:[['MATH 122'],['CSCI 146']],off:[0,0,1],alt:1},
+  'CSCI 127':{t:'Computer Simulation',u:5,k:'cs',pre:[['CSCI 10']],off:[0,0,0],noAuto:true},
+  'CSCI 166':{t:'Numerical Analysis',u:5,k:'cs',pre:[['CSCI 10'],['MATH 53']],off:[0,1,0],alt:0},
   'CSCI 168':{t:'Computer Graphics',u:5,k:'prog',pre:[['CSCI 10'],['MATH 13']],off:[0,0,1]},
   'CSCI 169':{t:'Programming Languages',u:5,k:'prog',pre:[['CSCI 62'],['MATH 51']],off:[0,1,0]},
   'CSCI 180':{t:'Computer Security',u:5,k:'cs',pre:[['CSEN 20']],off:[1,0,0]},
@@ -209,17 +209,17 @@ const C = {
   'CSCI 187':{t:'Design & Management of Software',u:5,k:'prog',pre:[['CSCI 62']],off:[1,0,0]},
   'MATH 123':{t:'Probability & Statistics II',u:5,k:'lower',pre:[['MATH 122']],co:[['MATH 53']],off:[0,1,1]},
   'MATH 178':{t:'Cryptography',u:5,k:'lower',pre:[['MATH 51']],off:[1,1,0]},
-  'MATH 101':{t:'Survey of Geometry',u:5,k:'lower',pre:[['MATH 13']],off:[0,1,0],alt:1,ph:true},
-  'MATH 176':{t:'Combinatorics',u:5,k:'lower',pre:[['MATH 51']],off:[1,0,0],ph:true},
-  'MATH 177':{t:'Graph Theory',u:5,k:'lower',pre:[['MATH 51']],off:[0,0,1],alt:0,ph:true},
+  'MATH 101':{t:'Survey of Geometry',u:5,k:'lower',pre:[['MATH 13']],off:[0,0,1],alt:1},
+  'MATH 176':{t:'Combinatorics',u:5,k:'lower',pre:[['MATH 51']],off:[0,0,1],alt:1},
+  'MATH 177':{t:'Graph Theory',u:5,k:'lower',pre:[['MATH 51']],off:[0,1,0],alt:0},
   'MATH 52':{t:'Intro to Abstract Algebra',u:4,k:'lower',pre:[['MATH 51']],off:[0,0,1]},
-  'MATH 175':{t:'Theory of Numbers',u:5,k:'lower',pre:[['MATH 52']],off:[0,1,0],alt:1,ph:true,noAuto:true},
-  'CSEN 146':{t:'Computer Networks (+146L)',u:5,k:'ext',pre:[['CSCI 62']],off:[1,1,1],prog:true},
+  'MATH 175':{t:'Theory of Numbers',u:5,k:'lower',pre:[['MATH 52']],off:[0,0,1],alt:0,noAuto:true},
+  'CSEN 146':{t:'Computer Networks (+146L)',u:5,k:'ext',pre:[['CSCI 62']],off:[1,1,1],prog:true,ph:true},
   'CSEN 152':{t:'Computer Forensics (+152L)',u:5,k:'ext',pre:[['CSCI 62'],['CSEN 20']],off:[0,0,0],ph:true,noAuto:true},
-  'CSEN 161':{t:'Web Development (+161L)',u:5,k:'ext',pre:[['CSCI 62']],off:[1,1,1],prog:true},
-  'CSEN 166':{t:'Artificial Intelligence',u:5,k:'ext',pre:[['CSCI 62'],['MATH 51']],off:[1,1,1],prog:true},
-  'CSEN 169':{t:'Web Information Management',u:5,k:'ext',pre:[['CSCI 62'],['MATH 122']],off:[0,1,0],prog:true},
-  'CSEN 178':{t:'Intro to Data Science',u:5,k:'ext',pre:[['CSCI 62']],off:[0,0,1],prog:true},
+  'CSEN 161':{t:'Web Development (+161L)',u:5,k:'ext',pre:[['CSCI 62']],off:[1,1,1],prog:true,ph:true},
+  'CSEN 166':{t:'Artificial Intelligence',u:5,k:'ext',pre:[['CSCI 62'],['MATH 51']],off:[1,1,1],prog:true,ph:true},
+  'CSEN 169':{t:'Web Information Management',u:5,k:'ext',pre:[['CSCI 62'],['MATH 122']],off:[0,1,0],prog:true,ph:true},
+  'CSEN 178':{t:'Intro to Data Science',u:5,k:'ext',pre:[['CSCI 62']],off:[0,0,1],prog:true,ph:true},
 };
 const PROG = new Set(['CSCI 181','CSCI 183','CSCI 185','CSCI 169','CSCI 184','CSCI 168','CSCI 187','CSEN 146','CSEN 161','CSEN 166','CSEN 169','CSEN 178']);
 const DEFAULT_OFF = JSON.parse(JSON.stringify(Object.fromEntries(Object.entries(C).map(([k,v])=>[k,{off:v.off,alt:v.alt===undefined?null:v.alt}]))));

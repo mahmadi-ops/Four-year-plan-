@@ -112,15 +112,16 @@
   <subsection xml:id="sec-planner-offerings">
     <title>Course offerings</title>
     <p>
-      The Bulletin marks a course as <q>offered in alternate years</q> but does not
-      say which quarter or which years. The planner's offerings table, at the bottom
-      of the page, holds placeholders chosen so that sequences like
-      <c>MATH 111</c>/<c>112</c> and <c>MATH 153</c>/<c>154</c> fall in consecutive
-      quarters of the same year. Edit the table to match the department's schedule;
-      the plan and its warnings update at once. Edits persist in the browser only,
-      so once the rotation is settled the defaults in <c>assets/planner.html</c>
-      (the <c>off</c> and <c>alt</c> fields of the course table) should be changed
-      to match, so that every visitor sees the real schedule.
+      The quarters and alternate-year rotation of the upper-division courses come
+      from the department's
+      <url href="https://www.scu.edu/cas/mathcs/academic-program/upper-division-course-schedule/" visual="scu.edu/cas/mathcs">upper-division course schedule</url>
+      (revised May 2026), and MATH 51, 52 and 53 from the 2026<ndash/>27 schedule.
+      Calculus and MATH 23 are assumed to run every quarter and are marked
+      <q>placeholder</q> in the offerings table at the bottom of the planner, where
+      any entry can be changed; edits persist in the browser only, so lasting
+      changes go in the course table near the top of <c>assets/planner.html</c>.
+      Courses the department offers by request only (MATH 100, 133, 134, 172) have
+      no quarters and are never suggested.
     </p>
   </subsection>
 

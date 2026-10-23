@@ -36,7 +36,7 @@ Each page in `assets/` is a self-contained HTML file. The planner and maps are e
 
 ## Course offerings
 
-The Bulletin says which courses run in alternate years but not which quarters or which years. The mathematics planner's offerings table holds placeholders; the computer science planner uses the department's tentative 2026–27 schedule. Once the department's rotation is known, edit the `off` (Fall/Winter/Spring) and `alt` (even/odd year) fields in the course table near the top of `assets/planner.html` so every visitor sees the real schedule.
+Upper-division quarters and the alternate-year rotation in both planners and both maps follow the department's upper-division course schedule (https://www.scu.edu/cas/mathcs/academic-program/upper-division-course-schedule/, revised May 2026). Lower-division MATH 51/52/53/122 and the CSCI lower division follow the tentative 2026–27 list in the CS advising document. Still guessed (marked `ph:true` and shown as "placeholder"): calculus and MATH 23 quarters, CSEN/ECEN, the science course. When the schedule changes, edit the `off` (Fall/Winter/Spring) and `alt` (0 = even academic years such as 2026–27, 1 = odd) fields in the course table near the top of `assets/planner.html` and `assets/cs-planner.html`, and the `alt:true` flags in the maps.
 
 ## Updating for a new bulletin
 
