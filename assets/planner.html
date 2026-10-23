@@ -252,7 +252,6 @@ const S = { y1: 2026, curY: 0, curQ: 0, emph: '', cap: 3, taken: {}, credit: {},
 try { const s = JSON.parse(localStorage.getItem('mathplanner')||'null'); if (s) { Object.assign(S, s); S.off = Object.assign(JSON.parse(JSON.stringify(DEFAULT_OFF)), s.off||{}); } } catch(e){}
 if (S.done) { S.credit = Object.assign({}, S.done, S.credit); delete S.done; }
 S.taken = S.taken || {}; S.credit = S.credit || {};
-try { const m = (location.hash + location.search).match(/plan=([A-Za-z0-9_-]+)/); if (m) { const o = decodePlan(m[1]); if (o) applyPlan(o); } } catch(e) {}
 const isDone = id => !!S.credit[id] || (id in S.taken);
 const doneIds = () => Object.keys(C).filter(isDone);
 const started = () => Object.keys(S.taken).length > 0 || Object.keys(S.credit).some(k=>S.credit[k]);
@@ -268,6 +267,7 @@ const encodePlan = () => { const o = { v:1, y1:S.y1, c:S.curY*3+S.curQ, e:S.emph
 const decodePlan = code => { try { const o = JSON.parse(decodeURIComponent(escape(atob(code.trim().replace(/-/g,'+').replace(/_/g,'/'))))); if (!o || o.v!==1) return null; return o; } catch(e) { return null; } };
 const applyPlan = o => { S.y1 = +o.y1 || 2026; S.curY = Math.floor((+o.c||0)/3); S.curQ = (+o.c||0)%3; S.emph = o.e || ''; S.cap = Math.max(1, Math.min(4, +o.k||3)); S.taken = {}; for (const [k,q] of Object.entries(o.t||{})) if (C[k] && q>=0 && q<=11) S.taken[k] = +q; S.credit = {}; for (const k of (o.r||[])) if (C[k]) S.credit[k] = true; };
 const save = () => { try { localStorage.setItem('mathplanner', JSON.stringify(S)); } catch(e){} };
+try { const m = (location.hash + location.search).match(/plan=([A-Za-z0-9_-]+)/); if (m) { const o = decodePlan(m[1]); if (o) applyPlan(o); } } catch(e) {}
 
 // ---------- planning ----------
 function offered(id, q) { // q: 0..11
@@ -464,10 +464,13 @@ const isUD = id => /\b1\d\d\b/.test(id);
 function renderStats(P) {
   const ids = Object.keys(S.taken); const cr = Object.keys(S.credit).filter(k=>S.credit[k]);
   const sum = L => L.reduce((a,id)=>a+C[id].u,0);
-  const now = S.curY*3+S.curQ;
-  const done = ids.filter(id=>S.taken[id] < now), planned = ids.filter(id=>S.taken[id] >= now);
-  const major = sum(ids) + sum(cr), ud = sum(ids.filter(isUD)) + sum(cr.filter(isUD));
-  $('#stats').innerHTML = ids.length || cr.length ? `<span>Major units in your plan: <b>${major}</b> (completed ${sum(done)+sum(cr)}, planned ${sum(planned)})</span><span>Upper-division: <b>${ud}</b></span><span>SCU degree: 175 units, 60 upper-division; Core and electives make up the rest.</span>` : '';
+  if (!ids.length && !cr.length) { $('#stats').innerHTML = ''; return; }
+  const inPlan = ids.concat(cr);
+  const whole = [...new Set(inPlan.concat(P.need))];          // the plan plus whatever the major still needs
+  const major = sum(inPlan), ud = sum(inPlan.filter(isUD));
+  const wholeU = sum(whole), wholeUD = sum(whole.filter(isUD));
+  const restUD = Math.max(0, 60 - wholeUD), rest = Math.max(0, 175 - wholeU);
+  $('#stats').innerHTML = `<span>Major courses in your plan: <b>${major}</b> units, <b>${ud}</b> upper-division${wholeU>major?` (the whole major: ${wholeU} units, ${wholeUD} upper-division)`:''}.</span><span>SCU requires 175 units, 60 upper-division, so about ${rest} units come from Core and electives outside the major, at least ${restUD} of them upper-division.</span>`;
 }
 function renderHead() {
   const scu = Object.keys(S.taken).sort((a,b)=>S.taken[a]-S.taken[b]); const cr = Object.keys(S.credit).filter(k=>S.credit[k]);
