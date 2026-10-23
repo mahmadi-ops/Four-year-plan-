@@ -163,7 +163,7 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
   <section class="panel" style="margin-top:12px"><h2>Requirement check</h2><div class="req" id="req"></div></section>
   <section class="panel noprint" style="margin-top:12px" id="offerings">
     <h2>Course offerings <span class="tag">Department schedule, May 2026</span></h2>
-    <div class="note">Upper-division quarters and alternate-year rotation are from the department's upper-division course schedule (revised May 2026); MATH 51, 52 and 53 from the 2026–27 schedule; PHYS 31 and 32 from the University's class listings; calculus, MATH 23 (Winter) and CSCI 10 (Fall, Winter), 60, 61, 62 from the department. Courses marked placeholder are guesses. "Even" = academic years starting in an even calendar year (2026–27, 2028–29). Courses offered by request only have no quarters ticked. Changes apply immediately and are kept in this browser.</div>
+    <div class="note">Upper-division quarters and alternate-year rotation are from the department's upper-division course schedule (revised May 2026); MATH 51, 52 and 53 from the 2026–27 schedule; PHYS 31 and 32 from the University's class listings; calculus, MATH 23 (Winter) and CSCI 10 (Fall, Winter), 60, 61, 62 from the department. MATH 9, CSEN 178 and the business and economics courses follow the University's class listings for 2023–24 through Fall 2026. "Even" = academic years starting in an even calendar year (2026–27, 2028–29). Courses offered by request only have no quarters ticked. Changes apply immediately and are kept in this browser.</div>
     <div class="offwrap"><table class="off" id="off"></table></div>
     <div style="margin-top:8px"><button id="resetOff">Restore department schedule</button></div>
   </section>
@@ -176,7 +176,7 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
 // pre: list of groups; each group is a list of alternatives (any one satisfies). co: pre-or-corequisite groups.
 // off: quarters offered [F,W,S]; alt: null (every year) | 0 (even academic years) | 1 (odd)
 const C = {
-  'MATH 9':{t:'Precalculus',u:4,k:'lower',pre:[],off:[1,1,1],ph:true},
+  'MATH 9':{t:'Precalculus',u:4,k:'lower',pre:[],off:[1,1,1]},
   'MATH 11':{t:'Calculus I',u:4,k:'lower',pre:[],off:[1,1,1]},
   'MATH 12':{t:'Calculus II',u:4,k:'lower',pre:[['MATH 11']],off:[1,1,1]},
   'MATH 13':{t:'Calculus III',u:4,k:'lower',pre:[['MATH 12']],off:[1,1,1]},
@@ -222,14 +222,14 @@ const C = {
   'CSCI 163':{t:'Theory of Algorithms',u:5,k:'ext',pre:[['MATH 51'],['CSCI 61']],off:[1,1,1]},
   'CSCI 183':{t:'Data Science & ML',u:5,k:'ext',pre:[['CSCI 62'],['MATH 53'],['MATH 122']],off:[1,1,0]},
   'CSCI 184':{t:'Advanced Machine Learning',u:5,k:'ext',pre:[['CSCI 183']],off:[0,1,1]},
-  'CSEN 178':{t:'Intro to Data Science (CSEN)',u:4,k:'ext',pre:[['CSCI 62']],off:[0,1,1],ph:true},
-  'ECON 113':{t:'Econometrics',u:5,k:'ext',pre:[],off:[1,1,1],ph:true},
-  'ECON 170':{t:'Econ elective (170–174)',u:5,k:'ext',pre:[['ECON 113']],off:[1,1,1],ph:true},
-  'BUSN 70':{t:'Contemporary Business Issues',u:4,k:'ext',pre:[],off:[1,1,1],ph:true},
-  'ACTG 11':{t:'Financial Accounting',u:4,k:'ext',pre:[],off:[1,1,1],ph:true},
-  'ACTG 12':{t:'Managerial Accounting',u:4,k:'ext',pre:[['ACTG 11']],off:[1,1,1],ph:true},
-  'FNCE 121':{t:'Financial Management',u:4,k:'ext',pre:[['ACTG 11']],off:[1,1,1],ph:true},
-  'FNCE 124':{t:'Investments',u:4,k:'ext',pre:[['FNCE 121']],off:[1,1,1],ph:true},
+  'CSEN 178':{t:'Intro to Data Science (CSEN)',u:4,k:'ext',pre:[['CSCI 62']],off:[1,0,1]},
+  'ECON 113':{t:'Econometrics',u:5,k:'ext',pre:[],off:[1,1,1]},
+  'ECON 170':{t:'Econ elective (170–174)',u:5,k:'ext',pre:[['ECON 113']],off:[1,1,1]},
+  'BUSN 70':{t:'Contemporary Business Issues',u:4,k:'ext',pre:[],off:[1,1,1]},
+  'ACTG 11':{t:'Financial Accounting',u:4,k:'ext',pre:[],off:[1,1,1]},
+  'ACTG 12':{t:'Managerial Accounting',u:4,k:'ext',pre:[['ACTG 11']],off:[1,1,1]},
+  'FNCE 121':{t:'Financial Management',u:4,k:'ext',pre:[['ACTG 11']],off:[1,1,1]},
+  'FNCE 124':{t:'Investments',u:4,k:'ext',pre:[['FNCE 121']],off:[1,1,1]},
 };
 const DEFAULT_OFF = JSON.parse(JSON.stringify(Object.fromEntries(Object.entries(C).map(([k,v])=>[k,{off:v.off,alt:v.alt===undefined?null:v.alt}]))));
 const LOWER = ['MATH 11','MATH 12','MATH 13','MATH 14','MATH 23','MATH 51','MATH 52','MATH 53'];

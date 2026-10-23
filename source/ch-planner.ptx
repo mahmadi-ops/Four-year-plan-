@@ -120,9 +120,9 @@
       department's class listings for 2023<ndash/>24 through Fall 2026. The department
       confirmed that calculus (MATH 11<ndash/>14) runs every quarter, MATH 23 every
       Winter, CSCI 10 in Fall and Winter, and CSCI 60, 61 and 62 every quarter.
-      The remaining guesses are marked
-      <q>placeholder</q> in the offerings table at the bottom of the planner, where
-      any entry can be changed; edits persist in the browser only, so lasting
+      MATH 9, CSEN 178 and the business and economics courses of the emphases follow
+      the University's class listings for 2023<ndash/>24 through Fall 2026. Any entry
+      can be changed in the offerings table at the bottom of the planner; edits persist in the browser only, so lasting
       changes go in the course table near the top of <c>assets/planner.html</c>.
       Courses the department offers by request only (MATH 100, 133, 134, 172) have
       no quarters and are never suggested.
