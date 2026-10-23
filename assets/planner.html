@@ -167,6 +167,7 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
 // pre: list of groups; each group is a list of alternatives (any one satisfies). co: pre-or-corequisite groups.
 // off: quarters offered [F,W,S]; alt: null (every year) | 0 (even academic years) | 1 (odd)
 const C = {
+  'MATH 9':{t:'Precalculus',u:4,k:'lower',pre:[],off:[1,1,1]},
   'MATH 11':{t:'Calculus I',u:4,k:'lower',pre:[],off:[1,1,1]},
   'MATH 12':{t:'Calculus II',u:4,k:'lower',pre:[['MATH 11']],off:[1,1,1]},
   'MATH 13':{t:'Calculus III',u:4,k:'lower',pre:[['MATH 12']],off:[1,1,1]},
@@ -298,6 +299,7 @@ function plan() {
   Object.keys(S.credit).filter(k=>S.credit[k]).forEach(k=>at[k]=-1);
   Object.entries(S.taken).forEach(([k,q])=>{ at[k]=q; });
   const satisfied = (id, q) => {
+    if (id==='MATH 11' && ('MATH 9' in at) && at['MATH 9'] >= q) return false;
     const ok = (g, strict) => g.some(p => (p in at) && (strict ? at[p] < q : at[p] <= q));
     return (C[id].pre||[]).every(g=>ok(g,true)) && (C[id].co||[]).every(g=>ok(g,false));
   };
@@ -346,7 +348,7 @@ function plan() {
 const $ = s => document.querySelector(s);
 function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 const kOf = id => C[id].k;
-const GROUPS = [['Lower division', LOWER.concat(EXTREQ)], ['Upper division', UPPER.concat(['MATH 195'])], ['Other departments', Object.keys(C).filter(id=>C[id].k==='ext' && id!=='MATH 195' && !EXTREQ.includes(id))]];
+const GROUPS = [['Lower division', ['MATH 9'].concat(LOWER, EXTREQ)], ['Upper division', UPPER.concat(['MATH 195'])], ['Other departments', Object.keys(C).filter(id=>C[id].k==='ext' && id!=='MATH 195' && !EXTREQ.includes(id))]];
 const takenChip = id => `<div class="course tk" style="--c:${col(kOf(id))}"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span><button class="x" data-untake="${esc(id)}" aria-label="Remove ${esc(id)}" title="Remove">×</button></div>`;
 const addSelect = q => `<select class="addsel" data-addq="${q}" aria-label="Add a course taken in this quarter"><option value="">+ add course</option>${GROUPS.map(([g,ids])=>`<optgroup label="${g}">${ids.filter(id=>!isDone(id)).map(id=>`<option value="${esc(id)}">${esc(id)} · ${esc(C[id].t)}</option>`).join('')}</optgroup>`).join('')}</select>`;
 function renderYears(P) {
