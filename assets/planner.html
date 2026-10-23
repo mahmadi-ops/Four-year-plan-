@@ -61,7 +61,9 @@ td.past{background:#F7F9FB}
 .course .x{position:absolute;top:0;right:0;border:0;background:none;padding:0 3px;font-size:1rem;line-height:1;color:var(--muted);cursor:pointer;font-weight:400}
 .course .x:hover{color:var(--error)}
 .addsel{display:block;width:100%;margin-top:4px;font-size:.78rem;padding:2px 4px;color:var(--muted);border:1px dashed var(--grid);background:transparent}
-.course.mine .id,.course.mine .nm{color:var(--muted)}
+.course.mine{background:#EEF1F5;border-left-color:#D3D8E2;padding:3px 6px 3px 7px}
+.course.mine .id{color:#7A8494;font-weight:600}
+.course.mine .nm{color:#8A93A3}
 .course .x.addrec{color:var(--blue);font-weight:700}
 .course .x.addrec:hover{color:var(--ink)}
 .years.sample td{background:#fff}
@@ -378,7 +380,7 @@ function renderRecs(P) {
       const sug = q >= P.start ? (P.sched[q]||[]).filter(id=>!(id in S.taken)) : [];
       mine.concat(sug).forEach(id=>units+=C[id].u);
       html += `<td class="${q<P.start?'past':''}">` +
-        mine.map(id=>`<div class="course mine" style="--c:var(--grid)"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span></div>`).join('') +
+        mine.map(id=>`<div class="course mine"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span></div>`).join('') +
         sug.map(id=>{
           const b = [];
           if (P.at[id]===P.latest[id]) b.push(`<span class="badge" style="--b:var(--warn)">last offering</span>`);
