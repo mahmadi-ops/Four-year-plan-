@@ -32,6 +32,12 @@
           dialog with only the plan on the page: a header naming the emphasis and the
           completed courses, the four year-tables, the warnings, and the requirement
           check. Choose <q>Save as PDF</q> there to keep a copy.
+          A plan is kept in the browser it was made in; <q>Save or share this
+          plan</q> gives a short code (also printed on the PDF) and, on the live
+          site, a link, either of which restores the plan anywhere, so a student
+          can bring it to an advising meeting or send it ahead. Above the plan, a
+          line totals the major units in it and the upper-division units, against
+          the university's 175 and 60.
         </p>
       </instructions>
       <static>
