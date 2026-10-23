@@ -163,7 +163,7 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
   <section class="panel" style="margin-top:12px"><h2>Requirement check</h2><div class="req" id="req"></div></section>
   <section class="panel noprint" style="margin-top:12px" id="offerings">
     <h2>Course offerings <span class="tag">Department schedule, May 2026</span></h2>
-    <div class="note">Upper-division quarters and alternate-year rotation are from the department's upper-division course schedule (revised May 2026); MATH 51, 52 and 53 from the 2026–27 schedule; PHYS 31 and 32 from the University's class listings. Courses marked placeholder are guesses: calculus and MATH 23 are assumed every quarter. "Even" = academic years starting in an even calendar year (2026–27, 2028–29). Courses offered by request only have no quarters ticked. Changes apply immediately and are kept in this browser.</div>
+    <div class="note">Upper-division quarters and alternate-year rotation are from the department's upper-division course schedule (revised May 2026); MATH 51, 52 and 53 from the 2026–27 schedule; PHYS 31 and 32 from the University's class listings; calculus, MATH 23 (Winter) and CSCI 10 (Fall, Winter), 60, 61, 62 from the department. Courses marked placeholder are guesses. "Even" = academic years starting in an even calendar year (2026–27, 2028–29). Courses offered by request only have no quarters ticked. Changes apply immediately and are kept in this browser.</div>
     <div class="offwrap"><table class="off" id="off"></table></div>
     <div style="margin-top:8px"><button id="resetOff">Restore department schedule</button></div>
   </section>
@@ -177,15 +177,15 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
 // off: quarters offered [F,W,S]; alt: null (every year) | 0 (even academic years) | 1 (odd)
 const C = {
   'MATH 9':{t:'Precalculus',u:4,k:'lower',pre:[],off:[1,1,1],ph:true},
-  'MATH 11':{t:'Calculus I',u:4,k:'lower',pre:[],off:[1,1,1],ph:true},
-  'MATH 12':{t:'Calculus II',u:4,k:'lower',pre:[['MATH 11']],off:[1,1,1],ph:true},
-  'MATH 13':{t:'Calculus III',u:4,k:'lower',pre:[['MATH 12']],off:[1,1,1],ph:true},
-  'MATH 14':{t:'Calculus IV',u:4,k:'lower',pre:[['MATH 13']],off:[1,1,1],ph:true},
-  'MATH 23':{t:'Series & Differential Equations',u:4,k:'lower',pre:[['MATH 13']],off:[1,1,1],ph:true},
+  'MATH 11':{t:'Calculus I',u:4,k:'lower',pre:[],off:[1,1,1]},
+  'MATH 12':{t:'Calculus II',u:4,k:'lower',pre:[['MATH 11']],off:[1,1,1]},
+  'MATH 13':{t:'Calculus III',u:4,k:'lower',pre:[['MATH 12']],off:[1,1,1]},
+  'MATH 14':{t:'Calculus IV',u:4,k:'lower',pre:[['MATH 13']],off:[1,1,1]},
+  'MATH 23':{t:'Series & Differential Equations',u:4,k:'lower',pre:[['MATH 13']],off:[0,1,0]},
   'MATH 51':{t:'Discrete Mathematics',u:4,k:'lower',pre:[],off:[1,1,1]},
   'MATH 52':{t:'Intro to Abstract Algebra',u:4,k:'lower',pre:[['MATH 51']],off:[0,0,1]},
   'MATH 53':{t:'Linear Algebra',u:4,k:'lower',pre:[['MATH 13']],off:[0,1,1]},
-  'CSCI 10':{t:'Intro to Computer Science',u:5,k:'ext',pre:[],off:[1,1,1],ph:true},
+  'CSCI 10':{t:'Intro to Computer Science',u:5,k:'ext',pre:[],off:[1,1,0]},
   'PHYS 31':{t:'Physics I',u:4,k:'ext',pre:[['MATH 11']],off:[0,1,1]},
   'PHYS 32':{t:'Physics II',u:4,k:'ext',pre:[['PHYS 31']],off:[1,0,1]},
   'MATH 101':{t:'Survey of Geometry',u:5,k:'geometry',pre:[['MATH 13']],off:[0,0,1],alt:1},
@@ -215,9 +215,9 @@ const C = {
   'MATH 178':{t:'Cryptography',u:5,k:'other',pre:[['MATH 51']],off:[1,1,0]},
   'MATH 195':{t:'Math Education & Social Justice',u:5,k:'ext',pre:[['MATH 12']],off:[0,0,1],noCount:true},
   'CSCI 162':{t:'Computational Complexity',u:5,k:'other',pre:[['MATH 51']],off:[0,1,0],alt:0},
-  'CSCI 60':{t:'C++ & OOP',u:5,k:'ext',pre:[['CSCI 10']],off:[1,1,1],ph:true},
-  'CSCI 61':{t:'Data Structures',u:4,k:'ext',pre:[['CSCI 60']],off:[1,1,1],ph:true},
-  'CSCI 62':{t:'Advanced Programming',u:4,k:'ext',pre:[['CSCI 61']],off:[1,1,1],ph:true},
+  'CSCI 60':{t:'C++ & OOP',u:5,k:'ext',pre:[['CSCI 10']],off:[1,1,1]},
+  'CSCI 61':{t:'Data Structures',u:4,k:'ext',pre:[['CSCI 60']],off:[1,1,1]},
+  'CSCI 62':{t:'Advanced Programming',u:4,k:'ext',pre:[['CSCI 61']],off:[1,1,1]},
   'CSCI 127':{t:'Computer Simulation',u:5,k:'ext',pre:[['CSCI 10']],off:[0,0,0],noAuto:true},
   'CSCI 163':{t:'Theory of Algorithms',u:5,k:'ext',pre:[['MATH 51'],['CSCI 61']],off:[1,1,1]},
   'CSCI 183':{t:'Data Science & ML',u:5,k:'ext',pre:[['CSCI 62'],['MATH 53'],['MATH 122']],off:[1,1,0]},
@@ -258,9 +258,9 @@ const started = () => Object.keys(S.taken).length > 0 || Object.keys(S.credit).s
 const completed = id => !!S.credit[id] || (id in S.taken && S.taken[id] < S.curY*3 + S.curQ);
 delete S.goal;
 // Target quarters from the department's sample curriculum (Mathematics Major Checklist, Fall 2025):
-// Y1 F MATH 11 · W CSCI 10, MATH 12, PHYS 31 · S MATH 13, PHYS 32 · Y2 F MATH 14, 51 · W MATH 53 · S MATH 23, 52;
+// Y1 F MATH 11 · W CSCI 10, MATH 12, PHYS 31 · S MATH 13, PHYS 32 · Y2 F MATH 14, 51 · W MATH 53, MATH 23 (offered Winter only) · S MATH 52;
 // upper division from junior year.  A course is not suggested before its target unless a deadline forces it.
-const TQ = {'MATH 11':0,'CSCI 10':1,'MATH 12':1,'PHYS 31':1,'MATH 13':2,'PHYS 32':2,'MATH 14':3,'MATH 51':3,'MATH 53':4,'MATH 23':5,'MATH 52':5};
+const TQ = {'MATH 11':0,'CSCI 10':1,'MATH 12':1,'PHYS 31':1,'MATH 13':2,'PHYS 32':2,'MATH 14':3,'MATH 51':3,'MATH 53':4,'MATH 23':4,'MATH 52':5};
 const tqOf = id => id in TQ ? TQ[id] : (UPPER.includes(id) || id==='MATH 195') ? 6 : 3;
 const classCap = (id, list) => UPPER.includes(id) ? list.filter(x=>UPPER.includes(x)).length < 2 : true;   // at most two upper-division courses a quarter
 const encodePlan = () => { const o = { v:1, y1:S.y1, c:S.curY*3+S.curQ, e:S.emph, k:S.cap, t:S.taken, r:Object.keys(S.credit).filter(k=>S.credit[k]) }; return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); };
@@ -288,12 +288,19 @@ function requiredSet(excl = new Set()) {
     const have = g.from.filter(id=>need.has(id) || isDone(id));
     let n = Math.max(0, g.n - have.length);
     have.forEach(id=>add(id,'emphasis'));
-    for (const id of g.from) { if (n<=0) break; if (!need.has(id) && !isDone(id)) { add(id,'emphasis'); n--; } }
+    for (const id of g.from) { if (n<=0) break; if (!need.has(id) && !isDone(id) && !C[id].noAuto) { add(id,'emphasis'); n--; } }
   }
   // category requirements, then fill to seven
   const ud = () => [...need].concat(doneIds()).filter(id=>UPPER.includes(id));
   for (const [cat, list] of Object.entries(CATS)) if (!list.some(id=>ud().includes(id))) add(list.find(id=>!isDone(id) && !C[id].noAuto) || list[0], cat==='third'?'geometry / discrete / applied requirement':cat+' requirement');
   for (const id of FILL) { if (new Set(ud()).size >= 7) break; if (!need.has(id) && !isDone(id) && !excl.has(id) && !C[id].noAuto) add(id,'fills the seven'); }
+  // every chosen course brings its prerequisites (first alternative when none is already in the plan)
+  for (let grew = true; grew; ) { grew = false;
+    for (const id of [...need]) for (const g of (C[id].pre||[]).concat(C[id].co||[])) {
+      if (g.some(p => need.has(p) || isDone(p) || !C[p])) continue;
+      const p = g.find(x => !C[x].noAuto) || g[0]; add(p, 'prerequisite of ' + id); grew = true;
+    }
+  }
   return { need: [...need].filter(id=>!isDone(id)), why };
 }
 function plan(excl = new Set()) {
@@ -322,7 +329,7 @@ function plan(excl = new Set()) {
     const ok = (g, strict) => g.some(p => (p in at) && (strict ? at[p] < q : at[p] <= q));
     return (C[id].pre||[]).every(g=>ok(g,true)) && (C[id].co||[]).every(g=>ok(g,false));
   };
-  const prio = (id,q) => [tqOf(id), latest[id]===null?99:latest[id], S.off[id].alt===null?1:0, C[id].k==='lower'?0:1, -deps[id].length];
+  const prio = (id,q) => [latest[id]!==null && latest[id] <= q ? 0 : 1, tqOf(id), latest[id]===null?99:latest[id], S.off[id].alt===null?1:0, C[id].k==='lower'?0:1, -deps[id].length];
   for (let q=start; q<=11; q++) {
     sched[q] = Object.keys(S.taken).filter(k=>S.taken[k]===q);
     const bySample = id => tqOf(id) <= q || (latest[id]!==null && latest[id] <= q+2);   // on schedule, or a deadline is near

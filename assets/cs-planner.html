@@ -162,7 +162,7 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
   <section class="panel" style="margin-top:12px"><h2>Requirement check</h2><div class="req" id="req"></div></section>
   <section class="panel noprint" style="margin-top:12px" id="offerings">
     <h2>Course offerings <span class="tag">Department schedule, May 2026</span></h2>
-    <div class="note">Upper-division quarters and alternate-year rotation are from the department's upper-division course schedule (revised May 2026); lower-division CSCI and MATH 51, 52, 53, 122 from the tentative 2026–27 list. The science course runs every quarter (University class listings). Courses marked placeholder are guesses (calculus, CSEN, ECEN). "Even" = academic years starting in an even calendar year (2026–27, 2028–29). Courses offered by request only have no quarters ticked. Changes apply immediately and are kept in this browser.</div>
+    <div class="note">Upper-division quarters and alternate-year rotation are from the department's upper-division course schedule (revised May 2026); lower-division CSCI and MATH 51, 52, 53, 122 from the tentative 2026–27 list. The science course runs every quarter (University class listings). Calculus runs every quarter (department). Courses marked placeholder are guesses (MATH 9, CSEN, ECEN). "Even" = academic years starting in an even calendar year (2026–27, 2028–29). Courses offered by request only have no quarters ticked. Changes apply immediately and are kept in this browser.</div>
     <div class="offwrap"><table class="off" id="off"></table></div>
     <div style="margin-top:8px"><button id="resetOff">Restore department schedule</button></div>
   </section>
@@ -175,10 +175,10 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
 // pre: groups of alternatives (any one satisfies); co: pre-or-co-requisite groups; off: [F,W,S]; alt: null | 0 (even academic years) | 1 (odd); prog: programming-heavy
 const C = {
   'MATH 9':{t:'Precalculus',u:4,k:'lower',pre:[],off:[1,1,1],ph:true},
-  'MATH 11':{t:'Calculus I',u:4,k:'lower',pre:[],off:[1,1,1],ph:true},
-  'MATH 12':{t:'Calculus II',u:4,k:'lower',pre:[['MATH 11']],off:[1,1,1],ph:true},
-  'MATH 13':{t:'Calculus III',u:4,k:'lower',pre:[['MATH 12']],off:[1,1,1],ph:true},
-  'MATH 14':{t:'Calculus IV',u:4,k:'lower',pre:[['MATH 13']],off:[1,1,1],ph:true},
+  'MATH 11':{t:'Calculus I',u:4,k:'lower',pre:[],off:[1,1,1]},
+  'MATH 12':{t:'Calculus II',u:4,k:'lower',pre:[['MATH 11']],off:[1,1,1]},
+  'MATH 13':{t:'Calculus III',u:4,k:'lower',pre:[['MATH 12']],off:[1,1,1]},
+  'MATH 14':{t:'Calculus IV',u:4,k:'lower',pre:[['MATH 13']],off:[1,1,1]},
   'MATH 51':{t:'Discrete Mathematics',u:4,k:'lower',pre:[],off:[1,1,1]},
   'MATH 53':{t:'Linear Algebra',u:4,k:'lower',pre:[['MATH 13']],off:[0,1,1]},
   'CSCI 10':{t:'Intro to Computer Science',u:5,k:'cs',pre:[],off:[1,1,0]},
@@ -288,6 +288,13 @@ function requiredSet() {
   const early = id => PROG.has(id) && (C[id].pre||[]).every(g=>g.some(p=>soph.has(p))) && !(C[id].co||[]).length;
   if (![...need].concat(doneIds()).some(early)) { const pick = ANY.find(id=>early(id) && !need.has(id) && !isDone(id)); if (pick) add(pick,'programming course for sophomore year (recommended)'); }
   if (need.has('MATH 175')) add('MATH 52','prerequisite of MATH 175');
+  // every chosen course brings its prerequisites (first alternative when none is already in the plan)
+  for (let grew = true; grew; ) { grew = false;
+    for (const id of [...need]) for (const g of (C[id].pre||[]).concat(C[id].co||[])) {
+      if (g.some(p => need.has(p) || isDone(p) || !C[p])) continue;
+      const p = g.find(x => !C[x].noAuto) || g[0]; add(p, 'prerequisite of ' + id); grew = true;
+    }
+  }
   return { need: [...need].filter(id=>!isDone(id)), why };
 }
 function plan() {
@@ -322,7 +329,7 @@ function plan() {
     if (id==='CSCI 161' && !('CSCI 163' in at)) return 1;
     return 0;
   };
-  const prio = (id,q) => [tqOf(id), (latest[id]===null?99:latest[id]) + boost(id,q) + (isEmph(id) && q<=5 && !PROG.has(id) ? 3 : 0), S.off[id].alt===null?1:0, LOWER.includes(id)?0:1, -deps[id].length];
+  const prio = (id,q) => [latest[id]!==null && latest[id] <= q ? 0 : 1, tqOf(id), (latest[id]===null?99:latest[id]) + boost(id,q) + (isEmph(id) && q<=5 && !PROG.has(id) ? 3 : 0), S.off[id].alt===null?1:0, LOWER.includes(id)?0:1, -deps[id].length];
   for (let q=start; q<=11; q++) {
     sched[q] = Object.keys(S.taken).filter(k=>S.taken[k]===q);
     const bySample = id => tqOf(id) <= q || (latest[id]!==null && latest[id] <= q+2);   // on schedule, or a deadline is near
