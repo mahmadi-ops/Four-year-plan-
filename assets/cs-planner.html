@@ -61,6 +61,11 @@ td.past{background:#F7F9FB}
 .course .x{position:absolute;top:0;right:0;border:0;background:none;padding:0 3px;font-size:1rem;line-height:1;color:var(--muted);cursor:pointer;font-weight:400}
 .course .x:hover{color:var(--error)}
 .addsel{display:block;width:100%;margin-top:4px;font-size:.78rem;padding:2px 4px;color:var(--muted);border:1px dashed var(--grid);background:transparent}
+.course.mine .id,.course.mine .nm{color:var(--muted)}
+.course .x.addrec{color:var(--blue);font-weight:700}
+.course .x.addrec:hover{color:var(--ink)}
+.years.sample td{background:#fff}
+.years.sample td.past{background:#F7F9FB}
 .rec{width:100%;border-collapse:collapse;font-size:.88rem;table-layout:auto;margin-top:4px;background:#fff}
 .rec th,.rec td{border:1px solid var(--grid);padding:5px 7px;vertical-align:middle;width:auto}
 .rec th{background:var(--soft);color:var(--ink)}
@@ -121,7 +126,7 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
 <body>
 
 <h1>Computer science major four-year planner</h1>
-<div class="sub">Build your own plan: add the courses you have taken to the quarters you took them, then the courses you intend to take. Recommendations for what to take next appear once you have started. Recommendations follow the department's prerequisite list, 2026–27 offerings and sequencing advice, and flag any course that can't wait.</div>
+<div class="sub">Build your own plan: add the courses you have taken to the quarters you took them, then the courses you intend to take. Once you add your first course, a sample four-year plan appears below with suggestions for the rest. Suggestions follow the department's prerequisite list, 2026–27 offerings and sequencing advice, and flag any course that can't wait.</div>
 
 <div class="layout">
 <aside class="panel" id="settings">
@@ -362,17 +367,30 @@ function renderYears(P) {
 }
 function renderRecs(P) {
   const box = $('#recs');
-  if (!started()) { box.innerHTML = `<h2>Recommended next</h2><p class="empty">Add a course you have taken, or tick any AP, IB or transfer credit, and recommendations for the remaining quarters will appear here.</p>`; return; }
-  const rows = [];
-  for (let q=P.start; q<=11; q++) for (const id of (P.sched[q]||[])) if (!(id in S.taken)) rows.push([q,id]);
-  if (!rows.length) { box.innerHTML = `<h2>Recommended next</h2><p class="empty">Nothing left to recommend: every course the major still needs is in your plan.</p>`; return; }
-  const qn = q => `Year ${Math.floor(q/3)+1} ${QN[q%3]}`;
-  box.innerHTML = `<h2>Recommended next</h2><p class="empty" style="margin-bottom:6px">A suggested order for the courses the major still needs, after what is already in your plan. Add the ones you choose.</p><table class="rec"><tr><th>Quarter</th><th>Course</th><th>Why</th><th></th></tr>` + rows.map(([q,id])=>{
-    const b = [];
-    if (P.at[id]===P.latest[id]) b.push(`<span class="badge" style="--b:var(--warn)">last offering</span>`);
-    else if (S.off[id].alt!==null) b.push(`<span class="badge" style="--b:var(--muted)">alt-year</span>`);
-    return `<tr><td class="q">${qn(q)}</td><td><div class="course" style="--c:${col(kOf(id))};margin:0"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span></div></td><td>${esc(P.why[id]||'')} ${b.join(' ')}</td><td class="a"><button data-recadd="${esc(id)}" data-recq="${q}">Add to plan</button></td></tr>`;
-  }).join('') + `</table>`;
+  box.hidden = Object.keys(S.taken).length === 0;
+  if (box.hidden) return;
+  let html = `<h2>Sample four-year plan</h2><p class="empty" style="margin-bottom:8px">One way to finish the major from where your plan stands. Grey courses are already in your plan; the others are suggestions. Use <b>+</b> to copy a suggestion into your plan.</p><div class="years sample">`;
+  for (let y=0; y<4; y++) {
+    const yr = S.y1+y; let units = 0;
+    html += `<div><table><caption>Year ${y+1}<span>${yr}–${String(yr+1).slice(2)}</span></caption><tr>${QN.map(n=>`<th>${n}</th>`).join('')}</tr><tr>`;
+    for (let qq=0; qq<3; qq++) {
+      const q = y*3+qq;
+      const mine = Object.keys(S.taken).filter(k=>S.taken[k]===q).sort();
+      const sug = q >= P.start ? (P.sched[q]||[]).filter(id=>!(id in S.taken)) : [];
+      mine.concat(sug).forEach(id=>units+=C[id].u);
+      html += `<td class="${q<P.start?'past':''}">` +
+        mine.map(id=>`<div class="course mine" style="--c:var(--grid)"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span></div>`).join('') +
+        sug.map(id=>{
+          const b = [];
+          if (P.at[id]===P.latest[id]) b.push(`<span class="badge" style="--b:var(--warn)">last offering</span>`);
+          else if (S.off[id].alt!==null) b.push(`<span class="badge" style="--b:var(--muted)">alt-year</span>`);
+          return `<div class="course tk" style="--c:${col(kOf(id))}"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span>${b.join('')}<button class="x addrec" data-recadd="${esc(id)}" data-recq="${q}" aria-label="Add ${esc(id)} to your plan in ${QN[qq]} of Year ${y+1}" title="Add to your plan">+</button></div>`;
+        }).join('') +
+        (mine.length || sug.length ? '' : `<span style="color:var(--muted)">core / electives</span>`) + `</td>`;
+    }
+    html += `</tr></table><div class="tot">${units ? units+' units of major courses this year' : ''}</div></div>`;
+  }
+  box.innerHTML = html + `</div>`;
 }
 function renderWarns(P) {
   $('#warns').hidden = !started();
