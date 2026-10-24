@@ -1,0 +1,32 @@
+/* Full-width layout: the default-modern theme limits the page to 1200px and the
+   text column to 696px.  The planners and maps are far wider than that. */
+.ptx-page { max-width: none; }
+.ptx-main .ptx-content { max-width: none; padding-left: 36px; padding-right: 36px; }
+@media (max-width: 800px) { .ptx-main .ptx-content { padding-left: 16px; padding-right: 16px; } }
+
+/* PreTeXt writes a fixed 600px width on each <interactive iframe>.  Let the
+   embedded planners and maps fill the column, keeping their aspect ratios. */
+.interactive-iframe-container iframe { width: 100% !important; height: auto !important; display: block; }
+#planner, #cs-planner { aspect-ratio: 1 / 1.25; }
+#major-map, #cs-major-map { aspect-ratio: 1920 / 1240; }
+
+/* "Important" box under each planner's introduction */
+#note-advising, #note-cs-advising { border: 1.5px solid #B5651D; border-radius: 6px; background: #FDF5EC; padding: 10px 14px; margin: 14px 0 6px; }
+#note-advising .heading, #note-cs-advising .heading { color: #8A4A12; }
+:root.dark-mode #note-advising, :root.dark-mode #note-cs-advising { background: #3A2A1B; border-color: #D08A40; }
+:root.dark-mode #note-advising .heading, :root.dark-mode #note-cs-advising .heading { color: #F0B070; }
+
+/* floating feedback button on every page (assets/feedback.js) */
+.feedback-fab { position: fixed; right: 20px; bottom: 20px; z-index: 1000; display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: 999px; background: #195684; color: #fff !important; text-decoration: none !important;
+  font: 600 14px/1.2 "Open Sans", "Helvetica Neue", Arial, sans-serif; box-shadow: 0 4px 14px rgba(0,0,0,.22); }
+.feedback-fab:hover { background: #12406A; }
+.feedback-fab:focus-visible { outline: 3px solid #8DB3D6; outline-offset: 2px; }
+.feedback-fab .fab-short { display: none; }
+@media (max-width: 800px) {   /* the theme's navigation bar sits at the bottom on small screens */
+  .feedback-fab { bottom: 76px; right: 12px; padding: 9px 13px; }
+  .feedback-fab .fab-long { display: none; }
+  .feedback-fab .fab-short { display: inline; }
+}
+:root.dark-mode .feedback-fab { background: #3C78A8; }
+@media print { .feedback-fab { display: none !important; } }

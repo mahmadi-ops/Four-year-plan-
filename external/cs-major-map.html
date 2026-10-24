@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SCU CS Major Map</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Layout: a fixed 1920×1240 stage scaled to the viewport, course boxes in columns by requirement category, arrows = prerequisites. Deliberately single dark theme to match the MATH 14 brain map. */
+:root { --bg: #16130f; --fg: #f3f2f2; --fg-55: rgba(243,242,242,0.55); --fg-75: rgba(243,242,242,0.75); --line: rgba(243,242,242,0.38); --arrow: rgba(243,242,242,0.30); --gold: #b68235; --gold-hi: #cf9f55; --cs: #6fb3f2; --font-display: "Cormorant Garamond", Georgia, serif; --font-body: "Lora", Georgia, serif; color-scheme: dark; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); }
+#wrap { overflow: hidden; width: 100%; }
+#stage { position: relative; width: 1920px; height: 1240px; background: var(--bg); color: var(--fg); font-family: var(--font-body); overflow: hidden; transform-origin: 0 0; }
+#connectors { position: absolute; inset: 0; pointer-events: none; }
+#connectors path { transition: stroke 0.15s, stroke-width 0.15s, opacity 0.15s; }
+#connectors.focus path { opacity: 0.12; }
+#connectors.focus path.hi { opacity: 1; stroke-width: 2.5; }
+#connectors path.hi.plain { stroke: rgba(243,242,242,0.85); }
+#connectors path.hi.gold { stroke: var(--gold-hi); }
+.node { position: absolute; box-sizing: border-box; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 10px 14px; color: var(--fg); display: block; transition: border-color 0.15s, opacity 0.15s; }
+.node.gold { border-color: rgba(182,130,53,0.85); }
+.node:hover, .node.hi { border-color: var(--gold-hi); }
+#stage.focus .node { opacity: 0.3; }
+#stage.focus .node.hi, #stage.focus .node:hover { opacity: 1; }
+#stage.focus .colhead { opacity: 0.3; }
+.node .kick { font-size: 12.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-55); }
+.node .t { font-family: var(--font-display); font-weight: 600; font-size: 20px; line-height: 1.12; margin-top: 2px; text-wrap: balance; }
+.node .hub { font-family: var(--font-display); font-weight: 500; text-align: center; line-height: 1.1; }
+.node .meta { margin-top: 5px; font-size: 12.5px; line-height: 1.35; color: var(--fg-55); }
+.node .meta b { color: var(--fg-75); font-weight: 400; }
+.node.emph .t { font-size: 21px; }
+.node.emph .meta { font-size: 13px; color: var(--fg-75); }
+.node.cs .kick { color: var(--cs); }
+.node.cs { border-color: rgba(111,179,242,0.6); }
+.node.cs.gold { border-color: rgba(182,130,53,0.85); }
+.rule { width: 70px; height: 1px; background: var(--gold); margin: 10px auto 0; }
+.colhead { position: absolute; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); transition: opacity 0.15s; }
+.colhead span { color: var(--fg-55); letter-spacing: 0.04em; text-transform: none; font-style: italic; }
+.title { position: absolute; left: 60px; top: 44px; }
+.title .h { font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 1; }
+.title .k { margin-top: 8px; font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
+#legend { position: absolute; left: 60px; top: 140px; width: 470px; font-size: 13.5px; color: var(--fg-75); line-height: 1.45; }
+#legend .row { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+#legend svg { flex: none; }
+#legend .box { flex: none; width: 36px; height: 14px; border: 1px solid rgba(182,130,53,0.85); border-radius: 3px; box-sizing: border-box; }
+#legend .hint { margin-top: 10px; font-style: italic; color: var(--fg-55); }
+@media (prefers-reduced-motion: reduce) { #connectors path, .node, .colhead { transition: none; } }
+</style>
+</head>
+<body>
+
+<div id="wrap"><div id="stage">
+  <svg id="connectors" width="1920" height="1240">
+    <defs>
+      <marker id="arr-plain" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="rgba(243,242,242,0.45)"/></marker>
+      <marker id="arr-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="rgba(182,130,53,0.85)"/></marker>
+    </defs>
+  </svg>
+  <div class="title"><div class="h">The major, course by course</div><div class="k">B.S. Computer Science &middot; SCU Bulletin 2026–27</div></div>
+  <div id="legend">
+    <div class="row"><svg width="44" height="10"><line x1="0" y1="5" x2="36" y2="5" stroke="rgba(243,242,242,0.35)" stroke-width="1.5"/><path d="M36,1 L44,5 L36,9 z" fill="rgba(243,242,242,0.45)"/></svg><span>is a prerequisite for</span></div>
+    <div class="row"><svg width="44" height="10"><line x1="0" y1="5" x2="36" y2="5" stroke="rgba(182,130,53,0.75)" stroke-width="1.5"/><path d="M36,1 L44,5 L36,9 z" fill="rgba(182,130,53,0.85)"/></svg><span>feeds a course offered only in alternate years</span></div>
+    <div class="row"><span class="box"></span><span>offered in alternate years (department schedule, May 2026)</span></div>
+    <div class="row"><span class="box" style="border-color:rgba(111,179,242,0.6)"></span><span>computer science course</span></div>
+    <div class="hint">Hover a course to light up what it needs and what it unlocks; hover an emphasis to see its courses. CSEN and ECEN prerequisites are not drawn.</div>
+  </div>
+</div></div>
+
+<script>
+(function(){
+const HEADS = [
+  [60, 365, 'Lower division', 'all required'],
+  [620, 60, 'Required upper division', ''],
+  [620, 560, 'Minor in Computer Science', ''],
+  [920, 60, 'Algorithms & Complexity', ''],
+  [920, 700, 'Software', ''],
+  [1220, 60, 'Data Science', ''],
+  [1220, 700, 'Security', ''],
+  [1520, 60, 'MATH electives', 'named by the emphases'],
+  [60, 1000, 'Emphases', 'choose one · five upper-division courses'],
+];
+const W = 260;
+const NODES = [
+  { id:'11', x:60,  y:395, w:220, kick:'MATH 11', t:'Calculus I', meta:'Prereq: MATH 9 / CRE ≥ 76 / AP' },
+  { id:'12', x:60,  y:490, w:220, kick:'MATH 12', t:'Calculus II', meta:'Prereq: 11' },
+  { id:'13', x:60,  y:585, w:220, kick:'MATH 13', t:'Calculus III', meta:'Prereq: 12' },
+  { id:'14', x:60,  y:680, w:220, kick:'MATH 14', t:'Calculus IV', meta:'Prereq: 13' },
+  { id:'51', x:60,  y:800, w:220, kick:'MATH 51', t:'Discrete Mathematics', meta:'no prerequisite · also CSEN 19' },
+  { id:'53', x:60,  y:895, w:220, kick:'MATH 53', t:'Linear Algebra', meta:'Prereq: 13' },
+  { id:'c10', x:320, y:395, w:240, cs:true, kick:'CSCI 10', t:'Intro to Computer Science', meta:'Python · weekly lab' },
+  { id:'c60', x:320, y:490, w:240, cs:true, kick:'CSCI 60', t:'C++ & Object-Oriented Programming', meta:'Prereq: CSCI 10' },
+  { id:'c61', x:320, y:585, w:240, cs:true, kick:'CSCI 61', t:'Data Structures', meta:'Prereq: CSCI 60' },
+  { id:'c62', x:320, y:680, w:240, cs:true, kick:'CSCI 62', t:'Advanced Programming', meta:'Prereq: CSCI 60, 61' },
+  { id:'sci', x:320, y:800, w:240, kick:'PHYS 31 · CHEM 11 · ENVS 21 · 23', t:'One science course', meta:'any one of the four' },
+  { id:'csen20', x:320, y:895, w:240, kick:'CSEN 20 · 20L · ECEN 21 · 21L', t:'Embedded systems · logic design', meta:'School of Engineering' },
+  // required upper division
+  { id:'122', x:620, y:90,  w:W, kick:'MATH 122', t:'Probability & Statistics I', meta:'Pre/co-req: 14' },
+  { id:'c161', x:620, y:190, w:W, cs:true, kick:'CSCI 161', t:'Automata & Languages', meta:'Prereq: MATH 51' },
+  { id:'c163', x:620, y:290, w:W, cs:true, kick:'CSCI 163', t:'Theory of Algorithms', meta:'Prereq: MATH 51, CSCI 61 · also CSEN 179' },
+  { id:'csen177', x:620, y:390, w:W, kick:'CSEN 177 · 177L', t:'Operating Systems', meta:'School of Engineering' },
+  { id:'minor', x:620, y:590, w:W, kick:'Minor', t:'Computer Science', meta:'CSCI 10, 60, 61, 62; MATH 51; CSEN 20 & 20L; two upper-division CSCI and one CSCI or CSEN', req:['c10','c60','c61','c62','51','csen20'] },
+  // algorithms & complexity
+  { id:'c162', x:920, y:90,  w:W, cs:true, kick:'CSCI 162', t:'Computational Complexity', meta:'Prereq: MATH 51', alt:true },
+  { id:'c164', x:920, y:190, w:W, cs:true, kick:'CSCI 164', t:'Advanced Theory of Algorithms', meta:'Prereq: CSCI 163', alt:true },
+  { id:'c165', x:920, y:290, w:W, cs:true, kick:'CSCI 165', t:'Data Privacy & Algorithmic Fairness', meta:'Prereq: MATH 51, CSCI 10 · by request' },
+  { id:'c146', x:920, y:390, w:W, cs:true, kick:'CSCI 146', t:'Optimization I', meta:'Prereq: CSCI 10, MATH 14, 53 · also MATH 146', alt:true },
+  { id:'c147', x:920, y:490, w:W, cs:true, kick:'CSCI 147', t:'Optimization II', meta:'Prereq: MATH 122, CSCI 146 · also MATH 147', alt:true },
+  // software
+  { id:'c169', x:920, y:730, w:W, cs:true, kick:'CSCI 169', t:'Programming Languages', meta:'Prereq: CSCI 62, MATH 51' },
+  { id:'c187', x:920, y:830, w:W, cs:true, kick:'CSCI 187', t:'Design & Management of Software', meta:'Prereq: CSCI 62' },
+  { id:'c168', x:920, y:930, w:W, cs:true, kick:'CSCI 168', t:'Computer Graphics', meta:'Prereq: CSCI 62, MATH 13' },
+  // data science
+  { id:'c183', x:1220, y:90,  w:W, cs:true, kick:'CSCI 183', t:'Data Science & Machine Learning', meta:'Prereq: CSCI 62, MATH 53, 122' },
+  { id:'c184', x:1220, y:190, w:W, cs:true, kick:'CSCI 184', t:'Advanced Machine Learning', meta:'Prereq: CSCI 183' },
+  { id:'c185', x:1220, y:290, w:W, cs:true, kick:'CSCI 185', t:'Data Mining', meta:'Prereq: CSCI 62, MATH 53, 122' },
+  { id:'c127', x:1220, y:390, w:W, cs:true, kick:'CSCI 127', t:'Computer Simulation', meta:'Prereq: CSCI 10 (MATH 122 recommended) · by request' },
+  { id:'c166', x:1220, y:490, w:W, cs:true, kick:'CSCI 166', t:'Numerical Analysis', meta:'Prereq: CSCI 10, MATH 53 · also MATH 166', alt:true },
+  // security
+  { id:'178', x:1220, y:730, w:W, kick:'MATH 178', t:'Cryptography', meta:'Prereq: MATH 51' },
+  { id:'c180', x:1220, y:830, w:W, cs:true, kick:'CSCI 180', t:'Computer Security', meta:'Prereq: CSEN 20, CSCI 62' },
+  { id:'c181', x:1220, y:930, w:W, cs:true, kick:'CSCI 181', t:'Applied Cryptography', meta:'Prereq: MATH 178, CSCI 62' },
+  // math electives
+  { id:'101', x:1520, y:90,  w:W, kick:'MATH 101', t:'Survey of Geometry', meta:'Prereq: 13 · algorithms emphasis', alt:true },
+  { id:'175', x:1520, y:190, w:W, kick:'MATH 175', t:'Theory of Numbers', meta:'Prereq: MATH 52 (not in the CS major) · algorithms, security', alt:true },
+  { id:'176', x:1520, y:290, w:W, kick:'MATH 176', t:'Combinatorics', meta:'Prereq: 51 · algorithms emphasis', alt:true },
+  { id:'177', x:1520, y:390, w:W, kick:'MATH 177', t:'Graph Theory', meta:'Prereq: 51 · algorithms emphasis', alt:true },
+  { id:'123', x:1520, y:490, w:W, kick:'MATH 123', t:'Probability & Statistics II', meta:'Prereq: 122; 53 pre/co · data science emphasis' },
+  { id:'csen', x:1520, y:730, w:W, kick:'CSEN electives', t:'146, 152, 161, 166, 169, 178', meta:'School of Engineering courses named by the emphases; prerequisites not drawn' },
+  // emphases
+  { id:'e-alg', x:60,   y:1030, w:340, emph:true, t:'Algorithms & Complexity', meta:'CSCI 162, 164 · two of CSCI 146, 147, 165, 181, MATH 101, 175, 176, 177, 178 · one more from that list or any upper-division CSCI/CSEN', req:['c162','c164','c146','c147','c165','c181','101','175','176','177','178'] },
+  { id:'e-ds',  x:430,  y:1030, w:340, emph:true, t:'Data Science', meta:'CSCI 183, 184, 185 · two of CSCI 127, 146, 147, 164, 166, MATH 123, CSEN 166, or any upper-division CSCI/CSEN', req:['c183','c184','c185','c127','c146','c147','c164','c166','123','csen'] },
+  { id:'e-sec', x:800,  y:1030, w:340, emph:true, t:'Security', meta:'MATH 178, CSCI 180, 181 · two of MATH 175, CSEN 152, 161, 146, or any upper-division CSCI/CSEN (not CSEN 150)', req:['178','c180','c181','175','csen'] },
+  { id:'e-sw',  x:1170, y:1030, w:340, emph:true, t:'Software', meta:'CSCI 169, 187, CSEN 146 · one of CSCI 183, 180, 168 or any upper-division CSCI · one of CSCI 183, 180, 168, CSEN 161, 178 or any upper-division CSCI/CSEN', req:['c169','c187','csen','c183','c180','c168'] },
+  { id:'note', x:1540, y:1030, w:340, emph:true, t:'For every emphasis', meta:'Five 4- or 5-unit upper-division courses. Decide by the end of junior year; only one emphasis. Data Science cannot be the emphasis for both a math and a CS major.' },
+];
+// prerequisite arrows: from the course needed to the course that needs it
+const EDGES = [
+  ['11','12'], ['12','13'], ['13','14'], ['13','53'],
+  ['c10','c60'], ['c60','c61'], ['c61','c62'],
+  ['14','122'], ['51','c161'], ['51','c163'], ['c61','c163'],
+  ['51','c162'], ['c163','c164'], ['51','c165'], ['c10','c165'], ['c10','c146'], ['14','c146'], ['53','c146'], ['122','c147'], ['c146','c147'],
+  ['c62','c169'], ['51','c169'], ['c62','c187'], ['c62','c168'], ['13','c168'],
+  ['c62','c183'], ['53','c183'], ['122','c183'], ['c183','c184'], ['c62','c185'], ['53','c185'], ['122','c185'], ['c10','c127'], ['c10','c166'], ['53','c166'],
+  ['51','178'], ['csen20','c180'], ['c62','c180'], ['178','c181'], ['c62','c181'],
+  ['13','101'], ['51','176'], ['51','177'], ['122','123'], ['53','123'],
+];
+
+const stage = document.getElementById('stage');
+for (const [x, y, h, s] of HEADS) {
+  const d = document.createElement('div'); d.className = 'colhead'; d.style.left = x + 'px'; d.style.top = y + 'px';
+  d.textContent = h; if (s) { const sp = document.createElement('span'); sp.textContent = ' · ' + s; d.appendChild(sp); }
+  stage.appendChild(d);
+}
+const byId = {};
+for (const n of NODES) {
+  byId[n.id] = n;
+  const el = document.createElement('div');
+  el.className = 'node' + (n.alt ? ' gold' : '') + (n.emph ? ' emph' : '') + (n.cs ? ' cs' : '');
+  el.dataset.node = n.id;
+  el.style.left = n.x + 'px'; el.style.top = n.y + 'px'; el.style.width = n.w + 'px';
+  if (n.kick) { const k = document.createElement('div'); k.className = 'kick'; k.textContent = n.kick; el.appendChild(k); }
+  if (n.t) { const t = document.createElement('div'); t.className = 't'; t.textContent = n.t; el.appendChild(t); }
+  if (n.meta) { const m = document.createElement('div'); m.className = 'meta'; m.innerHTML = n.meta; el.appendChild(m); }
+  stage.appendChild(el);
+}
+const svg = document.getElementById('connectors');
+const touching = {};
+const q = id => stage.querySelector('[data-node="' + id + '"]');
+function draw() {
+  while (svg.lastChild && svg.lastChild.tagName !== 'defs') svg.removeChild(svg.lastChild);
+  for (const k in touching) delete touching[k];
+  for (const [a, b] of EDGES) {
+    const rectOf = id => { const el = q(id); return { x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight }; };
+    const A = rectOf(a), B = rectOf(b);
+    const acx = A.x + A.w / 2, acy = A.y + A.h / 2, bcx = B.x + B.w / 2, bcy = B.y + B.h / 2;
+    let d;
+    if (Math.abs(bcx - acx) > Math.abs(bcy - acy)) {
+      const p1 = bcx > acx ? [A.x + A.w, acy] : [A.x, acy];
+      const p2 = bcx > acx ? [B.x, bcy] : [B.x + B.w, bcy];
+      const k = (p2[0] - p1[0]) * 0.45;
+      d = `M${p1[0]},${p1[1]} C${p1[0] + k},${p1[1]} ${p2[0] - k},${p2[1]} ${p2[0]},${p2[1]}`;
+    } else {
+      const p1 = bcy > acy ? [acx, A.y + A.h] : [acx, A.y];
+      const p2 = bcy > acy ? [bcx, B.y] : [bcx, B.y + B.h];
+      const k = (p2[1] - p1[1]) * 0.45;
+      d = `M${p1[0]},${p1[1]} C${p1[0]},${p1[1] + k} ${p2[0]},${p2[1] - k} ${p2[0]},${p2[1]}`;
+    }
+    const gold = !!byId[b].alt;
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', d); p.setAttribute('fill', 'none');
+    p.setAttribute('class', gold ? 'gold' : 'plain');
+    p.setAttribute('stroke', gold ? 'rgba(182,130,53,0.7)' : 'rgba(243,242,242,0.28)');
+    p.setAttribute('stroke-width', '1.5');
+    p.setAttribute('marker-end', gold ? 'url(#arr-gold)' : 'url(#arr-plain)');
+    svg.appendChild(p);
+    for (const id of [a, b]) {
+      (touching[id] = touching[id] || { paths: [], nodes: [] });
+      touching[id].paths.push(p);
+      touching[id].nodes.push(id === a ? b : a);
+    }
+  }
+}
+draw();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+
+for (const n of NODES) {
+  const el = q(n.id);
+  const focus = on => {
+    const inc = touching[n.id] || { paths: [], nodes: [] };
+    const extra = n.req || [];
+    if (!inc.paths.length && !extra.length) return;
+    svg.classList.toggle('focus', on); stage.classList.toggle('focus', on);
+    for (const p of inc.paths) p.classList.toggle('hi', on);
+    for (const id of inc.nodes.concat(extra)) { const t = q(id); if (t) t.classList.toggle('hi', on); }
+  };
+  el.addEventListener('mouseenter', () => focus(true));
+  el.addEventListener('mouseleave', () => focus(false));
+}
+function fit() {
+  const w = document.documentElement.clientWidth;
+  const s = w / 1920;
+  stage.style.transform = 'scale(' + s + ')';
+  document.getElementById('wrap').style.height = (1240 * s) + 'px';
+}
+fit(); window.addEventListener('resize', fit);
+})();
+</script>
+</body>
+</html>
