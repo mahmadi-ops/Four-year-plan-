@@ -516,8 +516,8 @@ $('#loadCode').addEventListener('click', () => { const raw = $('#planCode').valu
 $('#creditBox').addEventListener('toggle', e => { e.currentTarget.dataset.touched = '1'; });
 $('#reset').addEventListener('click', () => { S.taken = {}; S.credit = {}; S.want = {}; S.emph=''; S.curY=0; S.curQ=0; $('#emph').value=''; $('#curY').value=0; $('#curQ').value=0; renderChecks(); save(); render(); });
 $('#pdf').addEventListener('click', () => { renderHead(); window.print(); });
-$('#report').addEventListener('click', () => { const u = 'https://docs.google.com/forms/d/e/1FAIpQLSctL3PYIVXg_ADdcufIF2fOQ9gZOnQNIuCwxeL93zc1oXU60Q/viewform?usp=pp_url'
-  + '&entry.507797641=' + encodeURIComponent('Mathematics four-year planner') + '&entry.335123135=' + encodeURIComponent('Planner suggestion looks wrong') + '&entry.744743667=' + encodePlan();
+$('#report').addEventListener('click', () => { const u = 'https://docs.google.com/forms/d/e/1FAIpQLSfXueEwsaVoECwJaS6VWV3YBdRP8-ESllt0ygkpSCchcMoYsQ/viewform?usp=pp_url'
+  + '&entry.2122507823=' + encodeURIComponent('Mathematics four-year planner') + '&entry.974133623=' + encodeURIComponent('Planner suggestion looks wrong') + '&entry.578657742=' + encodePlan();
   window.open(u, '_blank', 'noopener'); });
 $('#resetOff').addEventListener('click', () => { S.off = JSON.parse(JSON.stringify(DEFAULT_OFF)); renderOff(); save(); render(); });
 window.__planner = { plan, S, C };

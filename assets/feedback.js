@@ -1,8 +1,8 @@
 /* "Spot a typo or error? Tell us." at the foot of every page.  The link opens the
    department's feedback form (Google Forms) with the page already filled in. */
 (function () {
-  var FORM = 'https://docs.google.com/forms/d/e/1FAIpQLSctL3PYIVXg_ADdcufIF2fOQ9gZOnQNIuCwxeL93zc1oXU60Q/viewform';
-  var PAGE = 'entry.507797641';
+  var FORM = 'https://docs.google.com/forms/d/e/1FAIpQLSfXueEwsaVoECwJaS6VWV3YBdRP8-ESllt0ygkpSCchcMoYsQ/viewform';
+  var PAGE = 'entry.2122507823';
   function pageName() {
     var t = document.querySelector('.ptx-content section > .heading .title, .ptx-content .heading .title');
     var name = t ? t.textContent.trim() : document.title;
