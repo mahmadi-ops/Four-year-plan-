@@ -144,6 +144,7 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
   <details class="credit" id="creditBox"><summary>Credit from AP, IB or transfer <span id="creditCount" style="color:var(--muted);font-weight:400"></span></summary><div class="chk" id="credit"></div><details class="more" id="creditMore"><summary>Upper-division and other courses</summary><div class="chk" id="credit2"></div></details></details>
   <div class="note">Use <b>+ add course</b> in the plan: earlier quarters for courses taken at SCU, later quarters for courses you intend to take.</div>
   <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><button id="reset">Clear student</button><button id="pdf">Download plan (PDF)</button></div>
+  <div style="margin-top:8px"><button id="report" title="Opens the department's feedback form with this plan attached">Report a problem with this plan</button></div>
   <details class="credit" id="saveBox"><summary>Save or share this plan</summary>
     <div class="note">Your plan is kept in this browser only. Copy the code to keep it or send it to your advisor; paste a code here and press Load to restore it.</div>
     <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><input id="planCode" aria-label="Plan code" style="flex:1;min-width:140px;font-family:ui-monospace,Menlo,monospace;font-size:.78rem;padding:4px 6px;border:1px solid #9AA4B8;border-radius:3px"><button id="copyCode">Copy code</button><button id="copyLink" hidden>Copy link</button><button id="loadCode">Load</button></div>
@@ -515,6 +516,9 @@ $('#loadCode').addEventListener('click', () => { const raw = $('#planCode').valu
 $('#creditBox').addEventListener('toggle', e => { e.currentTarget.dataset.touched = '1'; });
 $('#reset').addEventListener('click', () => { S.taken = {}; S.credit = {}; S.want = {}; S.emph=''; S.curY=0; S.curQ=0; $('#emph').value=''; $('#curY').value=0; $('#curQ').value=0; renderChecks(); save(); render(); });
 $('#pdf').addEventListener('click', () => { renderHead(); window.print(); });
+$('#report').addEventListener('click', () => { const u = 'https://docs.google.com/forms/d/e/1FAIpQLSctL3PYIVXg_ADdcufIF2fOQ9gZOnQNIuCwxeL93zc1oXU60Q/viewform?usp=pp_url'
+  + '&entry.507797641=' + encodeURIComponent('Mathematics four-year planner') + '&entry.335123135=' + encodeURIComponent('Planner suggestion looks wrong') + '&entry.744743667=' + encodePlan();
+  window.open(u, '_blank', 'noopener'); });
 $('#resetOff').addEventListener('click', () => { S.off = JSON.parse(JSON.stringify(DEFAULT_OFF)); renderOff(); save(); render(); });
 window.__planner = { plan, S, C };
 })();
