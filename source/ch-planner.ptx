@@ -6,8 +6,8 @@
     <p>
       Students build their own plan. Set the next quarter to plan, then use
       <q>+ add course</q> to put each course taken at Santa Clara in the quarter
-      it was taken, and each course you intend to take in a later quarter. AP,
-      IB, or transfer credit is ticked separately under <q>Credit from AP, IB or
+      it was taken, and each course you intend to take in a later quarter. AP
+      (Advanced Placement), IB (International Baccalaureate), or transfer credit is ticked separately under <q>Credit from AP, IB or
       transfer</q> and does not appear in the plan. Once a course has been added,
       a <q>Sample four-year plan</q> appears below the plan: the student's own
       courses in grey and suggested courses for every remaining quarter, following the
@@ -18,6 +18,14 @@
       requirement check marks what is completed and what is in the plan.
       For comfortable use, <url href="external/planner.html" visual="">open the planner full size in a new tab</url>.
     </p>
+
+    <assemblage xml:id="note-advising">
+      <title>Important</title>
+      <p>
+        A plan made here is a draft. Discuss it with your advisor and go over it
+        together in an advising session before you finalize it.
+      </p>
+    </assemblage>
   </introduction>
 
   <subsection xml:id="sec-planner">
@@ -65,9 +73,7 @@
       takes the courses whose prerequisites are met, that are offered that quarter,
       and that fit under the per-quarter cap, choosing the most urgent first:
       earliest latest-workable-quarter, then alternate-year courses, then
-      lower-division courses. Pre-or-co-requisites (<c>MATH 122</c> with
-      <c>MATH 14</c>, <c>MATH 123</c> with <c>MATH 53</c>) may be scheduled in the
-      same quarter as the course that needs them.
+      lower-division courses.
     </p>
 
     <p>
@@ -111,21 +117,40 @@
 
   <subsection xml:id="sec-planner-offerings">
     <title>Course offerings</title>
+    <p>Where the quarters for each course come from:</p>
+    <ul>
+      <li><p>
+        Upper-division MATH and CSCI courses, including the alternate-year rotation:
+        the department's <url href="https://www.scu.edu/cas/mathcs/academic-program/upper-division-course-schedule/" visual="scu.edu/cas/mathcs/academic-program/upper-division-course-schedule">upper-division course schedule</url> (revised May 2026).
+      </p></li>
+      <li><p>
+        MATH 51, 52 and 53: the tentative 2026<ndash/>27 list in the department's
+        <url href="https://www.scu.edu/media/college-of-arts-and-sciences/math-and-cs/documents/CS-Advising-Help-accessible.pdf" visual="scu.edu/media/college-of-arts-and-sciences/math-and-cs/documents/CS-Advising-Help-accessible.pdf">CS advising document</url>.
+      </p></li>
+      <li><p>
+        Calculus (MATH 11<ndash/>14) every quarter, MATH 23 every Winter, CSCI 10 in
+        Fall and Winter, and CSCI 60, 61 and 62 every quarter: confirmed by the
+        department (October 2026).
+      </p></li>
+      <li><p>
+        PHYS 31 (Winter, Spring) and PHYS 32 (Fall, Spring): the Physics department's
+        <url href="https://www.scu.edu/cas/physics-and-engineering-physics/academic-program/class-schedule/" visual="scu.edu/cas/physics-and-engineering-physics/academic-program/class-schedule">class schedule</url>, 2023<ndash/>24 through Fall 2026.
+      </p></li>
+      <li><p>
+        CSEN 178 and the business and economics courses of the emphases: the
+        University's class listings for 2023<ndash/>24 through Fall 2026, the same
+        listings shown on the department class schedules (for example the
+        Physics <url href="https://www.scu.edu/cas/physics-and-engineering-physics/academic-program/class-schedule/" visual="scu.edu/cas/physics-and-engineering-physics/academic-program/class-schedule">class schedule</url>).
+      </p></li>
+      <li><p>
+        Offered by request only (MATH 100, 133, 134, 172): no quarters, and never
+        suggested.
+      </p></li>
+    </ul>
     <p>
-      The quarters and alternate-year rotation of the upper-division courses come
-      from the department's
-      <url href="https://www.scu.edu/cas/mathcs/academic-program/upper-division-course-schedule/" visual="scu.edu/cas/mathcs">upper-division course schedule</url>
-      (revised May 2026), MATH 51, 52 and 53 from the 2026<ndash/>27 schedule, and
-      PHYS 31 (Winter, Spring) and PHYS 32 (Fall, Spring) from the Physics
-      department's class listings for 2023<ndash/>24 through Fall 2026. The department
-      confirmed that calculus (MATH 11<ndash/>14) runs every quarter, MATH 23 every
-      Winter, CSCI 10 in Fall and Winter, and CSCI 60, 61 and 62 every quarter.
-      MATH 9, CSEN 178 and the business and economics courses of the emphases follow
-      the University's class listings for 2023<ndash/>24 through Fall 2026. Any entry
-      can be changed in the offerings table at the bottom of the planner; edits persist in the browser only, so lasting
-      changes go in the course table near the top of <c>assets/planner.html</c>.
-      Courses the department offers by request only (MATH 100, 133, 134, 172) have
-      no quarters and are never suggested.
+      Any entry can be changed in the offerings table at the bottom of the planner;
+      edits persist in the browser only, so lasting changes go in the course table
+      near the top of <c>assets/planner.html</c>.
     </p>
   </subsection>
 

@@ -9,3 +9,9 @@
 .interactive-iframe-container iframe { width: 100% !important; height: auto !important; display: block; }
 #planner, #cs-planner { aspect-ratio: 1 / 1.25; }
 #major-map, #cs-major-map { aspect-ratio: 1920 / 1240; }
+
+/* "Important" box under each planner's introduction */
+#note-advising, #note-cs-advising { border: 1.5px solid #B5651D; border-radius: 6px; background: #FDF5EC; padding: 10px 14px; margin: 14px 0 6px; }
+#note-advising .heading, #note-cs-advising .heading { color: #8A4A12; }
+:root.dark-mode #note-advising, :root.dark-mode #note-cs-advising { background: #3A2A1B; border-color: #D08A40; }
+:root.dark-mode #note-advising .heading, :root.dark-mode #note-cs-advising .heading { color: #F0B070; }

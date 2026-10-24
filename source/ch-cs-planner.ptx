@@ -14,6 +14,14 @@
       plan says so under <q>Warnings and advice</q>.
       For comfortable use, <url href="external/cs-planner.html" visual="">open the planner full size in a new tab</url>.
     </p>
+
+    <assemblage xml:id="note-cs-advising">
+      <title>Important</title>
+      <p>
+        A plan made here is a draft. Discuss it with your advisor and go over it
+        together in an advising session before you finalize it.
+      </p>
+    </assemblage>
   </introduction>
 
   <subsection xml:id="sec-cs-planner">
@@ -22,7 +30,8 @@
       <instructions>
         <p>
           It works like the mathematics planner: students build their own plan,
-          AP, IB, or transfer credit is ticked separately, and the
+          AP (Advanced Placement), IB (International Baccalaureate), or transfer
+          credit is ticked separately, and the
           <q>Sample four-year plan</q> suggests the rest once a course has been added, in the order of the department's sample curriculum (Fall 2025). With the emphasis
           left as <q>Undecided</q>, the recommendations fill the five emphasis
           slots with programming-heavy courses.
@@ -35,21 +44,37 @@
 
   <subsection xml:id="sec-cs-planner-offerings">
     <title>Course offerings</title>
-    <p>
-      Upper-division quarters and the alternate-year rotation come from the
-      department's
-      <url href="https://www.scu.edu/cas/mathcs/academic-program/upper-division-course-schedule/" visual="scu.edu/cas/mathcs">upper-division course schedule</url>
-      (revised May 2026); the lower-division CSCI courses and MATH 51, 52, 53 and
-      122 from the tentative 2026<ndash/>27 list in the CS advising document.
-      The science course is available every quarter (PHYS 31 Winter and Spring,
-      CHEM 11 and ENVS 21 Fall and Winter, ENVS 23 Fall and Spring, per the
-      University's class listings for 2024<ndash/>25 through Fall 2026).
-      Calculus runs every quarter (department). Precalculus and the CSEN and ECEN
-      courses follow the University's class listings for 2023<ndash/>24 through Fall
-      2026: CSEN 20, 146, 161, 166, 177 and ECEN 21 every quarter, CSEN 169 in Winter,
-      and CSEN 178 in Fall and Spring. CSEN 152 has not run since at least 2024 and,
-      like CSCI 127 and 165 (offered by request), is never suggested.
-    </p>
+    <p>Where the quarters for each course come from:</p>
+    <ul>
+      <li><p>
+        Upper-division CSCI and MATH courses, including the alternate-year rotation:
+        the department's <url href="https://www.scu.edu/cas/mathcs/academic-program/upper-division-course-schedule/" visual="scu.edu/cas/mathcs/academic-program/upper-division-course-schedule">upper-division course schedule</url> (revised May 2026).
+      </p></li>
+      <li><p>
+        Lower-division CSCI courses and MATH 51, 52, 53 and 122: the tentative
+        2026<ndash/>27 list in the department's <url href="https://www.scu.edu/media/college-of-arts-and-sciences/math-and-cs/documents/CS-Advising-Help-accessible.pdf" visual="scu.edu/media/college-of-arts-and-sciences/math-and-cs/documents/CS-Advising-Help-accessible.pdf">CS advising document</url>. The department
+        confirmed CSCI 10 in Fall and Winter and CSCI 60, 61 and 62 every quarter
+        (October 2026).
+      </p></li>
+      <li><p>
+        Calculus (MATH 11<ndash/>14): every quarter, confirmed by the department.
+      </p></li>
+      <li><p>
+        The science course: every quarter (PHYS 31 Winter and Spring, CHEM 11 and
+        ENVS 21 Fall and Winter, ENVS 23 Fall and Spring), from the University's class
+        listings for 2024<ndash/>25 through Fall 2026, the same listings shown on the
+        department class schedules (for example the Physics <url href="https://www.scu.edu/cas/physics-and-engineering-physics/academic-program/class-schedule/" visual="scu.edu/cas/physics-and-engineering-physics/academic-program/class-schedule">class schedule</url>).
+      </p></li>
+      <li><p>
+        Precalculus and the CSEN and ECEN courses, from the same class listings for
+        2023<ndash/>24 through Fall 2026: CSEN 20, 146, 161, 166, 177 and ECEN 21
+        every quarter, CSEN 169 in Winter, and CSEN 178 in Fall and Spring.
+      </p></li>
+      <li><p>
+        Never suggested: CSEN 152, which has not run since at least 2024, and
+        CSCI 127 and 165, which are offered by request.
+      </p></li>
+    </ul>
   </subsection>
 
 </section>
