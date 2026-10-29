@@ -229,7 +229,7 @@ const PROG = new Set(['CSCI 181','CSCI 183','CSCI 185','CSCI 169','CSCI 184','CS
 const DEFAULT_OFF = JSON.parse(JSON.stringify(Object.fromEntries(Object.entries(C).map(([k,v])=>[k,{off:v.off,alt:v.alt===undefined?null:v.alt}]))));
 const LOWER = ['MATH 11','MATH 12','MATH 13','MATH 14','MATH 51','MATH 53','CSCI 10','CSCI 60','CSCI 61','CSCI 62','SCI','CSEN 20','ECEN 21'];
 const CORE = ['MATH 122','CSCI 161','CSCI 163','CSEN 177'];
-const UDLIST = Object.keys(C).filter(k=>!LOWER.includes(k) && !CORE.includes(k) && k!=='MATH 52');
+const UDLIST = Object.keys(C).filter(k=>!LOWER.includes(k) && !CORE.includes(k) && k!=='MATH 52' && k!=='MATH 9');   // upper division only: MATH 9 and MATH 52 are lower division
 const ANY = ['CSCI 183','CSCI 169','CSCI 187','CSCI 185','CSEN 161','CSEN 166','CSCI 168','CSCI 184','CSCI 181','CSEN 146','CSCI 166','CSCI 180','CSCI 164','CSCI 165','CSCI 146','CSCI 147','CSCI 127','CSEN 169','CSEN 178'];
 const EMPH = {
   alg:{ name:'Algorithms & Complexity', req:['CSCI 162','CSCI 164'], choose:[{n:2,from:['CSCI 146','CSCI 147','CSCI 165','CSCI 181','MATH 101','MATH 175','MATH 176','MATH 177','MATH 178']},{n:1,from:['CSCI 146','CSCI 147','CSCI 165','CSCI 181','MATH 101','MATH 175','MATH 176','MATH 177','MATH 178'].concat(ANY)}] },
@@ -390,7 +390,7 @@ function plan() {
 const $ = s => document.querySelector(s);
 function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 const kOf = id => PROG.has(id) ? 'prog' : C[id].k;
-const GROUPS = [['Lower division', ['MATH 9'].concat(LOWER)], ['Upper division', CORE.concat(UDLIST).concat(['MATH 52'])]];
+const GROUPS = [['Lower division', ['MATH 9'].concat(LOWER)], ['Upper division', CORE.concat(UDLIST)], ['Other mathematics', ['MATH 52']]];
 const takenChip = id => `<div class="course tk" style="--c:${col(kOf(id))}"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span><button class="x" data-untake="${esc(id)}" aria-label="Remove ${esc(id)}" title="Remove">×</button></div>`;
 const addSelect = q => `<select class="addsel" data-addq="${q}" aria-label="Add a course taken in this quarter"><option value="">+ add course</option>${GROUPS.map(([g,ids])=>`<optgroup label="${g}">${ids.filter(id=>!isDone(id)).map(id=>`<option value="${esc(id)}">${esc(id)} · ${esc(C[id].t)}</option>`).join('')}</optgroup>`).join('')}</select>`;
 function renderYears(P) {
