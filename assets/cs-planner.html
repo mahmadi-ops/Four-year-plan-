@@ -109,6 +109,15 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
 .tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);background:var(--blue-soft);border-radius:3px;padding:2px 6px;margin-left:6px;vertical-align:2px}
 .offwrap{overflow-x:auto}
 .printhead{display:none}
+.course.custom{border-left:3px dashed #9AA4B8;background:#F7F8FA;padding:3px 18px 3px 7px}
+.course.custom .id{font-style:italic}
+.course.custom .nm b{color:var(--ok);font-weight:600}
+.cform{display:flex;flex-direction:column;gap:4px;margin-top:4px;padding:6px;border:1px dashed var(--blue);border-radius:3px;background:#F4F8FC}
+.cform input{font:inherit;font-size:.8rem;padding:3px 5px;border:1px solid #9AA4B8;border-radius:3px;min-width:0}
+.cform #cunits{width:3.2em}
+.cform .crow{display:flex;align-items:center;gap:4px;font-size:.78rem;color:var(--muted);flex-wrap:wrap}
+.cform button{font-size:.75rem;padding:2px 8px}
+@media print{.cform{display:none}}
 #report.fab{position:fixed;right:20px;bottom:20px;z-index:1000;border:0;border-radius:999px;padding:10px 16px;background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.22)}
 #report.fab:hover{background:#12406A;color:#fff}
 @media (max-width:600px){#report.fab{right:12px;bottom:12px;padding:9px 13px}}
@@ -144,7 +153,7 @@ td.now{box-shadow:inset 0 0 0 2px var(--blue)}
   <label class="row">Emphasis <select id="emph"><option value="">Undecided</option><option value="alg">Algorithms &amp; Complexity</option><option value="ds">Data Science</option><option value="sec">Security</option><option value="sw">Software</option></select></label>
   <label class="row">Major courses per quarter, at most <input type="number" id="cap" min="1" max="4" value="3"></label>
   <details class="credit" id="creditBox"><summary>Credit from AP, IB or transfer <span id="creditCount" style="color:var(--muted);font-weight:400"></span></summary><div class="chk" id="credit"></div><details class="more" id="creditMore"><summary>Upper-division and other courses</summary><div class="chk" id="credit2"></div></details></details>
-  <div class="note">Use <b>+ add course</b> in the plan: earlier quarters for courses taken at SCU, later quarters for courses you intend to take.</div>
+  <div class="note">Use <b>+ add course</b> in the plan: earlier quarters for courses taken at SCU, later quarters for courses you intend to take. For Core and courses not in the list, choose <b>+ Type a course…</b>.</div>
   <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><button id="reset">Clear student</button><button id="pdf">Download plan (PDF)</button></div>
   <div style="margin-top:8px"><button id="report" title="Opens the department's feedback form with this plan attached">Report a problem with this plan</button></div>
   <details class="credit" id="saveBox"><summary>Save or share this plan</summary>
@@ -244,7 +253,11 @@ const col = k => k==='cs' ? 'var(--analysis)' : k==='prog' ? 'var(--applied)' : 
 const S = { y1: 2026, curY: 0, curQ: 0, emph: '', cap: 3, taken: {}, credit: {}, want: {}, off: JSON.parse(JSON.stringify(DEFAULT_OFF)) };
 try { const s = JSON.parse(localStorage.getItem('csplanner')||'null'); if (s) { Object.assign(S, s); S.off = Object.assign(JSON.parse(JSON.stringify(DEFAULT_OFF)), s.off||{}); } } catch(e){}
 if (S.done) { S.credit = Object.assign({}, S.done, S.credit); delete S.done; }
-S.taken = S.taken || {}; S.credit = S.credit || {};
+S.taken = S.taken || {}; S.credit = S.credit || {}; S.custom = Array.isArray(S.custom) ? S.custom : []; S.customEdit = null;
+// Typed-in courses (Core, electives the menus don't list). An upper-division CSCI below 190 or CSEN below 188
+// counts toward the emphasis courses ("any other 4-5 unit upper-division CSCI or CSEN course"); nothing else is checked.
+const normCourse = raw => { const t = String(raw||'').trim().replace(/\s+/g,' ').slice(0,40); const m = t.match(/^([A-Za-z]{2,5})\s*(\d{1,3}[A-Za-z]?)\b(.*)$/); return m ? (m[1].toUpperCase()+' '+m[2].toUpperCase()+m[3]) : t; };
+const countsUD = name => { const m = name.toUpperCase().match(/^(CSCI|CSEN) (\d{3})(?![0-9])/); return !!m && +m[2] >= 100 && +m[2] < (m[1]==='CSCI' ? 190 : 188) && !C[m[1]+' '+m[2]]; };
 const isDone = id => !!S.credit[id] || (id in S.taken);
 const doneIds = () => Object.keys(C).filter(isDone);
 const started = () => Object.keys(S.taken).length > 0 || Object.keys(S.credit).some(k=>S.credit[k]);
@@ -256,9 +269,9 @@ const TQ = {'CSCI 10':0,'MATH 11':0,'CSCI 60':1,'MATH 12':1,'CSCI 61':2,'MATH 13
 const isEmph = id => !LOWER.includes(id) && !CORE.includes(id) && id!=='MATH 9';
 const tqOf = id => id in TQ ? TQ[id] : isEmph(id) ? 4 : 0;
 const classCap = (id, list) => isEmph(id) ? !list.some(isEmph) : true;   // one emphasis course a quarter, as in the sample
-const encodePlan = () => { const o = { v:1, y1:S.y1, c:S.curY*3+S.curQ, e:S.emph, k:S.cap, t:S.taken, r:Object.keys(S.credit).filter(k=>S.credit[k]) }; return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); };
+const encodePlan = () => { const o = { v:1, y1:S.y1, c:S.curY*3+S.curQ, e:S.emph, k:S.cap, t:S.taken, r:Object.keys(S.credit).filter(k=>S.credit[k]), x:S.custom.map(c=>[c.q,c.name,c.u]) }; return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); };
 const decodePlan = code => { try { const o = JSON.parse(decodeURIComponent(escape(atob(code.trim().replace(/-/g,'+').replace(/_/g,'/'))))); if (!o || o.v!==1) return null; return o; } catch(e) { return null; } };
-const applyPlan = o => { S.y1 = +o.y1 || 2026; S.curY = Math.floor((+o.c||0)/3); S.curQ = (+o.c||0)%3; S.emph = o.e || ''; S.cap = Math.max(1, Math.min(4, +o.k||3)); S.taken = {}; for (const [k,q] of Object.entries(o.t||{})) if (C[k] && q>=0 && q<=11) S.taken[k] = +q; S.credit = {}; for (const k of (o.r||[])) if (C[k]) S.credit[k] = true; };
+const applyPlan = o => { S.y1 = +o.y1 || 2026; S.curY = Math.floor((+o.c||0)/3); S.curQ = (+o.c||0)%3; S.emph = o.e || ''; S.cap = Math.max(1, Math.min(4, +o.k||3)); S.taken = {}; for (const [k,q] of Object.entries(o.t||{})) if (C[k] && q>=0 && q<=11) S.taken[k] = +q; S.credit = {}; for (const k of (o.r||[])) if (C[k]) S.credit[k] = true; S.custom = []; for (const x of (Array.isArray(o.x)?o.x:[])) if (Array.isArray(x) && x[0]>=0 && x[0]<=11 && x[1]) S.custom.push({q:+x[0], name:normCourse(x[1]), u:Math.max(1,Math.min(6,+x[2]||4))}); S.customEdit = null; };
 const save = () => { try { localStorage.setItem('csplanner', JSON.stringify(S)); } catch(e){} };
 try { const m = (location.hash + location.search).match(/plan=([A-Za-z0-9_-]+)/); if (m) { const o = decodePlan(m[1]); if (o) applyPlan(o); } } catch(e) {}
 
@@ -276,16 +289,19 @@ function requiredSet() {
   if (e) e.req.forEach(id=>add(id,'emphasis'));
   if (e) {
     const used = new Set(e.req);   // a course satisfies only one emphasis requirement
+    let cuLeft = S.custom.filter(c=>countsUD(c.name)).length;   // typed-in electives fill "any other upper-division" slots
     for (const g of e.choose) {
       const have = g.from.filter(id=>!used.has(id) && (need.has(id) || isDone(id))).slice(0, g.n);
       have.forEach(id=>used.add(id));
       let n = g.n - have.length;
+      if (ANY.every(x=>g.from.includes(x))) { const k = Math.min(n, cuLeft); n -= k; cuLeft -= k; }
       for (const id of g.from) { if (n<=0) break; if (!used.has(id) && !need.has(id) && !isDone(id) && !C[id].noAuto) { add(id,'emphasis'); used.add(id); n--; } }
     }
   } else {
     // undecided: fill five upper-division slots with programming-heavy courses the student can reach
     const ud = () => [...need].concat(doneIds()).filter(id=>UDLIST.includes(id));
-    for (const id of ANY) { if (new Set(ud()).size >= 5) break; if (!need.has(id) && !isDone(id)) add(id,'elective (emphasis undecided)'); }
+    const cuN = S.custom.filter(c=>countsUD(c.name)).length;
+    for (const id of ANY) { if (new Set(ud()).size + cuN >= 5) break; if (!need.has(id) && !isDone(id)) add(id,'elective (emphasis undecided)'); }
   }
   // the sample curriculum puts a programming-heavy emphasis course in sophomore winter; make sure one is reachable then
   const soph = new Set(['CSCI 10','CSCI 60','CSCI 61','CSCI 62','MATH 11','MATH 12','MATH 13','MATH 14','MATH 51']);
@@ -339,9 +355,10 @@ function plan() {
     const bySample = id => tqOf(id) <= q || (latest[id]!==null && latest[id] <= q+2);   // on schedule, or a deadline is near
     const pick = (filter) => {
       let progress = true;
-      while (progress && sched[q].length < S.cap) {
+      const cuIn = S.custom.filter(c=>c.q===q && countsUD(c.name)).length;   // a typed-in elective takes a major-course slot; Core does not
+      while (progress && sched[q].length + cuIn < S.cap) {
         progress = false;
-        const cand = need.filter(id=>!(id in at) && offered(id,q) && satisfied(id,q) && filter(id) && (classCap(id, sched[q]) || (latest[id]!==null && latest[id] <= q)))
+        const cand = need.filter(id=>!(id in at) && offered(id,q) && satisfied(id,q) && filter(id) && ((classCap(id, sched[q]) && !(isEmph(id) && cuIn)) || (latest[id]!==null && latest[id] <= q)))
           .sort((a,b)=>{ const pa=prio(a,q), pb=prio(b,q); for (let i=0;i<pa.length;i++) if (pa[i]!==pb[i]) return pa[i]-pb[i]; return a.localeCompare(b); });
         if (cand.length) { const id = cand[0]; sched[q].push(id); at[id]=q; progress = true; }
       }
@@ -392,7 +409,7 @@ function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;'
 const kOf = id => PROG.has(id) ? 'prog' : C[id].k;
 const GROUPS = [['Lower division', ['MATH 9'].concat(LOWER)], ['Upper division', CORE.concat(UDLIST)], ['Other mathematics', ['MATH 52']]];
 const takenChip = id => `<div class="course tk" style="--c:${col(kOf(id))}"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span><button class="x" data-untake="${esc(id)}" aria-label="Remove ${esc(id)}" title="Remove">×</button></div>`;
-const addSelect = q => `<select class="addsel" data-addq="${q}" aria-label="Add a course taken in this quarter"><option value="">+ add course</option>${GROUPS.map(([g,ids])=>`<optgroup label="${g}">${ids.filter(id=>!isDone(id)).map(id=>`<option value="${esc(id)}">${esc(id)} · ${esc(C[id].t)}</option>`).join('')}</optgroup>`).join('')}</select>`;
+const addSelect = q => `<select class="addsel" data-addq="${q}" aria-label="Add a course taken in this quarter"><option value="">+ add course</option><option value="__custom">+ Type a course…</option>${GROUPS.map(([g,ids])=>`<optgroup label="${g}">${ids.filter(id=>!isDone(id)).map(id=>`<option value="${esc(id)}">${esc(id)} · ${esc(C[id].t)}</option>`).join('')}</optgroup>`).join('')}</select>`;
 function renderYears(P) {
   const years = $('#years'); years.innerHTML = '';
   for (let y=0; y<4; y++) {
@@ -402,17 +419,20 @@ function renderYears(P) {
       const q = y*3+qq;
       const tk = Object.keys(S.taken).filter(k=>S.taken[k]===q).sort();
       tk.forEach(id=>units+=C[id].u);
-      html += `<td class="${q<P.start?'past':''}${q===P.start?' now':''}">` + tk.map(takenChip).join('') + addSelect(q) + `</td>`;
+      const cu = S.custom.map((c,i)=>[c,i]).filter(([c])=>c.q===q); cu.forEach(([c])=>units+=c.u);
+      const cchips = cu.map(([c,i])=>`<div class="course tk custom"><span class="id">${esc(c.name)}</span><span class="nm">${c.u}u · typed in${countsUD(c.name)?' · <b>counts as an emphasis elective</b>':''}</span><button class="x" data-cdel="${i}" aria-label="Remove ${esc(c.name)}" title="Remove">×</button></div>`).join('');
+      const form = `<div class="cform"><input id="cname" maxlength="40" placeholder="Course, e.g. RSOC 9 or CSEN 140" aria-label="Course to add"><span class="crow"><input id="cunits" type="number" min="1" max="6" value="4" aria-label="Units"> units <button data-cadd="${q}">Add</button><button data-ccancel>Cancel</button></span></div>`;
+      html += `<td class="${q<P.start?'past':''}${q===P.start?' now':''}">` + tk.map(takenChip).join('') + cchips + (S.customEdit===q ? form : addSelect(q)) + `</td>`;
     }
     t.innerHTML = html + `</tr>`;
     const wrap = document.createElement('div'); wrap.appendChild(t);
-    const tot = document.createElement('div'); tot.className='tot'; tot.textContent = units ? `${units} units of major courses this year` : ''; wrap.appendChild(tot);
+    const tot = document.createElement('div'); tot.className='tot'; tot.textContent = units ? `${units} units this year` : ''; wrap.appendChild(tot);
     years.appendChild(wrap);
   }
 }
 function renderRecs(P) {
   const box = $('#recs');
-  box.hidden = Object.keys(S.taken).length === 0;
+  box.hidden = Object.keys(S.taken).length === 0 && !S.custom.length;
   if (box.hidden) return;
   let html = `<h2>Sample four-year plan</h2><p class="empty" style="margin-bottom:8px">One way to finish the major from where your plan stands. Grey courses are already in your plan; the others are suggestions. Use <b>+</b> to copy a suggestion into your plan.</p><div class="years sample">`;
   for (let y=0; y<4; y++) {
@@ -423,17 +443,19 @@ function renderRecs(P) {
       const mine = Object.keys(S.taken).filter(k=>S.taken[k]===q).sort();
       const sug = q >= P.start ? (P.sched[q]||[]).filter(id=>!(id in S.taken)) : [];
       mine.concat(sug).forEach(id=>units+=C[id].u);
+      const cuQ = S.custom.filter(c=>c.q===q); cuQ.forEach(c=>units+=c.u);
       html += `<td class="${q<P.start?'past':''}">` +
         mine.map(id=>`<div class="course mine"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span></div>`).join('') +
+        cuQ.map(c=>`<div class="course mine"><span class="id"><i>${esc(c.name)}</i></span><span class="nm">${c.u}u · typed in</span></div>`).join('') +
         sug.map(id=>{
           const b = [];
           if (P.at[id]===P.latest[id]) b.push(`<span class="badge" style="--b:var(--warn)">last offering</span>`);
           else if (S.off[id].alt!==null) b.push(`<span class="badge" style="--b:var(--muted)">alt-year</span>`);
           return `<div class="course tk" style="--c:${col(kOf(id))}"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span>${b.join('')}<button class="x addrec" data-recadd="${esc(id)}" data-recq="${q}" aria-label="Add ${esc(id)} to your plan in ${QN[qq]} of Year ${y+1}" title="Add to your plan">+</button></div>`;
         }).join('') +
-        (mine.length || sug.length ? '' : `<span style="color:var(--muted)">core / electives</span>`) + `</td>`;
+        (mine.length || sug.length || cuQ.length ? '' : `<span style="color:var(--muted)">core / electives</span>`) + `</td>`;
     }
-    html += `</tr></table><div class="tot">${units ? units+' units of major courses this year' : ''}</div></div>`;
+    html += `</tr></table><div class="tot">${units ? units+' units this year' : ''}</div></div>`;
   }
   box.innerHTML = html + `</div>`;
 }
@@ -453,10 +475,12 @@ function renderReq(P) {
   const e = EMPH[S.emph];
   if (e) {
     rows.push([mark(e.req.every(id=>completed(id)), e.req.every(done)), `${e.name} emphasis, required: ${e.req.join(', ')}`]);
-    e.choose.forEach(g=>{ const have=g.from.filter(done); rows.push([mark(g.from.filter(id=>completed(id)).length>=g.n, have.length>=g.n), `${e.name}: ${g.n} more from the emphasis list (${have.slice(0,g.n).join(', ')||'—'})`]); });
+    const cuNames = S.custom.filter(c=>countsUD(c.name)).map(c=>c.name+' (typed in)'); let cuI = 0;
+    e.choose.forEach(g=>{ let have=g.from.filter(done); if (ANY.every(x=>g.from.includes(x))) while (have.length<g.n && cuI<cuNames.length) have=have.concat([cuNames[cuI++]]); rows.push([mark(g.from.filter(id=>completed(id)).length>=g.n, have.length>=g.n), `${e.name}: ${g.n} more from the emphasis list (${have.slice(0,g.n).join(', ')||'—'})`]); });
   } else {
-    const ud = UDLIST.filter(done);
-    rows.push([mark(ud.filter(id=>completed(id)).length>=5, ud.length>=5), `Five emphasis courses, emphasis undecided (${ud.length} completed or in the plan: ${ud.join(', ')||'—'})`]);
+    const ud = UDLIST.filter(done).concat(S.custom.filter(c=>countsUD(c.name)).map(c=>c.name+' (typed in)'));
+    const udPast = UDLIST.filter(id=>completed(id)).length + S.custom.filter(c=>countsUD(c.name) && c.q < S.curY*3+S.curQ).length;
+    rows.push([mark(udPast>=5, ud.length>=5), `Five emphasis courses, emphasis undecided (${ud.length} completed or in the plan: ${ud.join(', ')||'—'})`]);
   }
   $('#req').innerHTML = rows.map(([m,t])=>`<span class="s">${m}</span><span>${esc(t)}</span>`).join('');
 }
@@ -477,17 +501,18 @@ const isUD = id => /\b1\d\d\b/.test(id);
 function renderStats(P) {
   const ids = Object.keys(S.taken); const cr = Object.keys(S.credit).filter(k=>S.credit[k]);
   const sum = L => L.reduce((a,id)=>a+C[id].u,0);
-  if (!ids.length && !cr.length) { $('#stats').innerHTML = ''; return; }
-  const inPlan = ids.concat(cr);
+  if (!ids.length && !cr.length && !S.custom.length) { $('#stats').innerHTML = ''; return; }
+  const inPlan = ids.concat(cr).filter(id=>C[id]);
   const whole = [...new Set(inPlan.concat(P.need))];          // the plan plus whatever the major still needs
   const major = sum(inPlan), ud = sum(inPlan.filter(isUD));
   const wholeU = sum(whole), wholeUD = sum(whole.filter(isUD));
-  const restUD = Math.max(0, 60 - wholeUD), rest = Math.max(0, 175 - wholeU);
-  $('#stats').innerHTML = `<span>Major courses in your plan: <b>${major}</b> units, <b>${ud}</b> upper-division${wholeU>major?` (the whole major: ${wholeU} units, ${wholeUD} upper-division)`:''}.</span><span>SCU requires 175 units, 60 upper-division, so about ${rest} units come from Core and electives outside the major, at least ${restUD} of them upper-division.</span>`;
+  const cuU = S.custom.reduce((a,c)=>a+c.u,0), cuUD = S.custom.filter(c=>/\b1\d\d\b/.test(c.name)).reduce((a,c)=>a+c.u,0);
+  const restUD = Math.max(0, 60 - wholeUD - cuUD), rest = Math.max(0, 175 - wholeU - cuU);
+  $('#stats').innerHTML = (cuU ? `<span>Courses you typed in: <b>${cuU}</b> units (prerequisites and quarters are not checked for these).</span>` : '') + `<span>Major courses in your plan: <b>${major}</b> units, <b>${ud}</b> upper-division${wholeU>major?` (the whole major: ${wholeU} units, ${wholeUD} upper-division)`:''}.</span><span>SCU requires 175 units, 60 upper-division, so about ${rest} units come from Core and electives outside the major, at least ${restUD} of them upper-division.</span>`;
 }
 function renderHead() {
   const scu = Object.keys(S.taken).sort((a,b)=>S.taken[a]-S.taken[b]); const cr = Object.keys(S.credit).filter(k=>S.credit[k]);
-  $('#printhead').innerHTML = `<div class="ph-title">Computer science major, four-year plan</div><div class="ph-meta">Emphasis: ${esc(EMPH[S.emph]?EMPH[S.emph].name:'undecided')} · Year 1: ${S.y1}–${String(S.y1+1).slice(2)} · Planned from Year ${S.curY+1} ${QN[S.curQ]} · Prepared ${new Date().toLocaleDateString()}</div><div class="ph-meta">Plan code: ${encodePlan()}</div><div class="ph-meta">Courses in the plan: ${scu.length?esc(scu.join(', ')):'none entered'}${cr.length?' · Credit by exam or transfer: '+esc(cr.join(', ')):''}</div>`;
+  $('#printhead').innerHTML = `<div class="ph-title">Computer science major, four-year plan</div><div class="ph-meta">Emphasis: ${esc(EMPH[S.emph]?EMPH[S.emph].name:'undecided')} · Year 1: ${S.y1}–${String(S.y1+1).slice(2)} · Planned from Year ${S.curY+1} ${QN[S.curQ]} · Prepared ${new Date().toLocaleDateString()}</div><div class="ph-meta">Plan code: ${encodePlan()}</div><div class="ph-meta">Courses in the plan: ${scu.length?esc(scu.join(', ')):'none entered'}${cr.length?' · Credit by exam or transfer: '+esc(cr.join(', ')):''}${S.custom.length?' · Typed in: '+esc(S.custom.slice().sort((a,b)=>a.q-b.q).map(c=>c.name).join(', ')):''}</div>`;
 }
 function refreshCode() { const el = $('#planCode'); if (el && document.activeElement !== el) el.value = encodePlan(); }
 function render() { const P = plan(); renderHead(); renderStats(P); renderYears(P); renderRecs(P); renderWarns(P); renderReq(P); refreshCode(); const cb=$('#creditBox'); if (cb && !started() && !cb.dataset.touched) cb.open = true; }
@@ -501,13 +526,31 @@ document.addEventListener('change', e => {
   if (t.id==='y1') S.y1 = +t.value; else if (t.id==='curY') S.curY = +t.value; else if (t.id==='curQ') S.curQ = +t.value;
   else if (t.id==='emph') S.emph = t.value; else if (t.id==='cap') S.cap = Math.max(1, Math.min(4, +t.value||2));
   else if (t.dataset.credit) { S.credit[t.dataset.credit] = t.checked; if (t.checked) delete S.taken[t.dataset.credit]; renderChecks(); }
+  else if ('addq' in t.dataset && t.value === '__custom') { S.customEdit = +t.dataset.addq; render(); setTimeout(()=>{ const n=$('#cname'); if (n) n.focus(); }, 0); return; }
   else if ('addq' in t.dataset) { if (!t.value) return; S.taken[t.value] = +t.dataset.addq; delete S.credit[t.value]; renderChecks(); }
   else if (t.dataset.off) S.off[t.dataset.off].off[+t.dataset.q] = t.checked ? 1 : 0;
   else if (t.dataset.alt) S.off[t.dataset.alt].alt = t.value==='' ? null : +t.value;
   else return;
   save(); render();
 });
+function addTyped(q) {
+  const name = normCourse($('#cname').value); if (!name) { $('#cname').focus(); return; }
+  const code = (name.match(/^[A-Z]{2,5} \d{1,3}[A-Z]?/)||[''])[0];
+  if (C[code]) { S.taken[code] = q; delete S.credit[code]; renderChecks(); }   // a course the planner knows goes in as that course
+  else S.custom.push({q, name, u: Math.max(1, Math.min(6, +$('#cunits').value||4))});
+  S.customEdit = null; save(); render();
+}
+document.addEventListener('keydown', e => {
+  if (!e.target.closest || !e.target.closest('.cform')) return;
+  if (e.key === 'Enter') { e.preventDefault(); const b = document.querySelector('[data-cadd]'); if (b) addTyped(+b.dataset.cadd); }
+  else if (e.key === 'Escape') { S.customEdit = null; render(); }
+});
 document.addEventListener('click', e => {
+  const ca = e.target.closest('[data-cadd]');
+  if (ca) { addTyped(+ca.dataset.cadd); return; }
+  if (e.target.closest('[data-ccancel]')) { S.customEdit = null; render(); return; }
+  const cd = e.target.closest('[data-cdel]');
+  if (cd) { S.custom.splice(+cd.dataset.cdel, 1); save(); render(); return; }
   const r = e.target.closest('[data-recadd]');
   if (r) { S.taken[r.dataset.recadd] = +r.dataset.recq; delete S.credit[r.dataset.recadd]; renderChecks(); save(); render(); return; }
   const b = e.target.closest('[data-untake]'); if (!b) return; delete S.taken[b.dataset.untake]; renderChecks(); save(); render();
@@ -518,7 +561,7 @@ $('#copyCode').addEventListener('click', () => copyText(encodePlan(), 'Plan code
 if (/^https?:/.test(location.protocol)) { $('#copyLink').hidden = false; $('#copyLink').addEventListener('click', () => copyText(location.origin + location.pathname + '#plan=' + encodePlan(), 'Link copied. Anyone who opens it sees this plan.')); }
 $('#loadCode').addEventListener('click', () => { const raw = $('#planCode').value; const code = (raw.match(/plan=([A-Za-z0-9_-]+)/)||[])[1] || raw; const o = decodePlan(code); if (!o) { msg('That is not a plan code.'); return; } applyPlan(o); $('#y1').value=S.y1; $('#curY').value=S.curY; $('#curQ').value=S.curQ; $('#emph').value=S.emph; $('#cap').value=S.cap; renderChecks(); save(); render(); msg('Plan loaded.'); });
 $('#creditBox').addEventListener('toggle', e => { e.currentTarget.dataset.touched = '1'; });
-$('#reset').addEventListener('click', () => { S.taken = {}; S.credit = {}; S.want = {}; S.emph=''; S.curY=0; S.curQ=0; $('#emph').value=''; $('#curY').value=0; $('#curQ').value=0; renderChecks(); save(); render(); });
+$('#reset').addEventListener('click', () => { S.taken = {}; S.credit = {}; S.want = {}; S.custom = []; S.customEdit = null; S.emph=''; S.curY=0; S.curQ=0; $('#emph').value=''; $('#curY').value=0; $('#curQ').value=0; renderChecks(); save(); render(); });
 $('#resetOff').addEventListener('click', () => { S.off = JSON.parse(JSON.stringify(DEFAULT_OFF)); renderOff(); save(); render(); });
 $('#pdf').addEventListener('click', () => { renderHead(); window.print(); });
 $('#report').addEventListener('click', () => { const u = 'https://docs.google.com/forms/d/e/1FAIpQLSfXueEwsaVoECwJaS6VWV3YBdRP8-ESllt0ygkpSCchcMoYsQ/viewform?usp=pp_url'

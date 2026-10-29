@@ -35,6 +35,11 @@
           <q>Sample four-year plan</q> suggests the rest once a course has been added, in the order of the department's sample curriculum (Fall 2025). With the emphasis
           left as <q>Undecided</q>, the recommendations fill the five emphasis
           slots with programming-heavy courses.
+          Core courses, and electives the menus do not list such as other CSEN
+          courses, can be added with <q>+ Type a course…</q>. An upper-division CSCI
+          course below 190 or CSEN course below 188 added this way counts toward the
+          emphasis courses; the planner does not check prerequisites or offering
+          quarters for typed-in courses.
           <q>Download plan (PDF)</q> prints only the plan.
         </p>
       </instructions>
