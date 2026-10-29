@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CS Major Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=PT+Serif:wght@400;700&display=swap">
+<style>
+/* Layout: settings column on the left, four year-tables and the checks on the right.
+   Styled to match the MATH 13 grade calculator: light only, Open Sans + PT Serif,
+   ink/blue palette, thin 4px panels, uppercase table headers. */
+:root{
+  --ink:#22262E; --grid:#9AA4B8; --grid-strong:#5C6575; --muted:#5C6575; --line:#C9CFDC; --soft:#EEF3F8; --bg:#fff;
+  --blue:#195684; --blue-soft:#E3ECF4; --drop:#9A3B1F; --error:#B3261E; --ok:#2E6B3A; --warn:#9A3B1F; --bad:#B3261E; --now:#195684;
+  --lower:#5C6575; --analysis:#195684; --algebra:#5B3F8C; --geometry:#1C7A6E; --discrete:#B5651D; --applied:#2E6B3A; --other:#8A8A8A; --ext:#9C7A1C;
+  --sans:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif; --serif:"PT Serif","Times New Roman",Times,serif;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;
+  padding-block:10px 24px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+h1{font-family:var(--serif);font-size:1.4rem;font-weight:700;margin:0;text-wrap:balance}
+h2{font-family:var(--serif);font-size:1.15rem;margin:0 0 10px;font-weight:700}
+h3{font-size:.8rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:12px 0 4px;font-weight:600}
+.sub{color:var(--muted);font-size:.9rem;margin-top:4px;max-width:72ch}
+.layout{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.6fr);gap:12px;margin-top:12px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:minmax(0,1fr)}}
+.panel{border:1px solid var(--line);border-radius:4px;padding:12px;min-width:0;background:#fff}
+.panel.result{background:var(--soft)}
+label.row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;padding:4px 0;font-weight:600}
+label.row span{display:flex;gap:6px}
+select,input[type=number]{font:inherit;font-size:.9rem;padding:5px 8px;border:1px solid #9AA4B8;border-radius:3px;background:#fff;color:var(--ink)}
+input[type=number]{width:4.4em;text-align:right;font-variant-numeric:tabular-nums}
+select:focus-visible,input:focus-visible,button:focus-visible{outline:3px solid #8DB3D6;outline-offset:1px;border-color:var(--blue)}
+.chk{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:2px 8px}
+.chk label{display:flex;align-items:baseline;gap:5px;font-size:.85rem;cursor:pointer;padding:2px 0}
+.chk label span.i{white-space:nowrap;font-weight:600;font-variant-numeric:tabular-nums}
+.chk label span.t{color:var(--muted);font-size:.78rem;min-width:0;overflow-wrap:anywhere}
+.chk input{margin:0;position:relative;top:2px}
+button{font:inherit;font-size:.9rem;font-weight:600;color:var(--ink);background:#fff;border:1px solid #B9C1D2;border-radius:3px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--blue);color:var(--blue)}
+.years{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:1100px){.years{grid-template-columns:minmax(0,1fr)}}
+.years>div{min-width:0}
+table{width:100%;border-collapse:collapse;font-size:.88rem;table-layout:fixed;font-variant-numeric:tabular-nums}
+caption{text-align:left;font-family:var(--serif);font-weight:700;font-size:1.05rem;padding:0 0 6px}
+caption span{color:var(--muted);font-weight:400;font-size:.88rem;font-family:var(--sans);margin-left:8px}
+th,td{border-bottom:1px solid var(--line);vertical-align:top;padding:5px 6px;text-align:left}
+th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;width:33.3%}
+td{border-left:1px solid var(--line)}
+td:first-child{border-left:0}
+.years table{border:1.5px solid var(--grid-strong)}
+.years th,.years td{border:1px solid var(--grid)}
+.years th{background:var(--soft);color:var(--ink);border-bottom:1.5px solid var(--grid-strong)}
+.years td{height:4.4em}
+td.past{background:#F7F9FB}
+.course.tk{position:relative;padding-right:18px}
+.course .x{position:absolute;top:0;right:0;border:0;background:none;padding:0 3px;font-size:1rem;line-height:1;color:var(--muted);cursor:pointer;font-weight:400}
+.course .x:hover{color:var(--error)}
+.addsel{display:block;width:100%;margin-top:4px;font-size:.78rem;padding:2px 4px;color:var(--muted);border:1px dashed var(--grid);background:transparent}
+.course.mine{background:#EEF1F5;border-left-color:#D3D8E2;padding:3px 6px 3px 7px}
+.course.mine .id{color:#7A8494;font-weight:600}
+.course.mine .nm{color:#8A93A3}
+.course .x.addrec{color:var(--blue);font-weight:700}
+.course .x.addrec:hover{color:var(--ink)}
+.years.sample td{background:#fff}
+.years.sample td.past{background:#F7F9FB}
+.stats{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.85rem;color:var(--muted);margin-top:6px}
+.stats b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.rec{width:100%;border-collapse:collapse;font-size:.88rem;table-layout:auto;margin-top:4px;background:#fff}
+.rec th,.rec td{border:1px solid var(--grid);padding:5px 7px;vertical-align:middle;width:auto}
+.rec th{background:var(--soft);color:var(--ink)}
+.rec td.q{white-space:nowrap;font-weight:600}
+.rec td.a{width:1%;white-space:nowrap}
+.rec button{font-size:.8rem;padding:3px 9px}
+.empty{color:var(--muted);font-size:.9rem;margin:2px 0 0}
+details.credit{margin-top:12px;border:1px solid var(--line);border-radius:3px;padding:6px 9px}
+details.more{margin-top:8px}
+details.more summary{font-weight:600;font-size:.82rem;color:var(--muted);cursor:pointer}
+details.more[open] summary{margin-bottom:4px}
+details.credit summary{cursor:pointer;font-weight:600;font-size:.9rem}
+details.credit[open] summary{margin-bottom:6px}
+td.now{box-shadow:inset 0 0 0 2px var(--blue)}
+.course{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 6px;padding:2px 0 2px 7px;border-left:3px solid var(--c,var(--line));margin:3px 0}
+.course .id{font-weight:700;white-space:nowrap}
+.course .nm{color:var(--muted);font-size:.82rem}
+.badge{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:1px 6px;border-radius:3px;color:#fff;background:var(--b);white-space:nowrap}
+.tot{color:var(--muted);font-size:.82rem;margin-top:4px}
+.warns{margin-top:12px}
+.w{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:6px 9px;border-radius:3px;margin:6px 0;font-size:.88rem;background:#fff;border:1px solid var(--line);border-left:4px solid var(--b)}
+.w b{font-weight:700}
+.w .k{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--b);padding-top:2px}
+.req{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:.88rem;margin-top:6px}
+.req .s{font-weight:700}
+.ok{color:var(--ok)}.no{color:var(--bad)}.pend{color:var(--warn)}
+.off{width:100%;font-size:.85rem;margin-top:8px;table-layout:auto}
+.off th{width:auto}
+.off td,.off th{padding:3px 6px}
+.off td:first-child{white-space:nowrap;font-weight:600}
+.off td{border-left:0}
+.off input[type=checkbox]{margin:0}
+.off select{font-size:.82rem;padding:2px 4px}
+.note{font-size:.85rem;color:var(--muted);margin-top:6px;max-width:80ch}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.8rem;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--c);margin-right:5px;vertical-align:-1px}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);background:var(--blue-soft);border-radius:3px;padding:2px 6px;margin-left:6px;vertical-align:2px}
+.offwrap{overflow-x:auto}
+.printhead{display:none}
+.course.custom{border-left:3px dashed #9AA4B8;background:#F7F8FA;padding:3px 18px 3px 7px}
+.course.custom .id{font-style:italic}
+.course.custom .nm b{color:var(--ok);font-weight:600}
+.cform{display:flex;flex-direction:column;gap:4px;margin-top:4px;padding:6px;border:1px dashed var(--blue);border-radius:3px;background:#F4F8FC}
+.cform input{font:inherit;font-size:.8rem;padding:3px 5px;border:1px solid #9AA4B8;border-radius:3px;min-width:0}
+.cform #cunits{width:3.2em}
+.cform .crow{display:flex;align-items:center;gap:4px;font-size:.78rem;color:var(--muted);flex-wrap:wrap}
+.cform button{font-size:.75rem;padding:2px 8px}
+@media print{.cform{display:none}}
+#report.fab{position:fixed;right:20px;bottom:20px;z-index:1000;border:0;border-radius:999px;padding:10px 16px;background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.22)}
+#report.fab:hover{background:#12406A;color:#fff}
+@media (max-width:600px){#report.fab{right:12px;bottom:12px;padding:9px 13px}}
+.ph-title{font-family:var(--serif);font-size:1.3rem;font-weight:700}
+.ph-meta{color:var(--muted);font-size:.85rem;margin-top:2px}
+@media print{
+  @page{margin:12mm}
+  body{padding:0;font-size:11px}
+  h1,.sub,#settings,.noprint,#offerings,.legend,button,.addsel{display:none!important}
+  .years td{height:auto}
+  .layout{display:block;margin-top:0}
+  .stats{margin-bottom:6px}
+  .printhead{display:block;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .years{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .panel,.w,table,.years>div{break-inside:avoid}
+  td.now{box-shadow:none}
+  .panel.result{background:#fff}
+  .badge{border:1px solid currentColor;color:var(--ink)!important;background:#fff!important}
+  a{color:inherit;text-decoration:none}
+}
+</style>
+</head>
+<body>
+
+<h1>Computer science major four-year planner</h1>
+<div class="sub">Build your own plan: add the courses you have taken to the quarters you took them, then the courses you intend to take. Once you add your first course, a sample four-year plan appears below with suggestions for the rest. Suggestions follow the department's prerequisite list, 2026–27 offerings and sequencing advice, and flag any course that can't wait.</div>
+
+<div class="layout">
+<aside class="panel" id="settings">
+  <h2>Student</h2>
+  <label class="row">Year 1 is academic year <select id="y1"></select></label>
+  <label class="row">Next quarter to plan <span><select id="curY"><option value="0">Year 1</option><option value="1">Year 2</option><option value="2">Year 3</option><option value="3">Year 4</option></select> <select id="curQ"><option value="0">Fall</option><option value="1">Winter</option><option value="2">Spring</option></select></span></label>
+  <label class="row">Emphasis <select id="emph"><option value="">Undecided</option><option value="alg">Algorithms &amp; Complexity</option><option value="ds">Data Science</option><option value="sec">Security</option><option value="sw">Software</option></select></label>
+  <label class="row">Major courses per quarter, at most <input type="number" id="cap" min="1" max="4" value="3"></label>
+  <details class="credit" id="creditBox"><summary>Credit from AP, IB or transfer <span id="creditCount" style="color:var(--muted);font-weight:400"></span></summary><div class="chk" id="credit"></div><details class="more" id="creditMore"><summary>Upper-division and other courses</summary><div class="chk" id="credit2"></div></details></details>
+  <div class="note">Use <b>+ add course</b> in the plan: earlier quarters for courses taken at SCU, later quarters for courses you intend to take. For Core and courses not in the list, choose <b>+ Type a course…</b>.</div>
+  <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><button id="reset">Clear student</button><button id="pdf">Download plan (PDF)</button></div>
+  <div style="margin-top:8px"><button id="report" title="Opens the department's feedback form with this plan attached">Report a problem with this plan</button></div>
+  <details class="credit" id="saveBox"><summary>Save or share this plan</summary>
+    <div class="note">Your plan is kept in this browser only. Copy the code to keep it or send it to your advisor; paste a code here and press Load to restore it.</div>
+    <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><input id="planCode" aria-label="Plan code" style="flex:1;min-width:140px;font-family:ui-monospace,Menlo,monospace;font-size:.78rem;padding:4px 6px;border:1px solid #9AA4B8;border-radius:3px"><button id="copyCode">Copy code</button><button id="copyLink" hidden>Copy link</button><button id="loadCode">Load</button></div>
+    <div class="note" id="codeMsg" style="min-height:1.2em"></div>
+  </details>
+</aside>
+
+<main style="min-width:0" id="plan">
+  <div class="printhead" id="printhead"></div>
+  <div class="years" id="years"></div>
+  <div class="stats" id="stats"></div>
+  <div class="legend">
+    <span><i style="--c:var(--lower)"></i>math</span><span><i style="--c:var(--analysis)"></i>CSCI</span><span><i style="--c:var(--applied)"></i>programming-heavy CSCI</span><span><i style="--c:var(--ext)"></i>CSEN / ECEN / science</span>
+  </div>
+  <section class="panel result noprint" style="margin-top:12px" id="recs"></section>
+  <section class="panel result warns" id="warns"></section>
+  <section class="panel" style="margin-top:12px"><h2>Requirement check</h2><div class="req" id="req"></div></section>
+  <section class="panel noprint" style="margin-top:12px" id="offerings">
+    <h2>Course offerings <span class="tag">Department schedule, May 2026</span></h2>
+    <div class="note">Upper-division quarters and alternate-year rotation are from the department's upper-division course schedule (revised May 2026); lower-division CSCI and MATH 51, 52, 53, 122 from the tentative 2026–27 list. Calculus runs every quarter (department); MATH 9, the science course and the CSEN and ECEN courses follow the University's class listings for 2023–24 through Fall 2026. CSEN 152 has not run since at least 2024 and is never suggested. "Even" = academic years starting in an even calendar year (2026–27, 2028–29). Courses offered by request only have no quarters ticked. Changes apply immediately and are kept in this browser.</div>
+    <div class="offwrap"><table class="off" id="off"></table></div>
+    <div style="margin-top:8px"><button id="resetOff">Restore department schedule</button></div>
+  </section>
+</main>
+</div>
+
+<script>
+(function(){
+// ---------- course database: prerequisites from the department's CS advising document; offerings from its 2026-27 tentative list ----------
+// pre: groups of alternatives (any one satisfies); co: pre-or-co-requisite groups; off: [F,W,S]; alt: null | 0 (even academic years) | 1 (odd); prog: programming-heavy
+const C = {
+  'MATH 9':{t:'Precalculus',u:4,k:'lower',pre:[],off:[1,1,1]},
+  'MATH 11':{t:'Calculus I',u:4,k:'lower',pre:[],off:[1,1,1]},
+  'MATH 12':{t:'Calculus II',u:4,k:'lower',pre:[['MATH 11']],off:[1,1,1]},
+  'MATH 13':{t:'Calculus III',u:4,k:'lower',pre:[['MATH 12']],off:[1,1,1]},
+  'MATH 14':{t:'Calculus IV',u:4,k:'lower',pre:[['MATH 13']],off:[1,1,1]},
+  'MATH 51':{t:'Discrete Mathematics',u:4,k:'lower',pre:[],off:[1,1,1]},
+  'MATH 53':{t:'Linear Algebra',u:4,k:'lower',pre:[['MATH 13']],off:[0,1,1]},
+  'CSCI 10':{t:'Intro to Computer Science',u:5,k:'cs',pre:[],off:[1,1,0]},
+  'CSCI 60':{t:'C++ & Object-Oriented Programming',u:5,k:'cs',pre:[['CSCI 10']],off:[1,1,1]},
+  'CSCI 61':{t:'Data Structures',u:4,k:'cs',pre:[['CSCI 60']],off:[1,1,1]},
+  'CSCI 62':{t:'Advanced Programming',u:4,k:'cs',pre:[['CSCI 61']],off:[1,1,1]},
+  'SCI':{t:'Science: PHYS 31, CHEM 11, ENVS 21 or 23',u:4,k:'ext',pre:[],off:[1,1,1]},
+  'CSEN 20':{t:'Embedded Systems (+20L)',u:5,k:'ext',pre:[['CSCI 62']],off:[1,1,1]},
+  'ECEN 21':{t:'Logic Design (+21L)',u:5,k:'ext',pre:[],off:[1,1,1]},
+  'MATH 122':{t:'Probability & Statistics I',u:5,k:'lower',pre:[],co:[['MATH 14']],off:[1,1,0]},
+  'CSCI 161':{t:'Automata & Languages',u:5,k:'cs',pre:[['MATH 51']],off:[1,1,1]},
+  'CSCI 163':{t:'Theory of Algorithms',u:5,k:'cs',pre:[['CSCI 62'],['MATH 51']],off:[1,1,1]},
+  'CSEN 177':{t:'Operating Systems (+177L)',u:5,k:'ext',pre:[['CSCI 62'],['CSEN 20']],off:[1,1,1]},
+  'CSCI 162':{t:'Computational Complexity',u:5,k:'cs',pre:[['CSCI 161']],off:[0,1,0],alt:0},
+  'CSCI 164':{t:'Advanced Theory of Algorithms',u:5,k:'cs',pre:[['CSCI 163']],off:[0,0,1],alt:1},
+  'CSCI 165':{t:'Data Privacy & Algorithmic Fairness',u:5,k:'cs',pre:[['MATH 51'],['CSCI 10']],off:[0,0,0],noAuto:true},
+  'CSCI 146':{t:'Optimization I',u:5,k:'cs',pre:[['CSCI 10'],['MATH 14'],['MATH 53']],off:[0,1,0],alt:1},
+  'CSCI 147':{t:'Optimization II',u:5,k:'cs',pre:[['MATH 122'],['CSCI 146']],off:[0,0,1],alt:1},
+  'CSCI 127':{t:'Computer Simulation',u:5,k:'cs',pre:[['CSCI 10']],off:[0,0,0],noAuto:true},
+  'CSCI 166':{t:'Numerical Analysis',u:5,k:'cs',pre:[['CSCI 10'],['MATH 53']],off:[0,1,0],alt:0},
+  'CSCI 168':{t:'Computer Graphics',u:5,k:'prog',pre:[['CSCI 10'],['MATH 13']],off:[0,0,1]},
+  'CSCI 169':{t:'Programming Languages',u:5,k:'prog',pre:[['CSCI 62'],['MATH 51']],off:[0,1,0]},
+  'CSCI 180':{t:'Computer Security',u:5,k:'cs',pre:[['CSEN 20']],off:[1,0,0]},
+  'CSCI 181':{t:'Applied Cryptography',u:5,k:'prog',pre:[['MATH 178'],['CSCI 60']],off:[0,0,1]},
+  'CSCI 183':{t:'Data Science & Machine Learning',u:5,k:'prog',pre:[['CSCI 62'],['MATH 53'],['MATH 122']],off:[1,1,0]},
+  'CSCI 184':{t:'Advanced Machine Learning',u:5,k:'prog',pre:[['CSCI 183']],off:[0,1,1]},
+  'CSCI 185':{t:'Data Mining',u:5,k:'prog',pre:[['CSCI 62'],['MATH 53'],['MATH 122']],off:[1,0,1]},
+  'CSCI 187':{t:'Design & Management of Software',u:5,k:'prog',pre:[['CSCI 62']],off:[1,0,0]},
+  'MATH 123':{t:'Probability & Statistics II',u:5,k:'lower',pre:[['MATH 122']],co:[['MATH 53']],off:[0,1,1]},
+  'MATH 178':{t:'Cryptography',u:5,k:'lower',pre:[['MATH 51']],off:[1,1,0]},
+  'MATH 101':{t:'Survey of Geometry',u:5,k:'lower',pre:[['MATH 13']],off:[0,0,1],alt:1},
+  'MATH 176':{t:'Combinatorics',u:5,k:'lower',pre:[['MATH 51']],off:[0,0,1],alt:1},
+  'MATH 177':{t:'Graph Theory',u:5,k:'lower',pre:[['MATH 51']],off:[0,1,0],alt:0},
+  'MATH 52':{t:'Intro to Abstract Algebra',u:4,k:'lower',pre:[['MATH 51']],off:[0,0,1]},
+  'MATH 175':{t:'Theory of Numbers',u:5,k:'lower',pre:[['MATH 52']],off:[0,0,1],alt:0,noAuto:true},
+  'CSEN 146':{t:'Computer Networks (+146L)',u:5,k:'ext',pre:[['CSCI 62']],off:[1,1,1],prog:true},
+  'CSEN 152':{t:'Computer Forensics (+152L)',u:5,k:'ext',pre:[['CSCI 62'],['CSEN 20']],off:[0,0,0],noAuto:true},
+  'CSEN 161':{t:'Web Development (+161L)',u:5,k:'ext',pre:[['CSCI 62']],off:[1,1,1],prog:true},
+  'CSEN 166':{t:'Artificial Intelligence',u:5,k:'ext',pre:[['CSCI 62'],['MATH 51']],off:[1,1,1],prog:true},
+  'CSEN 169':{t:'Web Information Management',u:5,k:'ext',pre:[['CSCI 62'],['MATH 122']],off:[0,1,0],prog:true},
+  'CSEN 178':{t:'Intro to Data Science',u:5,k:'ext',pre:[['CSCI 62']],off:[1,0,1],prog:true},
+};
+const PROG = new Set(['CSCI 181','CSCI 183','CSCI 185','CSCI 169','CSCI 184','CSCI 168','CSCI 187','CSEN 146','CSEN 161','CSEN 166','CSEN 169','CSEN 178']);
+const DEFAULT_OFF = JSON.parse(JSON.stringify(Object.fromEntries(Object.entries(C).map(([k,v])=>[k,{off:v.off,alt:v.alt===undefined?null:v.alt}]))));
+const LOWER = ['MATH 11','MATH 12','MATH 13','MATH 14','MATH 51','MATH 53','CSCI 10','CSCI 60','CSCI 61','CSCI 62','SCI','CSEN 20','ECEN 21'];
+const CORE = ['MATH 122','CSCI 161','CSCI 163','CSEN 177'];
+const UDLIST = Object.keys(C).filter(k=>!LOWER.includes(k) && !CORE.includes(k) && k!=='MATH 52' && k!=='MATH 9');   // upper division only: MATH 9 and MATH 52 are lower division
+const ANY = ['CSCI 183','CSCI 169','CSCI 187','CSCI 185','CSEN 161','CSEN 166','CSCI 168','CSCI 184','CSCI 181','CSEN 146','CSCI 166','CSCI 180','CSCI 164','CSCI 165','CSCI 146','CSCI 147','CSCI 127','CSEN 169','CSEN 178'];
+const EMPH = {
+  alg:{ name:'Algorithms & Complexity', req:['CSCI 162','CSCI 164'], choose:[{n:2,from:['CSCI 146','CSCI 147','CSCI 165','CSCI 181','MATH 101','MATH 175','MATH 176','MATH 177','MATH 178']},{n:1,from:['CSCI 146','CSCI 147','CSCI 165','CSCI 181','MATH 101','MATH 175','MATH 176','MATH 177','MATH 178'].concat(ANY), any:'cscsen'}] },
+  ds:{ name:'Data Science', req:['CSCI 183','CSCI 184','CSCI 185'], choose:[{n:2,from:['CSCI 127','CSCI 146','CSCI 147','CSCI 164','CSCI 166','MATH 123','CSEN 166'].concat(ANY), any:'cscsen'}] },
+  sec:{ name:'Security', req:['MATH 178','CSCI 180','CSCI 181'], choose:[{n:2,from:['MATH 175','CSEN 152','CSEN 161','CSEN 146'].concat(ANY), any:'cscsen', except:['CSEN 150']}] },
+  sw:{ name:'Software', req:['CSCI 169','CSCI 187','CSEN 146'], choose:[{n:1,from:['CSCI 183','CSCI 180','CSCI 168'].concat(ANY.filter(x=>/^CSCI /.test(x))), any:'csci'},{n:1,from:['CSCI 183','CSCI 180','CSCI 168','CSEN 161','CSEN 178'].concat(ANY), any:'cscsen'}] },
+};
+const QN = ['Fall','Winter','Spring'];
+const col = k => k==='cs' ? 'var(--analysis)' : k==='prog' ? 'var(--applied)' : `var(--${k})`;
+
+// ---------- state ----------
+const S = { y1: 2026, curY: 0, curQ: 0, emph: '', cap: 3, taken: {}, credit: {}, want: {}, off: JSON.parse(JSON.stringify(DEFAULT_OFF)) };
+try { const s = JSON.parse(localStorage.getItem('csplanner')||'null'); if (s) { Object.assign(S, s); S.off = Object.assign(JSON.parse(JSON.stringify(DEFAULT_OFF)), s.off||{}); } } catch(e){}
+if (S.done) { S.credit = Object.assign({}, S.done, S.credit); delete S.done; }
+S.taken = S.taken || {}; S.credit = S.credit || {}; S.custom = Array.isArray(S.custom) ? S.custom : []; S.customEdit = null;
+// Typed-in courses (Core, electives the menus don't list). An upper-division CSCI below 190 or CSEN below 188
+// counts toward the emphasis courses ("any other 4-5 unit upper-division CSCI or CSEN course"); nothing else is checked.
+const normCourse = raw => { const t = String(raw||'').trim().replace(/\s+/g,' ').slice(0,40); const m = t.match(/^([A-Za-z]{2,5})\s*(\d{1,3}[A-Za-z]?)\b(.*)$/); return m ? (m[1].toUpperCase()+' '+m[2].toUpperCase()+m[3]) : t; };
+const fitsAny = (g, name) => countsUD(name) && !(g.except||[]).includes((name.match(/^[A-Z]{2,5} \d{1,3}/)||[''])[0]) && (g.any==='cscsen' || /^CSCI /.test(name));
+const countsUD = name => { const m = name.toUpperCase().match(/^(CSCI|CSEN) (\d{3})(?![0-9])/); return !!m && +m[2] >= 100 && +m[2] < (m[1]==='CSCI' ? 190 : 188) && !C[m[1]+' '+m[2]]; };
+const isDone = id => !!S.credit[id] || (id in S.taken);
+const doneIds = () => Object.keys(C).filter(isDone);
+const started = () => Object.keys(S.taken).length > 0 || Object.keys(S.credit).some(k=>S.credit[k]);
+const completed = id => !!S.credit[id] || (id in S.taken && S.taken[id] < S.curY*3 + S.curQ);
+// Target quarters from the department's sample curriculum (CS Sample Curriculum, Fall 2025):
+// Y1 F CSCI 10, MATH 11 · W CSCI 60, MATH 12 · S CSCI 61, MATH 13 · Y2 F CSCI 62, MATH 14, 51 · W MATH 122, emphasis I (programming)
+// · S CSCI 163, MATH 53 · Y3 F CSCI 161, CSEN 20 · W emphasis II, CSEN 177 · S ECEN 21 · Y4 one emphasis course a quarter.
+const TQ = {'CSCI 10':0,'MATH 11':0,'CSCI 60':1,'MATH 12':1,'CSCI 61':2,'MATH 13':2,'CSCI 62':3,'MATH 14':3,'MATH 51':3,'MATH 122':4,'CSCI 163':5,'MATH 53':5,'CSCI 161':6,'CSEN 20':6,'CSEN 177':7,'ECEN 21':8,'SCI':8};
+const isEmph = id => !LOWER.includes(id) && !CORE.includes(id) && id!=='MATH 9';
+const tqOf = id => id in TQ ? TQ[id] : isEmph(id) ? 4 : 0;
+const classCap = (id, list) => isEmph(id) ? !list.some(isEmph) : true;   // one emphasis course a quarter, as in the sample
+const encodePlan = () => { const o = { v:1, y1:S.y1, c:S.curY*3+S.curQ, e:S.emph, k:S.cap, t:S.taken, r:Object.keys(S.credit).filter(k=>S.credit[k]), x:S.custom.map(c=>[c.q,c.name,c.u]) }; return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); };
+const decodePlan = code => { try { const o = JSON.parse(decodeURIComponent(escape(atob(code.trim().replace(/-/g,'+').replace(/_/g,'/'))))); if (!o || o.v!==1) return null; return o; } catch(e) { return null; } };
+const applyPlan = o => { S.y1 = +o.y1 || 2026; S.curY = Math.floor((+o.c||0)/3); S.curQ = (+o.c||0)%3; S.emph = o.e || ''; S.cap = Math.max(1, Math.min(4, +o.k||3)); S.taken = {}; for (const [k,q] of Object.entries(o.t||{})) if (C[k] && q>=0 && q<=11) S.taken[k] = +q; S.credit = {}; for (const k of (o.r||[])) if (C[k]) S.credit[k] = true; S.custom = []; for (const x of (Array.isArray(o.x)?o.x:[])) if (Array.isArray(x) && x[0]>=0 && x[0]<=11 && x[1]) S.custom.push({q:+x[0], name:normCourse(x[1]), u:Math.max(1,Math.min(6,+x[2]||4))}); S.customEdit = null; };
+const save = () => { try { localStorage.setItem('csplanner', JSON.stringify(S)); } catch(e){} };
+try { const m = (location.hash + location.search).match(/plan=([A-Za-z0-9_-]+)/); if (m) { const o = decodePlan(m[1]); if (o) applyPlan(o); } } catch(e) {}
+
+// ---------- planning ----------
+function offered(id, q) {
+  const o = S.off[id]; if (!o || !o.off[q%3]) return false;
+  if (o.alt === null || o.alt === undefined) return true;
+  return ((S.y1 + Math.floor(q/3)) % 2) === o.alt;
+}
+function requiredSet() {
+  const need = new Set(), why = {};
+  const add = (id, w) => { if (!C[id]) return; if (!need.has(id)) { need.add(id); why[id] = w; } };
+  LOWER.forEach(id=>add(id,'lower division')); CORE.forEach(id=>add(id,'required upper division'));
+  const e = EMPH[S.emph];
+  if (e) e.req.forEach(id=>add(id,'emphasis'));
+  if (e) {
+    const used = new Set(e.req);   // a course satisfies only one emphasis requirement
+    const cuPool = S.custom.map(c=>c.name).filter(countsUD);   // typed-in electives fill "any other upper-division" slots
+    for (const g of e.choose) {
+      const have = g.from.filter(id=>!used.has(id) && (need.has(id) || isDone(id))).slice(0, g.n);
+      have.forEach(id=>used.add(id));
+      let n = g.n - have.length;
+      if (g.any) for (let i = 0; i < cuPool.length && n > 0; ) { if (fitsAny(g, cuPool[i])) { cuPool.splice(i, 1); n--; } else i++; }
+      for (const id of g.from) { if (n<=0) break; if (!used.has(id) && !need.has(id) && !isDone(id) && !C[id].noAuto) { add(id,'emphasis'); used.add(id); n--; } }
+    }
+  } else {
+    // undecided: fill five upper-division slots with programming-heavy courses the student can reach
+    const ud = () => [...need].concat(doneIds()).filter(id=>UDLIST.includes(id));
+    const cuN = S.custom.filter(c=>countsUD(c.name)).length;
+    for (const id of ANY) { if (new Set(ud()).size + cuN >= 5) break; if (!need.has(id) && !isDone(id)) add(id,'elective (emphasis undecided)'); }
+  }
+  // the sample curriculum puts a programming-heavy emphasis course in sophomore winter; make sure one is reachable then
+  const soph = new Set(['CSCI 10','CSCI 60','CSCI 61','CSCI 62','MATH 11','MATH 12','MATH 13','MATH 14','MATH 51']);
+  const early = id => PROG.has(id) && (C[id].pre||[]).every(g=>g.some(p=>soph.has(p))) && !(C[id].co||[]).length;
+  if (![...need].concat(doneIds()).some(early)) { const pick = ANY.find(id=>early(id) && !need.has(id) && !isDone(id)); if (pick) add(pick,'programming course for sophomore year (recommended)'); }
+  if (need.has('MATH 175')) add('MATH 52','prerequisite of MATH 175');
+  // every chosen course brings its prerequisites (first alternative when none is already in the plan)
+  for (let grew = true; grew; ) { grew = false;
+    for (const id of [...need]) for (const g of (C[id].pre||[]).concat(C[id].co||[])) {
+      if (g.some(p => need.has(p) || isDone(p) || !C[p])) continue;
+      const p = g.find(x => !C[x].noAuto) || g[0]; add(p, 'prerequisite of ' + id); grew = true;
+    }
+  }
+  return { need: [...need].filter(id=>!isDone(id)), why };
+}
+function plan() {
+  const { need, why } = requiredSet();
+  const start = S.curY*3 + S.curQ;
+  const reqSet = new Set(need);
+  const deps = {}; need.forEach(id=>{ deps[id]=[]; });
+  for (const id of need) for (const g of (C[id].pre||[])) for (const p of g) if (reqSet.has(p) && g.length===1) deps[p].push([id,'pre']);
+  for (const id of need) for (const g of (C[id].co||[])) for (const p of g) if (reqSet.has(p) && g.length===1) deps[p].push([id,'co']);
+  const latest = {}, infeasible = {};
+  const visit = (id, stack=new Set()) => {
+    if (id in latest) return latest[id]; if (stack.has(id)) return 11; stack.add(id);
+    let bound = 11;
+    for (const [d, kind] of deps[id]) { const ld = visit(d, stack); if (ld === null) continue; bound = Math.min(bound, kind==='pre' ? ld-1 : ld); }
+    let q = null; for (let i=bound; i>=0; i--) if (offered(id,i)) { q=i; break; }
+    latest[id] = q; if (q===null) infeasible[id]=true; return q;
+  };
+  need.forEach(id=>visit(id));
+  const sched = {}; const at = {};
+  Object.keys(S.credit).filter(k=>S.credit[k]).forEach(k=>at[k]=-1);
+  Object.entries(S.taken).forEach(([k,q])=>{ at[k]=q; });
+  const satisfied = (id, q) => {
+    if (id==='MATH 11' && ('MATH 9' in at) && at['MATH 9'] >= q) return false;
+    const ok = (g, strict) => g.some(p => (p in at) && (strict ? at[p] < q : at[p] <= q));
+    return (C[id].pre||[]).every(g=>ok(g,true)) && (C[id].co||[]).every(g=>ok(g,false));
+  };
+  // advice from the department: MATH 122 right after 14; CSCI 62 before upper-division CSCI; 161/163 soon after 51
+  const boost = (id, q) => {
+    if (id==='MATH 122') return -5;
+    if (['CSCI 10','CSCI 60','CSCI 61','CSCI 62'].includes(id)) return -3;
+    if ((id==='CSCI 161'||id==='CSCI 163') && !('CSCI 62' in at && at['CSCI 62'] < q)) return 4;
+    if (id==='CSCI 161' && !('CSCI 163' in at)) return 1;
+    return 0;
+  };
+  const prio = (id,q) => [latest[id]!==null && latest[id] <= q ? 0 : 1, tqOf(id), (latest[id]===null?99:latest[id]) + boost(id,q) + (isEmph(id) && q<=5 && !PROG.has(id) ? 3 : 0), S.off[id].alt===null?1:0, LOWER.includes(id)?0:1, -deps[id].length];
+  for (let q=start; q<=11; q++) {
+    sched[q] = Object.keys(S.taken).filter(k=>S.taken[k]===q);
+    const bySample = id => tqOf(id) <= q || (latest[id]!==null && latest[id] <= q+2);   // on schedule, or a deadline is near
+    const pick = (filter) => {
+      let progress = true;
+      const cuIn = S.custom.filter(c=>c.q===q && countsUD(c.name)).length;   // a typed-in elective takes a major-course slot; Core does not
+      while (progress && sched[q].length + cuIn < S.cap) {
+        progress = false;
+        const cand = need.filter(id=>!(id in at) && offered(id,q) && satisfied(id,q) && filter(id) && ((classCap(id, sched[q]) && !(isEmph(id) && cuIn)) || (latest[id]!==null && latest[id] <= q)))
+          .sort((a,b)=>{ const pa=prio(a,q), pb=prio(b,q); for (let i=0;i<pa.length;i++) if (pa[i]!==pb[i]) return pa[i]-pb[i]; return a.localeCompare(b); });
+        if (cand.length) { const id = cand[0]; sched[q].push(id); at[id]=q; progress = true; }
+      }
+    };
+    pick(bySample);
+    if (sched[q].length === 0) { const n = S.cap; S.cap = 1; pick(()=>true); S.cap = n; }   // never leave a quarter empty while work remains
+  }
+  const W = [];
+  const qname = q => `Year ${Math.floor(q/3)+1} ${QN[q%3]}`;
+  for (const [id,q] of Object.entries(S.taken)) {
+    const miss = (C[id].pre||[]).filter(g=>!g.some(p=>(p in at) && at[p] < q)).concat((C[id].co||[]).filter(g=>!g.some(p=>(p in at) && at[p] <= q))).map(g=>g.join(' or '));
+    if (miss.length) W.push(['info', id, `is entered in ${qname(q)}, before its prerequisite ${miss.join(', ')}. Check the quarter, or add the earlier course.`]);
+    if (q >= start && !offered(id, q)) W.push(['warn', id, `is planned for ${qname(q)}, but the offerings table does not list it then.`]);
+  }
+  for (const id of need) {
+    if (infeasible[id]) { W.push(['bad', id, `has no offering that leaves room for what follows it (${deps[id].map(d=>d[0]).join(', ')||'—'}) before Year 4 Spring.`]); continue; }
+    if (latest[id] < start) {
+      W.push(['bad', id, deps[id].length
+        ? `needed by ${qname(latest[id])} so that ${deps[id].map(d=>d[0]).join(', ')} can follow; that quarter has passed.`
+        : `is not offered again before Year 4 Spring; its last workable offering was ${qname(latest[id])}. Consider a substitute.`]);
+      continue;
+    }
+    if (!(id in at)) { W.push(['bad', id, `could not be scheduled (${why[id]}). ${latest[id]!==null?'Latest workable quarter is '+qname(latest[id])+'.':''} Raise courses per quarter or check prerequisites.`]); continue; }
+    if (at[id] === latest[id] && at[id] >= start && (latest[id] - start <= 2 || deps[id].length)) {
+      const reason = deps[id].length ? `later would leave no room for ${deps[id].map(d=>d[0]).join(', ')}` : 'it is the last offering that fits';
+      W.push(['warn', id, `must be taken in ${qname(at[id])}: ${reason}${S.off[id].alt!==null?' (alternate-year course)':''}.`]);
+    }
+  }
+  // sequencing advice
+  const q14 = at['MATH 14'], q122 = at['MATH 122'];
+  if (q14!==undefined && q122!==undefined && q122>=start) {
+    let earliest = null; for (let q=Math.max(start,q14); q<=11; q++) if (offered('MATH 122',q)) { earliest = q; break; }
+    if (earliest!==null && q122 > earliest && q122 - q14 > 1) W.push(['info','MATH 122', `is planned in ${qname(q122)} but could be taken in ${qname(earliest)}; the department advises taking it as soon after MATH 14 as possible.`]);
+  }
+  const q51 = at['MATH 51'], first = Math.min(...[at['CSCI 161'],at['CSCI 163']].filter(x=>x!==undefined));
+  if (q51!==undefined && q51>=start && isFinite(first) && first - q51 > 3) W.push(['info','MATH 51', `is ${first-q51} quarters before the first of CSCI 161/163; keep the gap short so the material is fresh.`]);
+  const q62 = at['CSCI 62'];
+  for (const id of ['CSCI 161','CSCI 163']) if (at[id]!==undefined && q62!==undefined && at[id] < q62 && at[id]>=start) W.push(['info', id, `is planned before CSCI 62; the department advises finishing CSCI 62 before any upper-division CSCI course.`]);
+  if (q62!==undefined && q62 <= 3) { const y2 = [4,5].flatMap(q=>sched[q]||[]); if (!y2.some(id=>PROG.has(id)) && start <= 5) W.push(['info','Sophomore year', `has no programming-heavy upper-division course. After CSCI 62 the lower division has little programming; add one of CSCI 181, 183, 185, 169, 184, 168, 187 or a CSEN course in Year 2.`]); }
+  if (S.emph==='' && start < 9) W.push(['info','Emphasis', `is undecided; the plan fills the five emphasis slots with programming-heavy courses. Declare by the beginning of senior year, earlier if sure, so the degree audit shows the requirements.`]);
+  const udDone = UDLIST.filter(id=>isDone(id) || id in at).length;
+  return { need, why, sched, at, latest, W, start, udDone };
+}
+
+// ---------- rendering ----------
+const $ = s => document.querySelector(s);
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+const kOf = id => PROG.has(id) ? 'prog' : C[id].k;
+const GROUPS = [['Lower division', ['MATH 9'].concat(LOWER)], ['Upper division', CORE.concat(UDLIST)], ['Other mathematics', ['MATH 52']]];
+const takenChip = id => `<div class="course tk" style="--c:${col(kOf(id))}"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span><button class="x" data-untake="${esc(id)}" aria-label="Remove ${esc(id)}" title="Remove">×</button></div>`;
+const addSelect = q => `<select class="addsel" data-addq="${q}" aria-label="Add a course taken in this quarter"><option value="">+ add course</option><option value="__custom">+ Type a course…</option>${GROUPS.map(([g,ids])=>`<optgroup label="${g}">${ids.filter(id=>!isDone(id)).map(id=>`<option value="${esc(id)}">${esc(id)} · ${esc(C[id].t)}</option>`).join('')}</optgroup>`).join('')}</select>`;
+function renderYears(P) {
+  const years = $('#years'); years.innerHTML = '';
+  for (let y=0; y<4; y++) {
+    const t = document.createElement('table'); const yr = S.y1+y; let units = 0;
+    let html = `<caption>Year ${y+1}<span>${yr}–${String(yr+1).slice(2)}</span></caption><tr>${QN.map(n=>`<th>${n}</th>`).join('')}</tr><tr>`;
+    for (let qq=0; qq<3; qq++) {
+      const q = y*3+qq;
+      const tk = Object.keys(S.taken).filter(k=>S.taken[k]===q).sort();
+      tk.forEach(id=>units+=C[id].u);
+      const cu = S.custom.map((c,i)=>[c,i]).filter(([c])=>c.q===q); cu.forEach(([c])=>units+=c.u);
+      const cchips = cu.map(([c,i])=>`<div class="course tk custom"><span class="id">${esc(c.name)}</span><span class="nm">${c.u}u · typed in${countsUD(c.name) && !(S.emph==='sec' && /^CSEN 150\b/.test(c.name))?' · <b>counts as an emphasis elective</b>':''}</span><button class="x" data-cdel="${i}" aria-label="Remove ${esc(c.name)}" title="Remove">×</button></div>`).join('');
+      const form = `<div class="cform"><input id="cname" maxlength="40" placeholder="Course, e.g. RSOC 9 or CSEN 140" aria-label="Course to add"><span class="crow"><input id="cunits" type="number" min="1" max="6" value="4" aria-label="Units"> units <button data-cadd="${q}">Add</button><button data-ccancel>Cancel</button></span></div>`;
+      html += `<td class="${q<P.start?'past':''}${q===P.start?' now':''}">` + tk.map(takenChip).join('') + cchips + (S.customEdit===q ? form : addSelect(q)) + `</td>`;
+    }
+    t.innerHTML = html + `</tr>`;
+    const wrap = document.createElement('div'); wrap.appendChild(t);
+    const tot = document.createElement('div'); tot.className='tot'; tot.textContent = units ? `${units} units this year` : ''; wrap.appendChild(tot);
+    years.appendChild(wrap);
+  }
+}
+function renderRecs(P) {
+  const box = $('#recs');
+  box.hidden = Object.keys(S.taken).length === 0 && !S.custom.length;
+  if (box.hidden) return;
+  let html = `<h2>Sample four-year plan</h2><p class="empty" style="margin-bottom:8px">One way to finish the major from where your plan stands. Grey courses are already in your plan; the others are suggestions. Use <b>+</b> to copy a suggestion into your plan.</p><div class="years sample">`;
+  for (let y=0; y<4; y++) {
+    const yr = S.y1+y; let units = 0;
+    html += `<div><table><caption>Year ${y+1}<span>${yr}–${String(yr+1).slice(2)}</span></caption><tr>${QN.map(n=>`<th>${n}</th>`).join('')}</tr><tr>`;
+    for (let qq=0; qq<3; qq++) {
+      const q = y*3+qq;
+      const mine = Object.keys(S.taken).filter(k=>S.taken[k]===q).sort();
+      const sug = q >= P.start ? (P.sched[q]||[]).filter(id=>!(id in S.taken)) : [];
+      mine.concat(sug).forEach(id=>units+=C[id].u);
+      const cuQ = S.custom.filter(c=>c.q===q); cuQ.forEach(c=>units+=c.u);
+      html += `<td class="${q<P.start?'past':''}">` +
+        mine.map(id=>`<div class="course mine"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span></div>`).join('') +
+        cuQ.map(c=>`<div class="course mine"><span class="id"><i>${esc(c.name)}</i></span><span class="nm">${c.u}u · typed in</span></div>`).join('') +
+        sug.map(id=>{
+          const b = [];
+          if (P.at[id]===P.latest[id]) b.push(`<span class="badge" style="--b:var(--warn)">last offering</span>`);
+          else if (S.off[id].alt!==null) b.push(`<span class="badge" style="--b:var(--muted)">alt-year</span>`);
+          return `<div class="course tk" style="--c:${col(kOf(id))}"><span class="id">${esc(id)}</span><span class="nm">${esc(C[id].t)} · ${C[id].u}u</span>${b.join('')}<button class="x addrec" data-recadd="${esc(id)}" data-recq="${q}" aria-label="Add ${esc(id)} to your plan in ${QN[qq]} of Year ${y+1}" title="Add to your plan">+</button></div>`;
+        }).join('') +
+        (mine.length || sug.length || cuQ.length ? '' : `<span style="color:var(--muted)">core / electives</span>`) + `</td>`;
+    }
+    html += `</tr></table><div class="tot">${units ? units+' units this year' : ''}</div></div>`;
+  }
+  box.innerHTML = html + `</div>`;
+}
+function renderWarns(P) {
+  $('#warns').hidden = !started();
+  if (!started()) return;
+  const order = {bad:0,warn:1,info:2};
+  const list = P.W.sort((a,b)=>order[a[0]]-order[b[0]]);
+  $('#warns').innerHTML = `<h2>Warnings and advice</h2>` + (list.length ? list.map(([k,id,msg])=>`<div class="w" style="--b:var(--${k==='info'?'now':k})"><span class="k">${k==='bad'?'blocked':k==='warn'?'cannot wait':'advice'}</span><span><b>${esc(id)}</b> ${esc(msg)}</span></div>`).join('') : `<div class="note">Nothing is at risk in this plan.</div>`);
+}
+function renderReq(P) {
+  const done = isDone;
+  const mark = (ok, pend) => ok ? '<span class="ok">✓</span>' : pend ? '<span class="pend">…</span>' : '<span class="no">✗</span>';
+  const rows = [];
+  rows.push([mark(LOWER.every(id=>completed(id)), LOWER.every(done)), 'Lower division: MATH 11, 12, 13, 14, 51, 53; CSCI 10, 60, 61, 62; one science; CSEN 20 & 20L; ECEN 21 & 21L']);
+  rows.push([mark(CORE.every(id=>completed(id)), CORE.every(done)), 'Required upper division: MATH 122, CSCI 161, CSCI 163, CSEN 177 & 177L']);
+  const e = EMPH[S.emph];
+  if (e) {
+    rows.push([mark(e.req.every(id=>completed(id)), e.req.every(done)), `${e.name} emphasis, required: ${e.req.join(', ')}`]);
+    const cuPool = S.custom.map(c=>c.name).filter(countsUD);
+    e.choose.forEach(g=>{ let have=g.from.filter(done); if (g.any) for (let i = 0; i < cuPool.length && have.length < g.n; ) { if (fitsAny(g, cuPool[i])) have = have.concat([cuPool.splice(i, 1)[0]+' (typed in)']); else i++; } rows.push([mark(g.from.filter(id=>completed(id)).length>=g.n, have.length>=g.n), `${e.name}: ${g.n} more from the emphasis list (${have.slice(0,g.n).join(', ')||'—'})`]); });
+  } else {
+    const ud = UDLIST.filter(done).concat(S.custom.filter(c=>countsUD(c.name)).map(c=>c.name+' (typed in)'));
+    const udPast = UDLIST.filter(id=>completed(id)).length + S.custom.filter(c=>countsUD(c.name) && c.q < S.curY*3+S.curQ).length;
+    rows.push([mark(udPast>=5, ud.length>=5), `Five emphasis courses, emphasis undecided (${ud.length} completed or in the plan: ${ud.join(', ')||'—'})`]);
+  }
+  $('#req').innerHTML = rows.map(([m,t])=>`<span class="s">${m}</span><span>${esc(t)}</span>`).join('');
+}
+function renderOff() {
+  $('#off').innerHTML = `<tr><th>Course</th><th>Fall</th><th>Winter</th><th>Spring</th><th>Years</th></tr>` + Object.keys(C).map(id=>{
+    const o = S.off[id];
+    return `<tr><td>${esc(id)}${C[id].ph?' <span class="tag">placeholder</span>':''}</td>${[0,1,2].map(i=>`<td><input type="checkbox" data-off="${esc(id)}" data-q="${i}" ${o.off[i]?'checked':''}></td>`).join('')}<td><select data-alt="${esc(id)}"><option value="" ${o.alt===null?'selected':''}>every year</option><option value="0" ${o.alt===0?'selected':''}>even</option><option value="1" ${o.alt===1?'selected':''}>odd</option></select></td></tr>`;
+  }).join('');
+}
+function renderChecks() {
+  const mk = (host, ids, key) => { host.innerHTML = ids.map(id=>`<label><input type="checkbox" data-${key}="${esc(id)}" ${S[key][id]?'checked':''}><span class="i">${esc(id)}</span> <span class="t">${esc(C[id].t)}</span></label>`).join(''); };
+  mk($('#credit'), GROUPS[0][1], 'credit');
+  mk($('#credit2'), GROUPS.slice(1).flatMap(g=>g[1]), 'credit');
+  if (GROUPS.slice(1).some(g=>g[1].some(id=>S.credit[id]))) $('#creditMore').open = true;
+  const n = Object.keys(S.credit).filter(k=>S.credit[k]).length; $('#creditCount').textContent = n ? `(${n})` : '';
+}
+const isUD = id => /\b1\d\d\b/.test(id);
+function renderStats(P) {
+  const ids = Object.keys(S.taken); const cr = Object.keys(S.credit).filter(k=>S.credit[k]);
+  const sum = L => L.reduce((a,id)=>a+C[id].u,0);
+  if (!ids.length && !cr.length && !S.custom.length) { $('#stats').innerHTML = ''; return; }
+  const inPlan = ids.concat(cr).filter(id=>C[id]);
+  const whole = [...new Set(inPlan.concat(P.need))];          // the plan plus whatever the major still needs
+  const major = sum(inPlan), ud = sum(inPlan.filter(isUD));
+  const wholeU = sum(whole), wholeUD = sum(whole.filter(isUD));
+  const cuU = S.custom.reduce((a,c)=>a+c.u,0), cuUD = S.custom.filter(c=>/\b1\d\d\b/.test(c.name)).reduce((a,c)=>a+c.u,0);
+  const restUD = Math.max(0, 60 - wholeUD - cuUD), rest = Math.max(0, 175 - wholeU - cuU);
+  $('#stats').innerHTML = (cuU ? `<span>Courses you typed in: <b>${cuU}</b> units (prerequisites and quarters are not checked for these).</span>` : '') + `<span>Major courses in your plan: <b>${major}</b> units, <b>${ud}</b> upper-division${wholeU>major?` (the whole major: ${wholeU} units, ${wholeUD} upper-division)`:''}.</span><span>SCU requires 175 units, 60 upper-division, so about ${rest} units come from Core and electives outside the major, at least ${restUD} of them upper-division.</span>`;
+}
+function renderHead() {
+  const scu = Object.keys(S.taken).sort((a,b)=>S.taken[a]-S.taken[b]); const cr = Object.keys(S.credit).filter(k=>S.credit[k]);
+  $('#printhead').innerHTML = `<div class="ph-title">Computer science major, four-year plan</div><div class="ph-meta">Emphasis: ${esc(EMPH[S.emph]?EMPH[S.emph].name:'undecided')} · Year 1: ${S.y1}–${String(S.y1+1).slice(2)} · Planned from Year ${S.curY+1} ${QN[S.curQ]} · Prepared ${new Date().toLocaleDateString()}</div><div class="ph-meta">Plan code: ${encodePlan()}</div><div class="ph-meta">Courses in the plan: ${scu.length?esc(scu.join(', ')):'none entered'}${cr.length?' · Credit by exam or transfer: '+esc(cr.join(', ')):''}${S.custom.length?' · Typed in: '+esc(S.custom.slice().sort((a,b)=>a.q-b.q).map(c=>c.name).join(', ')):''}</div>`;
+}
+function refreshCode() { const el = $('#planCode'); if (el && document.activeElement !== el) el.value = encodePlan(); }
+function render() { const P = plan(); renderHead(); renderStats(P); renderYears(P); renderRecs(P); renderWarns(P); renderReq(P); refreshCode(); const cb=$('#creditBox'); if (cb && !started() && !cb.dataset.touched) cb.open = true; }
+
+// ---------- wiring ----------
+const y1 = $('#y1'); for (let y=2020; y<=2030; y++) { const o=document.createElement('option'); o.value=y; o.textContent=`${y}–${String(y+1).slice(2)}`; y1.appendChild(o); }
+y1.value = S.y1; $('#curY').value = S.curY; $('#curQ').value = S.curQ; $('#emph').value = S.emph; $('#cap').value = S.cap;
+renderChecks(); renderOff(); render();
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id==='y1') S.y1 = +t.value; else if (t.id==='curY') S.curY = +t.value; else if (t.id==='curQ') S.curQ = +t.value;
+  else if (t.id==='emph') S.emph = t.value; else if (t.id==='cap') S.cap = Math.max(1, Math.min(4, +t.value||2));
+  else if (t.dataset.credit) { S.credit[t.dataset.credit] = t.checked; if (t.checked) delete S.taken[t.dataset.credit]; renderChecks(); }
+  else if ('addq' in t.dataset && t.value === '__custom') { S.customEdit = +t.dataset.addq; render(); setTimeout(()=>{ const n=$('#cname'); if (n) n.focus(); }, 0); return; }
+  else if ('addq' in t.dataset) { if (!t.value) return; S.taken[t.value] = +t.dataset.addq; delete S.credit[t.value]; renderChecks(); }
+  else if (t.dataset.off) S.off[t.dataset.off].off[+t.dataset.q] = t.checked ? 1 : 0;
+  else if (t.dataset.alt) S.off[t.dataset.alt].alt = t.value==='' ? null : +t.value;
+  else return;
+  save(); render();
+});
+function addTyped(q) {
+  const name = normCourse($('#cname').value); if (!name) { $('#cname').focus(); return; }
+  const code = (name.match(/^[A-Z]{2,5} \d{1,3}[A-Z]?/)||[''])[0];
+  if (C[code]) { S.taken[code] = q; delete S.credit[code]; renderChecks(); }   // a course the planner knows goes in as that course
+  else S.custom.push({q, name, u: Math.max(1, Math.min(6, +$('#cunits').value||4))});
+  S.customEdit = null; save(); render();
+}
+document.addEventListener('keydown', e => {
+  if (!e.target.closest || !e.target.closest('.cform')) return;
+  if (e.key === 'Enter') { e.preventDefault(); const b = document.querySelector('[data-cadd]'); if (b) addTyped(+b.dataset.cadd); }
+  else if (e.key === 'Escape') { S.customEdit = null; render(); }
+});
+document.addEventListener('click', e => {
+  const ca = e.target.closest('[data-cadd]');
+  if (ca) { addTyped(+ca.dataset.cadd); return; }
+  if (e.target.closest('[data-ccancel]')) { S.customEdit = null; render(); return; }
+  const cd = e.target.closest('[data-cdel]');
+  if (cd) { S.custom.splice(+cd.dataset.cdel, 1); save(); render(); return; }
+  const r = e.target.closest('[data-recadd]');
+  if (r) { S.taken[r.dataset.recadd] = +r.dataset.recq; delete S.credit[r.dataset.recadd]; renderChecks(); save(); render(); return; }
+  const b = e.target.closest('[data-untake]'); if (!b) return; delete S.taken[b.dataset.untake]; renderChecks(); save(); render();
+});
+const msg = t => { $('#codeMsg').textContent = t; setTimeout(()=>{ if ($('#codeMsg').textContent===t) $('#codeMsg').textContent=''; }, 4000); };
+const copyText = (t, ok) => { (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(t) : Promise.reject()).then(()=>msg(ok), ()=>{ const el=$('#planCode'); el.value=t; el.select(); msg('Press Ctrl+C or Cmd+C to copy.'); }); };
+$('#copyCode').addEventListener('click', () => copyText(encodePlan(), 'Plan code copied.'));
+if (/^https?:/.test(location.protocol)) { $('#copyLink').hidden = false; $('#copyLink').addEventListener('click', () => copyText(location.origin + location.pathname + '#plan=' + encodePlan(), 'Link copied. Anyone who opens it sees this plan.')); }
+$('#loadCode').addEventListener('click', () => { const raw = $('#planCode').value; const code = (raw.match(/plan=([A-Za-z0-9_-]+)/)||[])[1] || raw; const o = decodePlan(code); if (!o) { msg('That is not a plan code.'); return; } applyPlan(o); $('#y1').value=S.y1; $('#curY').value=S.curY; $('#curQ').value=S.curQ; $('#emph').value=S.emph; $('#cap').value=S.cap; renderChecks(); save(); render(); msg('Plan loaded.'); });
+$('#creditBox').addEventListener('toggle', e => { e.currentTarget.dataset.touched = '1'; });
+$('#reset').addEventListener('click', () => { S.taken = {}; S.credit = {}; S.want = {}; S.custom = []; S.customEdit = null; S.emph=''; S.curY=0; S.curQ=0; $('#emph').value=''; $('#curY').value=0; $('#curQ').value=0; renderChecks(); save(); render(); });
+$('#resetOff').addEventListener('click', () => { S.off = JSON.parse(JSON.stringify(DEFAULT_OFF)); renderOff(); save(); render(); });
+$('#pdf').addEventListener('click', () => { renderHead(); window.print(); });
+$('#report').addEventListener('click', () => { const u = 'https://docs.google.com/forms/d/e/1FAIpQLSfXueEwsaVoECwJaS6VWV3YBdRP8-ESllt0ygkpSCchcMoYsQ/viewform?usp=pp_url'
+  + '&entry.2122507823=' + encodeURIComponent('Computer science four-year planner') + '&entry.974133623=' + encodeURIComponent('Planner suggestion looks wrong') + '&entry.578657742=' + encodePlan();
+  window.open(u, '_blank', 'noopener'); });
+window.__planner = { plan, S, C, code: encodePlan, hasPlan: () => started() };
+// Opened on its own (full-size tab, Canvas, artifact), the report button floats in the corner.
+// Embedded in the site, the site's own floating button carries the plan code instead.
+try { if (!window.frameElement) $('#report').classList.add('fab'); } catch (e) { $('#report').classList.add('fab'); }
+})();
+</script>
+</body>
+</html>
