@@ -241,10 +241,10 @@ const CORE = ['MATH 122','CSCI 161','CSCI 163','CSEN 177'];
 const UDLIST = Object.keys(C).filter(k=>!LOWER.includes(k) && !CORE.includes(k) && k!=='MATH 52' && k!=='MATH 9');   // upper division only: MATH 9 and MATH 52 are lower division
 const ANY = ['CSCI 183','CSCI 169','CSCI 187','CSCI 185','CSEN 161','CSEN 166','CSCI 168','CSCI 184','CSCI 181','CSEN 146','CSCI 166','CSCI 180','CSCI 164','CSCI 165','CSCI 146','CSCI 147','CSCI 127','CSEN 169','CSEN 178'];
 const EMPH = {
-  alg:{ name:'Algorithms & Complexity', req:['CSCI 162','CSCI 164'], choose:[{n:2,from:['CSCI 146','CSCI 147','CSCI 165','CSCI 181','MATH 101','MATH 175','MATH 176','MATH 177','MATH 178']},{n:1,from:['CSCI 146','CSCI 147','CSCI 165','CSCI 181','MATH 101','MATH 175','MATH 176','MATH 177','MATH 178'].concat(ANY)}] },
-  ds:{ name:'Data Science', req:['CSCI 183','CSCI 184','CSCI 185'], choose:[{n:2,from:['CSCI 127','CSCI 146','CSCI 147','CSCI 164','CSCI 166','MATH 123','CSEN 166'].concat(ANY)}] },
-  sec:{ name:'Security', req:['MATH 178','CSCI 180','CSCI 181'], choose:[{n:2,from:['MATH 175','CSEN 152','CSEN 161','CSEN 146'].concat(ANY)}] },
-  sw:{ name:'Software', req:['CSCI 169','CSCI 187','CSEN 146'], choose:[{n:1,from:['CSCI 183','CSCI 180','CSCI 168'].concat(ANY)},{n:1,from:['CSCI 183','CSCI 180','CSCI 168','CSEN 161','CSEN 178'].concat(ANY)}] },
+  alg:{ name:'Algorithms & Complexity', req:['CSCI 162','CSCI 164'], choose:[{n:2,from:['CSCI 146','CSCI 147','CSCI 165','CSCI 181','MATH 101','MATH 175','MATH 176','MATH 177','MATH 178']},{n:1,from:['CSCI 146','CSCI 147','CSCI 165','CSCI 181','MATH 101','MATH 175','MATH 176','MATH 177','MATH 178'].concat(ANY), any:'cscsen'}] },
+  ds:{ name:'Data Science', req:['CSCI 183','CSCI 184','CSCI 185'], choose:[{n:2,from:['CSCI 127','CSCI 146','CSCI 147','CSCI 164','CSCI 166','MATH 123','CSEN 166'].concat(ANY), any:'cscsen'}] },
+  sec:{ name:'Security', req:['MATH 178','CSCI 180','CSCI 181'], choose:[{n:2,from:['MATH 175','CSEN 152','CSEN 161','CSEN 146'].concat(ANY), any:'cscsen', except:['CSEN 150']}] },
+  sw:{ name:'Software', req:['CSCI 169','CSCI 187','CSEN 146'], choose:[{n:1,from:['CSCI 183','CSCI 180','CSCI 168'].concat(ANY.filter(x=>/^CSCI /.test(x))), any:'csci'},{n:1,from:['CSCI 183','CSCI 180','CSCI 168','CSEN 161','CSEN 178'].concat(ANY), any:'cscsen'}] },
 };
 const QN = ['Fall','Winter','Spring'];
 const col = k => k==='cs' ? 'var(--analysis)' : k==='prog' ? 'var(--applied)' : `var(--${k})`;
@@ -257,6 +257,7 @@ S.taken = S.taken || {}; S.credit = S.credit || {}; S.custom = Array.isArray(S.c
 // Typed-in courses (Core, electives the menus don't list). An upper-division CSCI below 190 or CSEN below 188
 // counts toward the emphasis courses ("any other 4-5 unit upper-division CSCI or CSEN course"); nothing else is checked.
 const normCourse = raw => { const t = String(raw||'').trim().replace(/\s+/g,' ').slice(0,40); const m = t.match(/^([A-Za-z]{2,5})\s*(\d{1,3}[A-Za-z]?)\b(.*)$/); return m ? (m[1].toUpperCase()+' '+m[2].toUpperCase()+m[3]) : t; };
+const fitsAny = (g, name) => countsUD(name) && !(g.except||[]).includes((name.match(/^[A-Z]{2,5} \d{1,3}/)||[''])[0]) && (g.any==='cscsen' || /^CSCI /.test(name));
 const countsUD = name => { const m = name.toUpperCase().match(/^(CSCI|CSEN) (\d{3})(?![0-9])/); return !!m && +m[2] >= 100 && +m[2] < (m[1]==='CSCI' ? 190 : 188) && !C[m[1]+' '+m[2]]; };
 const isDone = id => !!S.credit[id] || (id in S.taken);
 const doneIds = () => Object.keys(C).filter(isDone);
@@ -289,12 +290,12 @@ function requiredSet() {
   if (e) e.req.forEach(id=>add(id,'emphasis'));
   if (e) {
     const used = new Set(e.req);   // a course satisfies only one emphasis requirement
-    let cuLeft = S.custom.filter(c=>countsUD(c.name)).length;   // typed-in electives fill "any other upper-division" slots
+    const cuPool = S.custom.map(c=>c.name).filter(countsUD);   // typed-in electives fill "any other upper-division" slots
     for (const g of e.choose) {
       const have = g.from.filter(id=>!used.has(id) && (need.has(id) || isDone(id))).slice(0, g.n);
       have.forEach(id=>used.add(id));
       let n = g.n - have.length;
-      if (ANY.every(x=>g.from.includes(x))) { const k = Math.min(n, cuLeft); n -= k; cuLeft -= k; }
+      if (g.any) for (let i = 0; i < cuPool.length && n > 0; ) { if (fitsAny(g, cuPool[i])) { cuPool.splice(i, 1); n--; } else i++; }
       for (const id of g.from) { if (n<=0) break; if (!used.has(id) && !need.has(id) && !isDone(id) && !C[id].noAuto) { add(id,'emphasis'); used.add(id); n--; } }
     }
   } else {
@@ -420,7 +421,7 @@ function renderYears(P) {
       const tk = Object.keys(S.taken).filter(k=>S.taken[k]===q).sort();
       tk.forEach(id=>units+=C[id].u);
       const cu = S.custom.map((c,i)=>[c,i]).filter(([c])=>c.q===q); cu.forEach(([c])=>units+=c.u);
-      const cchips = cu.map(([c,i])=>`<div class="course tk custom"><span class="id">${esc(c.name)}</span><span class="nm">${c.u}u · typed in${countsUD(c.name)?' · <b>counts as an emphasis elective</b>':''}</span><button class="x" data-cdel="${i}" aria-label="Remove ${esc(c.name)}" title="Remove">×</button></div>`).join('');
+      const cchips = cu.map(([c,i])=>`<div class="course tk custom"><span class="id">${esc(c.name)}</span><span class="nm">${c.u}u · typed in${countsUD(c.name) && !(S.emph==='sec' && /^CSEN 150\b/.test(c.name))?' · <b>counts as an emphasis elective</b>':''}</span><button class="x" data-cdel="${i}" aria-label="Remove ${esc(c.name)}" title="Remove">×</button></div>`).join('');
       const form = `<div class="cform"><input id="cname" maxlength="40" placeholder="Course, e.g. RSOC 9 or CSEN 140" aria-label="Course to add"><span class="crow"><input id="cunits" type="number" min="1" max="6" value="4" aria-label="Units"> units <button data-cadd="${q}">Add</button><button data-ccancel>Cancel</button></span></div>`;
       html += `<td class="${q<P.start?'past':''}${q===P.start?' now':''}">` + tk.map(takenChip).join('') + cchips + (S.customEdit===q ? form : addSelect(q)) + `</td>`;
     }
@@ -475,8 +476,8 @@ function renderReq(P) {
   const e = EMPH[S.emph];
   if (e) {
     rows.push([mark(e.req.every(id=>completed(id)), e.req.every(done)), `${e.name} emphasis, required: ${e.req.join(', ')}`]);
-    const cuNames = S.custom.filter(c=>countsUD(c.name)).map(c=>c.name+' (typed in)'); let cuI = 0;
-    e.choose.forEach(g=>{ let have=g.from.filter(done); if (ANY.every(x=>g.from.includes(x))) while (have.length<g.n && cuI<cuNames.length) have=have.concat([cuNames[cuI++]]); rows.push([mark(g.from.filter(id=>completed(id)).length>=g.n, have.length>=g.n), `${e.name}: ${g.n} more from the emphasis list (${have.slice(0,g.n).join(', ')||'—'})`]); });
+    const cuPool = S.custom.map(c=>c.name).filter(countsUD);
+    e.choose.forEach(g=>{ let have=g.from.filter(done); if (g.any) for (let i = 0; i < cuPool.length && have.length < g.n; ) { if (fitsAny(g, cuPool[i])) have = have.concat([cuPool.splice(i, 1)[0]+' (typed in)']); else i++; } rows.push([mark(g.from.filter(id=>completed(id)).length>=g.n, have.length>=g.n), `${e.name}: ${g.n} more from the emphasis list (${have.slice(0,g.n).join(', ')||'—'})`]); });
   } else {
     const ud = UDLIST.filter(done).concat(S.custom.filter(c=>countsUD(c.name)).map(c=>c.name+' (typed in)'));
     const udPast = UDLIST.filter(id=>completed(id)).length + S.custom.filter(c=>countsUD(c.name) && c.q < S.curY*3+S.curQ).length;

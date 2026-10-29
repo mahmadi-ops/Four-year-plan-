@@ -45,7 +45,13 @@
           site, a link, either of which restores the plan anywhere, so a student
           can bring it to an advising meeting or send it ahead. Above the plan, a
           line totals the major units in it and the upper-division units, against
-          the university's 175 and 60.
+          the university's 175 and 60. Core courses and courses the menus do not
+          list can be added with <q>+ Type a course…</q>. An upper-division MATH course
+          numbered 101 to 189 added this way counts toward the seven upper-division
+          courses (MATH 100 and courses numbered 190 and above do not), as do the
+          alternatives the Bulletin names for an emphasis, such as ECON 174 in Data
+          Science or MATH 8 in Mathematics Education; the planner does not check
+          prerequisites or offering quarters for typed-in courses.
         </p>
       </instructions>
       <static>
